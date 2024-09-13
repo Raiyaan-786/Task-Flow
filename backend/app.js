@@ -14,5 +14,8 @@ app.use(express.urlencoded({extended: true}))
 app.use(express.static("public"))
 app.use(cookieParser())
 
+// Routes 
+
+app.use('/api/auth', );
 
 export { app } ;
