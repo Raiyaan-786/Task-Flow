@@ -1,9 +1,9 @@
-import { Button, Container, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField,Typography } from '@mui/material';
+import { Button, FormControl, FormControlLabel, FormLabel, Grid2, Link, Paper, Radio, RadioGroup, TextField,Typography } from '@mui/material';
 import React, { useState } from 'react'
 
 const Login = () => {
     const [inputs,setInputs]=useState({
-        name: 'inzamam',
+        name: '',
         email: '',
         password: "",
         role:'',
@@ -20,16 +20,19 @@ const Login = () => {
         e.preventDefault();
         console.log(inputs);
    }
+   //paper style
+   const paperStyle={padding:20,height:'80vh',width:280,margin:'20px auto'}
   return (
-    <>
-    <Container  sx={{background:'yellow' ,marginTop:'8%'}} maxWidth='xs'>
+    <Grid2>
+    <Paper  elevation={10} style={paperStyle}>
             
     <form  onSubmit={handleSubmit}>
-        <TextField name='name' type='text' value={inputs.name} onChange={handleChange} varient="outlined" placeholder='Enter your Name'></TextField>
+        <TextField fullWidth label='Name' name='name' type='text' value={inputs.name} onChange={handleChange} variant='standard' placeholder='Enter Name'>hello</TextField>
+        {/* <TextField fullWidth name='name' type='text' value={inputs.name} onChange={handleChange} varient='standard' placeholder='Enter your Name'></TextField> */}
         <br />
-        <TextField name='email' type='email' value={inputs.email} onChange={handleChange} varient="outlined" placeholder='Enter your email'></TextField>
+         <TextField fullWidth variant='standard' label='Email' name='email' type='email' value={inputs.email} onChange={handleChange}  placeholder='Enter Email'></TextField>
         <br />
-        <TextField name='password' type='password' value={inputs.password} onChange={handleChange} varient="outlined" placeholder='Password'></TextField>
+         <TextField fullWidth variant='standard' label='Password' name='password' type='password' value={inputs.password} onChange={handleChange} varient="outlined" placeholder='Enter Password'></TextField>
         <br />
         <FormControl>
                   <FormLabel>Role</FormLabel>
@@ -39,13 +42,15 @@ const Login = () => {
                      <FormControlLabel label='Customer' value={'Customer'} control={<Radio/>}/>
                   </RadioGroup>
         </FormControl>
-        <br />
-        <Button variant='contained'  type="submit" >Sign in</Button>
-        <br />
-        <Button variant='outlined'>Sign up</Button>
+        
+        
+
+        <Button fullWidth variant='contained'  type="submit" sx={{margin:'8px 0'}}>Sign in</Button>
+        <Typography>Do you have an account? <Link href="#" underline="none">Sign Up</Link>
+        </Typography>
     </form>
-    </Container>
-    </>
+    </Paper>
+    </Grid2>
   )
 }
 
