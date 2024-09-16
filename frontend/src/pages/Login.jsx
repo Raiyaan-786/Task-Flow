@@ -21,19 +21,20 @@ const Login = () => {
     console.log(inputs);
   }
   //paper style
-  const paperStyle = { padding: '40px 30px', width: 250, margin: '40px auto' }
+  const paperStyle = {padding: '25px 30px', width: 250, margin: '35px auto' }
+  // const paperStyle = { padding: '40px 30px', width: 250, margin: '40px auto' }
   return (
     <Grid2>
       <Paper elevation={10} style={paperStyle}>
-        <Grid2 align='center' sx={{ paddingBottom: "35px" }}>
+        <Grid2 align='center' sx={{ paddingBottom: "20px" }}>
           <Avatar sx={{ bgcolor: '#1976d2' }}><Lock /></Avatar>
           <Typography variant="h3">Login</Typography>
         </Grid2>
         <form onSubmit={handleSubmit}>
-          <TextField size='small' fullWidth variant='outlined' name='email' type='email' value={inputs.email} onChange={handleChange} placeholder='Enter Email'></TextField>
+          <TextField size='small' fullWidth variant='outlined' name='email' type='email' value={inputs.email} onChange={handleChange} placeholder='Email'></TextField>
           <br />
           <br />
-          <TextField size='small' fullWidth variant='outlined' name='password' type='password' value={inputs.password} onChange={handleChange} varient="outlined" placeholder='Enter Password'></TextField>
+          <TextField size='small' fullWidth variant='outlined' name='password' type='password' value={inputs.password} onChange={handleChange} varient="outlined" placeholder='Password'></TextField>
           <br />
           <br />
           <FormControl size='small' fullWidth >
