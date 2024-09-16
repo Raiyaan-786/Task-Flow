@@ -1,7 +1,7 @@
-const Task = require('../models/Task');
+import { Task } from '../models/task.model.js';
 
 // Create Task (Only Admin and Manager can create)
-exports.createTask = async (req, res) => {
+const createTask = async (req, res) => {
   try {
     const { title, description, assignedTo } = req.body;
     const task = new Task({ title, description, assignedTo, createdBy: req.user.id });
@@ -13,7 +13,7 @@ exports.createTask = async (req, res) => {
 };
 
 // Get All Tasks (Admin can view all tasks, Manager can view own and assigned tasks)
-exports.getAllTasks = async (req, res) => {
+const getAllTasks = async (req, res) => {
   try {
     const role = req.user.role;
     let tasks;
@@ -33,7 +33,7 @@ exports.getAllTasks = async (req, res) => {
 };
 
 // Update Task (Only Admin and Manager)
-exports.updateTask = async (req, res) => {
+const updateTask = async (req, res) => {
   try {
     const { id } = req.params;
     const task = await Task.findById(id);
@@ -49,3 +49,23 @@ exports.updateTask = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
+
+// Delete Task (Only Admin and Manager)
+const deleteTask = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const task = await Task.findById(id);
+
+    if (!task) return res.status(404).json({ error: 'Task not found' });
+    if (req.user.role !== 'Admin' && task.createdBy.toString() !== req.user.id) {
+      return res.status(403).json({ error: 'Unauthorized' });
+    }
+
+    await Task.findByIdAndDelete(id);
+    res.status(200).json({ message: 'Task deleted successfully' });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+export { createTask , getAllTasks , updateTask , deleteTask};
