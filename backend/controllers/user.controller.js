@@ -31,5 +31,80 @@ const loginUser = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
+// Create User 
 
-export { registerUser, loginUser};
+const createUser = async (req, res) => {
+  try {
+    const { name, email, password, role } = req.body;
+
+    // Ensure the role is valid and Admin is not creating a 'Customer'
+    const validRoles = ['Admin', 'Manager', 'User'];
+    if (!validRoles.includes(role)) {
+      return res.status(400).json({ error: 'Invalid role specified' });
+    }
+
+    // Check if email is already registered
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Email already exists' });
+    }
+
+    // Create a new user
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      name,
+      email,
+      password: hashedPassword,
+      role // Admin specifies the role
+    });
+
+    await newUser.save();
+    res.status(201).json({ message: `${role} created successfully`, user: newUser });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Get all User 
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({}, 'name email role'); 
+    res.status(200).json({ users });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+const updateUserRole = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { role } = req.body;
+
+    // Ensure the role is valid
+    const validRoles = ['Admin', 'Manager', 'User'];
+    if (!validRoles.includes(role)) {
+      return res.status(400).json({ error: 'Invalid role specified' });
+    }
+
+    // Find the user by ID
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Prevent Admin from downgrading their own role
+    if (user.id === req.user.id) {
+      return res.status(403).json({ error: 'You cannot change your own role' });
+    }
+
+    // Update the user's role
+    user.role = role;
+    await user.save();
+
+    res.status(200).json({ message: 'User role updated successfully', user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export { registerUser, loginUser , getAllUsers , updateUserRole ,createUser };
