@@ -2,8 +2,9 @@ import { Avatar, Button, FormControl, Grid2, InputLabel, Link, MenuItem, Paper, 
 import React, { useState } from 'react'
 import { Lock } from '@mui/icons-material';
 
-const Login = () => {
+const Signup = () => {
   const [inputs, setInputs] = useState({
+    name:'dfdf',
     email: '',
     password: "",
     role: '',
@@ -21,16 +22,18 @@ const Login = () => {
     console.log(inputs);
   }
   //paper style
-  const paperStyle = {padding: '25px 30px', width: 250, margin: '35px auto' }
-  // const paperStyle = { padding: '40px 30px', width: 250, margin: '40px auto' }
+  const paperStyle = { padding: '25px 30px', width: 250, margin: '35px auto' }
   return (
     <Grid2>
       <Paper elevation={10} style={paperStyle}>
         <Grid2 align='center' sx={{ paddingBottom: "20px" }}>
           <Avatar sx={{ bgcolor: '#1976d2' }}><Lock /></Avatar>
-          <Typography variant="h3">Login</Typography>
+          <Typography variant="h3">Signup</Typography>
         </Grid2>
         <form onSubmit={handleSubmit}>
+          <TextField size='small' fullWidth variant='outlined' name='name' type='text' value={inputs.name} onChange={handleChange} placeholder='Name'></TextField>
+          <br />
+          <br />
           <TextField size='small' fullWidth variant='outlined' name='email' type='email' value={inputs.email} onChange={handleChange} placeholder='Email'></TextField>
           <br />
           <br />
@@ -49,7 +52,7 @@ const Login = () => {
           <br />
           <Button fullWidth variant='contained' type="submit" sx={{ margin: '15px 0' }}>LOGIN</Button>
           <br />
-          <Typography variant="caption" sx={{paddingLeft:'30px'}} >Do you have an account? <Link href="#" underline="none">Sign Up</Link>
+          <Typography variant="caption" sx={{paddingLeft:'30px'}} >Already have an account? <Link href="#" underline="none">Login</Link>
           </Typography>
         </form>
       </Paper>
@@ -57,4 +60,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default Signup
