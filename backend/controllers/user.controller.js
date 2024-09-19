@@ -5,11 +5,11 @@ import bcrypt from 'bcrypt'
 // Register User
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password , role} = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({ name, email, password: hashedPassword, role });
     await user.save();
-    res.status(201).json({ user ,message: 'User registered successfully' });
+    res.status(201).json({ user ,message: 'Customer registered successfully' });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -31,8 +31,7 @@ const loginUser = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
-// Create User 
-
+// Create User by Admin only
 const createUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -42,13 +41,11 @@ const createUser = async (req, res) => {
     if (!validRoles.includes(role)) {
       return res.status(400).json({ error: 'Invalid role specified' });
     }
-
     // Check if email is already registered
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ error: 'Email already exists' });
     }
-
     // Create a new user
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
@@ -57,14 +54,12 @@ const createUser = async (req, res) => {
       password: hashedPassword,
       role // Admin specifies the role
     });
-
     await newUser.save();
     res.status(201).json({ message: `${role} created successfully`, user: newUser });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
-
 // Get all User 
 const getAllUsers = async (req, res) => {
   try {

@@ -1,7 +1,8 @@
 import { Task } from '../models/task.model.js';
+import { User } from '../models/user.model.js';
 
 // Create Task (Only Admin and Manager can create)
-const createTask = async (req, res) => {
+const createTaskByAdmin = async (req, res) => {
   try {
     const { title, description, assignedTo } = req.body;
     const task = new Task({ title, description, assignedTo, createdBy: req.user.id });
@@ -9,6 +10,46 @@ const createTask = async (req, res) => {
     res.status(201).json({ message: 'Task created successfully', task });
   } catch (err) {
     res.status(400).json({ error: err.message });
+  }
+};
+
+// Create task by Customer, default assignment to Manager
+
+const createTaskByCustomer = async (req, res) => {
+  try {
+    const { title, description } = req.body;
+
+    // Get the logged-in user (Customer)
+    const customerId = req.user.id;  // Assuming JWT middleware adds user info
+
+    // Ensure the user is a customer
+    const customer = await User.findById(customerId);
+    if (customer.role !== 'Customer') {
+      return res.status(403).json({ error: 'Only customers can create tasks' });
+    }
+
+    // Find a manager to assign the task to
+    const manager = await User.findOne({ role: 'Manager' });
+    if (!manager) {
+      return res.status(404).json({ error: 'No manager found to assign the task' });
+    }
+
+    // Create the task
+    const task = new Task({
+      title,
+      description,
+      createdBy: customerId,  // Task created by the customer
+      assignedTo: manager._id  // Default assignment to the manager
+    });
+
+    await task.save();
+
+    res.status(201).json({
+      message: 'Task created successfully',
+      task
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -68,4 +109,4 @@ const deleteTask = async (req, res) => {
   }
 };
 
-export { createTask , getAllTasks , updateTask , deleteTask};
+export { createTaskByAdmin , getAllTasks , updateTask , deleteTask , createTaskByCustomer};
