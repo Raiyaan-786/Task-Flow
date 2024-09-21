@@ -3,11 +3,9 @@ import React from 'react'
 
 const Sidebar = () => {
   return (
-    <div>
-        <Box>
-            
-        </Box>
-    </div>
+    <Box bgcolor={'red'} flex={1}>
+      <h4>hello sidebar</h4>
+    </Box>
   )
 }
 

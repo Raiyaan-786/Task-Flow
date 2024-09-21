@@ -1,4 +1,4 @@
-import { Avatar, Button, FormControl, Grid2, InputLabel, Link, MenuItem, Paper, Select, TextField, Typography } from '@mui/material';
+import { Avatar, Button, Grid2,  Link, Paper, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react'
 import { Lock } from '@mui/icons-material';
 
@@ -7,7 +7,6 @@ const Signup = () => {
     name:'dfdf',
     email: '',
     password: "",
-    role: '',
   });
   // input change function 
   const handleChange = (e) => {
@@ -22,7 +21,8 @@ const Signup = () => {
     console.log(inputs);
   }
   //paper style
-  const paperStyle = { padding: '25px 30px', width: 250, margin: '35px auto' }
+  const paperStyle = {padding: '40px 30px', width: 250, margin: '50px auto' }
+  
   return (
     <Grid2>
       <Paper elevation={10} style={paperStyle}>
@@ -38,16 +38,6 @@ const Signup = () => {
           <br />
           <br />
           <TextField size='small' fullWidth variant='outlined' name='password' type='password' value={inputs.password} onChange={handleChange} varient="outlined" placeholder='Password'></TextField>
-          <br />
-          <br />
-          <FormControl size='small' fullWidth >
-            <InputLabel id="menu">Role</InputLabel>
-            <Select labelId='menu' id='menu-list' label="role" name="role" value={inputs.role} onChange={handleChange}>
-              <MenuItem value={'Admin'}>Admin</MenuItem>
-              <MenuItem value={'Employee'}>Employee</MenuItem>
-              <MenuItem value={'Customer'}>Customer</MenuItem>
-            </Select>
-          </FormControl>
           <br />
           <br />
           <Button fullWidth variant='contained' type="submit" sx={{ margin: '15px 0' }}>LOGIN</Button>
