@@ -9,7 +9,9 @@ const Layout = ({ children }) => {
       <Header />
       <Stack direction="row" spacing={2} justifyContent={'space-between'}>
         <Sidebar />
-        <Box flex={6} bgcolor={'pink'}>{children}</Box>
+        <Box flex={6} >
+          {children}
+          </Box>
       </Stack>
     </>
   )

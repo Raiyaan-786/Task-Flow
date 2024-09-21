@@ -4,8 +4,8 @@ import React from 'react'
 
 const Sidebar = () => {
   return (
-    <Box flex={1} p={2} sx={{ display: { xs: 'none', sm: 'block' } }}>
-    <Box position={"fixed"}>
+    <Box flex={1} p={2} sx={{ display: { xs: 'none', sm: 'block' }}}  >
+    <Box position={"fixed"} >
     <List>
       <ListItem disablePadding>
         <ListItemButton component="a" href='/'>
@@ -17,11 +17,11 @@ const Sidebar = () => {
       </ListItem>
 
       <ListItem disablePadding>
-        <ListItemButton component="a" href='/task'>
+        <ListItemButton component="a" href='/tasks'>
           <ListItemIcon>
             <FormatListBulleted />
           </ListItemIcon>
-          <ListItemText primary="Task" />
+          <ListItemText primary="Tasks" />
         </ListItemButton>
       </ListItem>
 

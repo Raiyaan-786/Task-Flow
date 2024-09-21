@@ -1,6 +1,7 @@
 import {BrowserRouter,Routes,Route} from 'react-router-dom'
 import Home from './pages/Home'
-import Task from './pages/Task'
+import Tasks from './pages/Tasks'
+import Taskpage from './pages/Taskpage'
 
 function App() {
   return (
@@ -8,7 +9,8 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Home/>}/>
-          <Route path='/task' element={<Task/>}/>
+          <Route path='/tasks' element={<Tasks/>}/>
+          <Route path='/taskpage' element={<Taskpage/>}/>
         </Routes>
       </BrowserRouter>
     </div>

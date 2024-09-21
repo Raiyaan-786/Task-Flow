@@ -1,12 +1,13 @@
+import { Box } from '@mui/material'
 import React from 'react'
 import Layout from '../components/Layout/Layout'
 
-const Task = () => {
+const Taskpage = () => {
   return (
     <Layout>
-        <div>Task</div>
+      <Box>Taskpage</Box>
     </Layout>
   )
 }
 
-export default Task
+export default Taskpage
