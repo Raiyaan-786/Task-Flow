@@ -1,7 +1,8 @@
 import React from 'react'
 import Header from './Header'
 import Sidebar from './Sidebar'
-import { Box, Stack } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
+import BreadCrumbs from '../BreadCrumbs'
 
 const Layout = ({ children }) => {
   return (
@@ -10,8 +11,9 @@ const Layout = ({ children }) => {
       <Stack direction="row" spacing={2} justifyContent={'space-between'}>
         <Sidebar />
         <Box flex={6} >
+          <BreadCrumbs/>
           {children}
-          </Box>
+        </Box>
       </Stack>
     </Box>
   )

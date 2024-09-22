@@ -5,7 +5,7 @@ import { Box, Typography } from '@mui/material'
 const Home = () => {
   return (
     <Layout >
-      <Box p={5}>
+      <Box pl={5} >
         <Typography variant="h3">Home</Typography>
         <Box overflow={'auto'} height={400}>
             <Typography variant='h5'>

@@ -21,7 +21,7 @@ const UserBox = styled(Box)(({ theme }) => ({
 const Header = () => {
   const [open,setOpen]=useState(false)
   return (
-    <AppBar position='sticky'>
+    <AppBar position='sticky' sx={{bgcolor:'#16423C'}}>
       <StyledToolbar>
         <Typography variant="h6" sx={{ display: { xs: 'none', sm: 'block' } }} >LOGO</Typography>
         <Fitbit sx={{ display: { xs: 'block', sm: 'none' } }} />

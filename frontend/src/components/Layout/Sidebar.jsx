@@ -4,8 +4,8 @@ import React from 'react'
 
 const Sidebar = () => {
   return (
-    <Box flex={1} p={2} sx={{ display: { xs: 'none', sm: 'block' }}}  >
-    <Box position={"fixed"} >
+    <Box p={4} flex={1}  sx={{ height:'100vh', display: { xs: 'none', sm: 'block' }}} bgcolor={'#C4DAD2'}>
+    <Box position={"fixed"} sx={{height:'100%'}} bgcolor={'#C4DAD2'}>
     <List>
       <ListItem disablePadding>
         <ListItemButton component="a" href='/'>
