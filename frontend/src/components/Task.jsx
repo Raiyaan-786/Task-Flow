@@ -4,7 +4,7 @@ import React from 'react'
 
 const Task = () => {
     return (
-        <Paper sx={{ margin: '20px', }} elevation={2}>
+        <Paper sx={{ margin: '20px'}} elevation={2}>
             <ListItem disablePadding>
                 <ListItemButton component="a" href="/taskpage">
                     <ListItemAvatar>

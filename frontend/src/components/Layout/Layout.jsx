@@ -5,7 +5,7 @@ import { Box, Stack } from '@mui/material'
 
 const Layout = ({ children }) => {
   return (
-    <>
+    <Box >
       <Header />
       <Stack direction="row" spacing={2} justifyContent={'space-between'}>
         <Sidebar />
@@ -13,7 +13,7 @@ const Layout = ({ children }) => {
           {children}
           </Box>
       </Stack>
-    </>
+    </Box>
   )
 }
 
