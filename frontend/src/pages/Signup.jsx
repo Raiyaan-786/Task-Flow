@@ -1,6 +1,7 @@
 import { Avatar, Button, Grid2,  Link, Paper, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react'
 import { Lock } from '@mui/icons-material';
+import API from '../api/api';
 
 const Signup = () => {
   const [inputs, setInputs] = useState({
@@ -23,6 +24,20 @@ const Signup = () => {
   //paper style
   const paperStyle = {padding: '40px 30px', width: 250, margin: '50px auto' }
   
+  // Sign up APi 
+  // Add phone number field also as it is only for customers
+  // Yahan pr name , email , phone , password ke jagah apna variable daal dena 
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    try {
+      await API.post('/auth/register', { name, email, phone, password });
+      navigate('/login');
+    } catch (err) {
+      console.error(err);
+      alert('Registration failed');
+    }
+  };
+
   return (
     <Grid2>
       <Paper elevation={10} style={paperStyle}>

@@ -1,8 +1,9 @@
 import { Box, Fab, List, ListItem, ListItemButton, ListItemText, Stack, Tooltip, Typography } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Layout from '../components/Layout/Layout'
 import Task from '../components/Task'
 import { Add} from '@mui/icons-material'
+import API from '../api/api'
 
 const taskData={
     "tasks": [
@@ -44,6 +45,21 @@ const taskData={
     ]
   }
   
+  // Task coming through api 
+  const [apitasks, setApiTasks] = useState([]);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const { data } = await API.get('/tasks');
+        setTasks(data);
+      } catch (err) {
+        console.error(err);
+        alert('Failed to fetch tasks');
+      }
+    };
+    fetchTasks();
+  }, []);
   
 
 const Tasks = () => {
