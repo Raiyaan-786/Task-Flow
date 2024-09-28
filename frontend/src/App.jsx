@@ -25,6 +25,7 @@ function App() {
                 <Route path='/' element={<Tasks/>}/>
                 <Route path='/users' element={<Users/>}/>
                 <Route path='/invoices' element={<Invoices/>}/>
+                <Route path='/tasks' element={<Tasks/>}/>
                 
               </Routes>
             </main>

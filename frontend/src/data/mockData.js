@@ -146,5 +146,80 @@ export const mockDataUsers=[
           date: "05/02/2021",
         },
       ];
-      
+
+export const mockDataTasks=
+  [
+  {
+  "id": 1,
+  "user": "John Doe",
+  "project": "Marketing Campaign",
+  "address": "123 Main St, New York, NY",
+  "date": "2024-03-01",
+  "status": "In Progress"
+  },
+  {
+  "id": 2,
+  "user": "Jane Smith",
+  "project": "Software Development",
+  "address": "456 Elm St, Chicago, IL",
+  "date": "2024-02-15",
+  "status": "Complete"
+  },
+  {
+  "id": 3,
+  "user": "Bob Johnson",
+  "project": "Website Design",
+  "address": "789 Oak St, Los Angeles, CA",
+  "date": "2024-03-10",
+  "status": "Pending"
+  },
+  {
+  "id": 4,
+  "user": "Alice Brown",
+  "project": "Research Study",
+  "address": "321 Maple St, Houston, TX",
+  "date": "2024-02-20",
+  "status": "Approved"
+  },
+  {
+  "id": 5,
+  "user": "Mike Davis",
+  "project": "Sales Report",
+  "address": "901 Broadway, Seattle, WA",
+  "date": "2024-03-05",
+  "status": "In Progress"
+  },
+  {
+  "id": 6,
+  "user": "Emily Chen",
+  "project": "Event Planning",
+  "address": "345 Pine St, Miami, FL",
+  "date": "2024-02-25",
+  "status": "Complete"
+  },
+  {
+  "id": 7,
+  "user": "David Lee",
+  "project": "IT Support",
+  "address": "678 Cedar St, Dallas, TX",
+  "date": "2024-03-12",
+  "status": "Rejected"
+  },
+  {
+  "id": 8,
+  "user": "Sarah Taylor",
+  "project": "Graphic Design",
+  "address": "234 Spruce St, Philadelphia, PA",
+  "date": "2024-02-18",
+  "status": "Pending"
+  },
+  {
+  "id": 9,
+  "user": "Kevin White",
+  "project": "Financial Analysis",
+  "address": "567 Fir St, Boston, MA",
+  "date": "2024-03-08",
+  "status": "Approved"
+  }
+  ]
       
