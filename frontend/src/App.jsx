@@ -8,6 +8,7 @@ import Topbar from './pages/global/Topbar'
 import Tasks from './pages/tasks'
 import Users from './pages/users'
 import Invoices from './pages/invoices';
+import Userform from './pages/userform';
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
                 <Route path='/users' element={<Users/>}/>
                 <Route path='/invoices' element={<Invoices/>}/>
                 <Route path='/tasks' element={<Tasks/>}/>
+                <Route path='/userform' element={<Userform/>}/>
                 
               </Routes>
             </main>
