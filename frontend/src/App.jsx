@@ -7,6 +7,7 @@ import Sidebar from './pages/global/Sidebar'
 import Topbar from './pages/global/Topbar'
 import Tasks from './pages/tasks'
 import Users from './pages/users'
+import Invoices from './pages/invoices';
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
               <Routes>
                 <Route path='/' element={<Tasks/>}/>
                 <Route path='/users' element={<Users/>}/>
+                <Route path='/invoices' element={<Invoices/>}/>
                 
               </Routes>
             </main>
