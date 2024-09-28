@@ -1,23 +1,32 @@
-import {BrowserRouter,Routes,Route} from 'react-router-dom'
-import Home from './pages/Home'
-import Tasks from './pages/Tasks'
-import Taskpage from './pages/Taskpage'
-import Login from './pages/Login'
-import Signup from './pages/Signup'
+import { Routes, Route } from 'react-router-dom'
+import { ColorModeContext, useMode, } from './theme'
+import { ThemeProvider } from '@emotion/react';
+import { CssBaseline } from '@mui/material';
+import Sidebar from './pages/global/Sidebar'
+import Topbar from './pages/global/Topbar'
+import Tasks from './pages/tasks'
+import { useState } from 'react';
+
 
 function App() {
+  const [theme, colorMode] = useMode();
+  const [isCollapsed, setIsCollapsed] = useState(false);
   return (
-    <div>
-      <BrowserRouter>
-        <Routes>
-          <Route path='/' element={<Home/>}/>
-          <Route path="/login" element={<Login/>} />
-          <Route path="/register" element={<Signup />} />
-          <Route path='/tasks' element={<Tasks/>}/>
-          <Route path='/taskpage' element={<Taskpage/>}/>
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <ColorModeContext.Provider value={colorMode}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline>
+          <div className='app'>
+            <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed}/>
+            <main className='content'>
+              <Topbar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed}/>
+              <Routes>
+                <Route path='/' element={<Tasks/>}/>
+              </Routes>
+            </main>
+          </div>
+        </CssBaseline>
+      </ThemeProvider>
+    </ColorModeContext.Provider>
   )
 }
 
