@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom'
 import { ColorModeContext, useMode, } from './theme'
 import { ThemeProvider } from '@emotion/react';
@@ -5,7 +6,7 @@ import { CssBaseline } from '@mui/material';
 import Sidebar from './pages/global/Sidebar'
 import Topbar from './pages/global/Topbar'
 import Tasks from './pages/tasks'
-import { useState } from 'react';
+import Users from './pages/users'
 
 
 function App() {
@@ -21,6 +22,8 @@ function App() {
               <Topbar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed}/>
               <Routes>
                 <Route path='/' element={<Tasks/>}/>
+                <Route path='/users' element={<Users/>}/>
+                
               </Routes>
             </main>
           </div>

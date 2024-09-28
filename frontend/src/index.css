@@ -10,7 +10,7 @@ html,body,#root,.app,.content{
   position: relative;
 }
 ::-webkit-scrollbar{
-  width: 2px;
+  width: 0px;
 }
 ::-webkit-scrollbar-track{
   background: #e0e0e0;

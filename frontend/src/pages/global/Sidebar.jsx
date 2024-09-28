@@ -95,8 +95,7 @@ const Sidebar = ({isCollapsed}) => {
                 >
                   Inzamam
                 </Typography>
-                <Typography variant="h6" color={"#00c2ff"}>
-                {/* <Typography variant="h5" color={colors.blueAccent[300]}> */}
+                <Typography variant="h6" color={colors.teal[500]}>
                   Admin
                 </Typography>
               </Box>
