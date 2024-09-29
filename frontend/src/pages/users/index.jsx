@@ -1,6 +1,6 @@
 import React from 'react'
 import {DataGrid} from '@mui/x-data-grid'
-import {Box, Typography, useTheme} from "@mui/material"
+import {Avatar, Box, Typography, useTheme} from "@mui/material"
 import {tokens} from "../../theme"
 import { mockDataUsers } from '../../data/mockData'
 import Header from "../../components/Header"
@@ -16,6 +16,12 @@ const Users = () => {
       headerName: "Name",
       flex: 1,
       cellClassName: "name-column--cell",
+      renderCell:(params)=>(
+        <Box display={'flex'} alignItems={'center'} gap={2} p={1} height={'100%'}>
+          <Avatar src={params.row.image} sx={{width:'28px', height:'28px'}}/>
+          <Typography variant='h7'>{params.row.name}</Typography>
+        </Box>
+      )
     },
     {
       field: "age",
@@ -37,7 +43,7 @@ const Users = () => {
     {
       field: "accessLevel",
       headerName: "Access Level",
-      flex: 1,
+      flex: 1.2,
       renderCell: ({ row: { access } }) => {
         return (
           <Box
@@ -67,7 +73,7 @@ const Users = () => {
     },
   ];
   return (
-    <Box m="20px" >
+    <Box m="20px" width={'87%'}>
       <Header title="USERS" subtitle="Manage Users"/>
       <Box m="40px 0 0 0" height="65vh"
       sx={{
@@ -86,7 +92,7 @@ const Users = () => {
           borderBottom: "none",
         },
         "& .MuiDataGrid-virtualScroller": {
-          backgroundColor: colors.primary[600],
+          backgroundColor: colors.primary[700],
         },
         "& .MuiDataGrid-footerContainer": {
           borderTop: "none",
@@ -97,7 +103,7 @@ const Users = () => {
         },
       }}
       >
-        <DataGrid checkboxSelection rows={mockDataUsers} columns={columns}/>
+        <DataGrid  rows={mockDataUsers} columns={columns}/>
       </Box>
     </Box>
   )

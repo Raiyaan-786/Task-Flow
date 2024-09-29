@@ -9,6 +9,7 @@ import Tasks from './pages/tasks'
 import Users from './pages/users'
 import Invoices from './pages/invoices';
 import Userform from './pages/userform';
+import Taskform from './pages/taskform';
 
 
 function App() {
@@ -28,7 +29,7 @@ function App() {
                 <Route path='/invoices' element={<Invoices/>}/>
                 <Route path='/tasks' element={<Tasks/>}/>
                 <Route path='/userform' element={<Userform/>}/>
-                
+                <Route path='/taskform' element={<Taskform/>}/>
               </Routes>
             </main>
           </div>

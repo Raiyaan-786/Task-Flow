@@ -106,6 +106,9 @@ export const tokens =(mode)=>({
           800: "#511866",
           900: "#290c33"
       },
+      bgc:{
+        100:"#101624"
+      }
       }:{
             grey: {
                 100: "#141414",
@@ -125,7 +128,7 @@ export const tokens =(mode)=>({
                 400: "#f2f0f0", //manually changed
                 500: "#141b2d",
                 600: "#f2f0f0", //manually changed
-                700: "#727681",
+                700: "#f2f0f0", //manually changed
                 800: "#a1a4ab",
                 900: "#e9e9eb", //manually changed
             },
@@ -184,6 +187,9 @@ export const tokens =(mode)=>({
             800: "#eab1ff",
             900: "#f5d8ff",
           },
+          bgc:{
+            100:"#fcfcfc"
+          }
         }
     )
 })
@@ -267,7 +273,7 @@ export const themeSettings = (mode) => {
   });
   
   export const useMode = () => {
-    const [mode, setMode] = useState("dark");
+    const [mode, setMode] = useState("light");
   
     const colorMode = useMemo(
       () => ({

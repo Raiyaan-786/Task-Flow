@@ -8,12 +8,14 @@ html,body,#root,.app,.content{
 .app{
   display: flex;
   position: relative;
+  overflow-x: hidden;
 }
 ::-webkit-scrollbar{
   width: 0px;
 }
 ::-webkit-scrollbar-track{
-  background: #e0e0e0;
+  /* background: #e0e0e0; */
+  background: #4d4d4d;
 }
 ::-webkit-slider-thumb{
   background: #888;

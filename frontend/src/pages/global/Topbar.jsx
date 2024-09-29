@@ -10,12 +10,14 @@ const Topbar = ({isCollapsed,setIsCollapsed}) => {
   const colorMode = useContext(ColorModeContext)
   return (
     <Box display={'flex'} justifyContent={'space-between'} p={2} bgcolor={colors.primary[900]}>
-      <IconButton onClick={()=>setIsCollapsed(!isCollapsed)}><MenuOutlined /></IconButton>
       {/* search bar */}
-      <Box display={'flex'} bgcolor={colors.primary[600]} borderRadius={'3px'} >
+      <Box display={'flex'} gap={2} alignItems={'center'}>
+      <IconButton onClick={()=>setIsCollapsed(!isCollapsed)}><MenuOutlined /></IconButton>
+      <Box display={'flex'} bgcolor={colors.bgc[100]} borderRadius={'5px'} height={'30px'} >
         <InputBase sx={{ ml: 2, flex: 1 }} placeholder='Search' />
         <IconButton type='button' sx={{ p: 1 }}><Search /></IconButton>
       </Box>
+     </Box>
       {/* icon buttons */}
       <Box display={'flex'}>
         <IconButton onClick={colorMode.toggleColorMode}>

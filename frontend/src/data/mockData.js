@@ -5,7 +5,8 @@ export const mockDataUsers=[
     "email": "mehrajxyz@gmail.com",
     "age": 35,
     "phone": "6309787469",
-    "access": "admin"
+    "access": "admin",
+    "image" :"https://mui.com/static/images/avatar/1.jpg"
     },
     {
     "id": 2,
@@ -13,7 +14,8 @@ export const mockDataUsers=[
     "email": "johndoe@example.com",
     "age": 30,
     "phone": "1234567890",
-    "access": "user"
+    "access": "user",
+    "image" :"https://mui.com/static/images/avatar/2.jpg"
     },
     {
     "id": 3,
@@ -21,7 +23,8 @@ export const mockDataUsers=[
     "email": "emilychen@email.com",
     "age": 28,
     "phone": "9876543210",
-    "access": "manager"
+    "access": "manager",
+    "image" :"https://mui.com/static/images/avatar/3.jpg"
     },
     {
     "id": 4,
@@ -29,7 +32,8 @@ export const mockDataUsers=[
     "email": "davidlee@email.com",
     "age": 40,
     "phone": "5551112222",
-    "access": "user"
+    "access": "user",
+    "image" :"https://mui.com/static/images/avatar/4.jpg"
     },
     {
     "id": 5,
@@ -37,7 +41,8 @@ export const mockDataUsers=[
     "email": "sarahtaylor@email.com",
     "age": 32,
     "phone": "9998887777",
-    "access": "admin"
+    "access": "admin",
+    "image" :"https://mui.com/static/images/avatar/5.jpg"
     },
     {
     "id": 6,
@@ -45,7 +50,8 @@ export const mockDataUsers=[
     "email": "michaelbrown@email.com",
     "age": 45,
     "phone": "6663332222",
-    "access": "manager"
+    "access": "manager",
+    "image" :"https://mui.com/static/images/avatar/6.jpg"
     },
     {
     "id": 7,
@@ -53,7 +59,8 @@ export const mockDataUsers=[
     "email": "jessicadavis@email.com",
     "age": 29,
     "phone": "4441112222",
-    "access": "user"
+    "access": "user",
+    "image" :"https://mui.com/static/images/avatar/7.jpg"
     },
     {
     "id": 8,
@@ -61,7 +68,8 @@ export const mockDataUsers=[
     "email": "williamwhite@email.com",
     "age": 38,
     "phone": "3339998888",
-    "access": "admin"
+    "access": "admin",
+    "image" :"https://mui.com/static/images/avatar/1.jpg"
     },
     {
     "id": 9,
@@ -69,7 +77,8 @@ export const mockDataUsers=[
     "email": "oliviamartin@email.com",
     "age": 25,
     "phone": "2228889999",
-    "access": "user"
+    "access": "user",
+    "image" :"https://mui.com/static/images/avatar/4.jpg"
     },
     {
     "id": 10,
@@ -77,7 +86,8 @@ export const mockDataUsers=[
     "email": "jameswilson@email.com",
     "age": 42,
     "phone": "1112223333",
-    "access": "manager"
+    "access": "manager",
+    "image" :"https://mui.com/static/images/avatar/3.jpg"
     }
     ]
     export const mockDataInvoices = [
@@ -222,4 +232,11 @@ export const mockDataTasks=
   "status": "Approved"
   }
   ]
-      
+
+export const mockDataManagers=[
+  
+    { label: 'Emily Chen', id: 1 },
+    { label: 'Michael Brown', id: 2 },
+    { label: 'James Wilson', id: 3 },
+  
+]

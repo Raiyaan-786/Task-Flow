@@ -30,6 +30,9 @@ const Userform = () => {
         }) => (
           <form onSubmit={handleSubmit}>
             <Box
+              p={2}
+              height={'59vh'}
+              overflow={"auto"}
               display="grid"
               gap="30px"
               gridTemplateColumns="repeat(4, minmax(0, 1fr))"
@@ -39,7 +42,7 @@ const Userform = () => {
             >
               <TextField
                 fullWidth
-                variant="filled"
+                variant="outlined"
                 type="text"
                 label="First Name"
                 onBlur={handleBlur}
@@ -52,7 +55,7 @@ const Userform = () => {
               />
               <TextField
                 fullWidth
-                variant="filled"
+                variant="outlined"
                 type="text"
                 label="Last Name"
                 onBlur={handleBlur}
@@ -65,7 +68,7 @@ const Userform = () => {
               />
               <TextField
                 fullWidth
-                variant="filled"
+                variant="outlined"
                 type="text"
                 label="Email"
                 onBlur={handleBlur}
@@ -78,7 +81,7 @@ const Userform = () => {
               />
               <TextField
                 fullWidth
-                variant="filled"
+                variant="outlined"
                 type="text"
                 label="Contact Number"
                 onBlur={handleBlur}
@@ -91,7 +94,7 @@ const Userform = () => {
               />
               <TextField
                 fullWidth
-                variant="filled"
+                variant="outlined"
                 type="text"
                 label="Address 1"
                 onBlur={handleBlur}
@@ -104,7 +107,7 @@ const Userform = () => {
               />
               <TextField
                 fullWidth
-                variant="filled"
+                variant="outlined"
                 type="text"
                 label="Address 2"
                 onBlur={handleBlur}

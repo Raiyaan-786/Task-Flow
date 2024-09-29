@@ -1,4 +1,4 @@
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Container, Typography, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import { mockDataInvoices } from "../../data/mockData";
@@ -8,22 +8,25 @@ const Invoices = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const columns = [
-    { field: "id", headerName: "ID" },
+    { field: "id", headerName: "ID",flex:1 },
     {
       field: "name",
       headerName: "Name",
       flex: 1,
+     
       cellClassName: "name-column--cell",
     },
     {
       field: "phone",
       headerName: "Phone Number",
       flex: 1,
+    
     },
     {
       field: "email",
       headerName: "Email",
       flex: 1,
+
     },
     {
       field: "cost",
@@ -43,14 +46,15 @@ const Invoices = () => {
   ];
 
   return (
-    <Box m="20px">
+    <Box  sx={{m:'20px'}} width={"87%"} >
       <Header title="INVOICES" subtitle="List of Invoice Balances" />
       <Box
+        height={'65vh'}
         m="40px 0 0 0"
-        height="65vh"
         sx={{
           "& .MuiDataGrid-root": {
             border: "none",
+           
           },
           "& .MuiDataGrid-cell": {
             borderBottom: "none",
@@ -63,7 +67,7 @@ const Invoices = () => {
             borderBottom: "none",
           },
           "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: colors.primary[600],
+            backgroundColor: colors.primary[700],
           },
           "& .MuiDataGrid-footerContainer": {
             borderTop: "none",
@@ -74,7 +78,7 @@ const Invoices = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={mockDataInvoices} columns={columns} scrollbarSize={0}/>
+        <DataGrid  checkboxSelection rows={mockDataInvoices} columns={columns} scrollbarSize={0}/>
       </Box>
     </Box>
   );

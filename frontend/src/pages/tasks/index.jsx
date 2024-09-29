@@ -64,9 +64,9 @@ const Tasks = () => {
       }
   ];
   return (
-    <Box m="20px" >
+    <Box m="20px" width={'87%'} >
       <Header title="TASKS" subtitle="Manage Tasks"/>
-      <Box m="40px 0 0 0" height="65vh"
+      <Box m="40px 0 0 0" height="65vh" width={'100%'}
       sx={{
         "& .MuiDataGrid-root": {
           border: "none",
@@ -83,7 +83,7 @@ const Tasks = () => {
           borderBottom: "none",
         },
         "& .MuiDataGrid-virtualScroller": {
-          backgroundColor: colors.primary[600],
+          backgroundColor: colors.primary[700],
         },
         "& .MuiDataGrid-footerContainer": {
           borderTop: "none",
@@ -94,7 +94,7 @@ const Tasks = () => {
         },
       }}
       >
-        <DataGrid checkboxSelection rows={mockDataTasks} columns={columns}/>
+        <DataGrid  rows={mockDataTasks} columns={columns}/>
       </Box>
     </Box>
   )
