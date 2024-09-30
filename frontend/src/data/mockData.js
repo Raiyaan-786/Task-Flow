@@ -165,7 +165,8 @@ export const mockDataTasks=
   "project": "Marketing Campaign",
   "address": "123 Main St, New York, NY",
   "date": "2024-03-01",
-  "status": "In Progress"
+  "status": "In Progress",
+  "taskid":234,
   },
   {
   "id": 2,
@@ -173,7 +174,8 @@ export const mockDataTasks=
   "project": "Software Development",
   "address": "456 Elm St, Chicago, IL",
   "date": "2024-02-15",
-  "status": "Complete"
+  "status": "Complete",
+  "taskid":235,
   },
   {
   "id": 3,
@@ -181,7 +183,8 @@ export const mockDataTasks=
   "project": "Website Design",
   "address": "789 Oak St, Los Angeles, CA",
   "date": "2024-03-10",
-  "status": "Pending"
+  "status": "Pending",
+  "taskid":236,
   },
   {
   "id": 4,
@@ -189,7 +192,8 @@ export const mockDataTasks=
   "project": "Research Study",
   "address": "321 Maple St, Houston, TX",
   "date": "2024-02-20",
-  "status": "Approved"
+  "status": "Approved",
+  "taskid":237,
   },
   {
   "id": 5,
@@ -197,7 +201,8 @@ export const mockDataTasks=
   "project": "Sales Report",
   "address": "901 Broadway, Seattle, WA",
   "date": "2024-03-05",
-  "status": "In Progress"
+  "status": "In Progress",
+  "taskid":238,
   },
   {
   "id": 6,
@@ -205,7 +210,8 @@ export const mockDataTasks=
   "project": "Event Planning",
   "address": "345 Pine St, Miami, FL",
   "date": "2024-02-25",
-  "status": "Complete"
+  "status": "Complete",
+  "taskid":239,
   },
   {
   "id": 7,
@@ -213,7 +219,8 @@ export const mockDataTasks=
   "project": "IT Support",
   "address": "678 Cedar St, Dallas, TX",
   "date": "2024-03-12",
-  "status": "Rejected"
+  "status": "Rejected",
+  "taskid":240,
   },
   {
   "id": 8,
@@ -221,7 +228,8 @@ export const mockDataTasks=
   "project": "Graphic Design",
   "address": "234 Spruce St, Philadelphia, PA",
   "date": "2024-02-18",
-  "status": "Pending"
+  "status": "Pending",
+  "taskid":241,
   },
   {
   "id": 9,
@@ -229,7 +237,8 @@ export const mockDataTasks=
   "project": "Financial Analysis",
   "address": "567 Fir St, Boston, MA",
   "date": "2024-03-08",
-  "status": "Approved"
+  "status": "Approved",
+  "taskid":242,
   }
   ]
 

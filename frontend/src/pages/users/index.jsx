@@ -73,7 +73,7 @@ const Users = () => {
     },
   ];
   return (
-    <Box m="20px" width={'87%'}>
+    <Box p={2} m="20px" width={'87%'}>
       <Header title="USERS" subtitle="Manage Users"/>
       <Box m="40px 0 0 0" height="65vh"
       sx={{

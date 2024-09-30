@@ -14,7 +14,7 @@ const Taskform = () => {
         console.log(values);
     };
     return (
-        <Box m="20px" >
+        <Box p={2} m="20px" >
             <Header title="CREATE TASK" subtitle="Create a New Task" />
 
             <Formik
@@ -34,7 +34,7 @@ const Taskform = () => {
                 }) => (
                     <form onSubmit={handleSubmit}>
                         <Box
-                            p={2}
+                            pt={1}
                             height={'59vh'}
                             overflow={"auto"}
                             display="grid"
@@ -108,8 +108,8 @@ const Taskform = () => {
                                 aria-describedby="modal-modal-description"
                                 sx={{display:"flex",alignItems:"center",justifyContent:'center'}}
                             >
-                                <Box display={'flex'} flexDirection={'column'} gap={3} sx={{height:'150px',width:"250px", bgcolor:"white",borderRadius:'15px',p:3}} >
-                                    <Typography id="modal-modal-title" variant="h4" component="h2">
+                                <Box display={'flex'} flexDirection={'column'} gap={3} sx={{height:'150px',width:"250px", bgcolor:"white",borderRadius:'8px',p:3}} >
+                                    <Typography id="modal-modal-title" variant="h4" component="h2" textAlign={'center'}>
                                         Create a New Task ?
                                     </Typography>
                                     <Box display={'flex'} alignItems={'center'} justifyContent={'center'} gap={4}>

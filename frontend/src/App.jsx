@@ -10,6 +10,7 @@ import Users from './pages/users'
 import Invoices from './pages/invoices';
 import Userform from './pages/userform';
 import Taskform from './pages/taskform';
+import Taskpage from './pages/taskpage';
 
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
                 <Route path='/tasks' element={<Tasks/>}/>
                 <Route path='/userform' element={<Userform/>}/>
                 <Route path='/taskform' element={<Taskform/>}/>
+                <Route path='/tasks/taskpage/:taskid' element={<Taskpage/>}/>
               </Routes>
             </main>
           </div>

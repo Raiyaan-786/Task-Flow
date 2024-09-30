@@ -1,18 +1,19 @@
-import { Box, Button, colors, TextField } from "@mui/material";
+import { Box, Button, colors, Modal, TextField, Typography } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
+import { useState } from "react";
 
 const Userform = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
-
+  const [open,setOpen]=useState(false);
   const handleFormSubmit = (values) => {
     console.log(values);
   };
 
   return (
-    <Box m="20px" >
+    <Box p={2} m="20px" >
       <Header title="CREATE USER" subtitle="Create a New User Profile" />
 
       <Formik
@@ -30,7 +31,7 @@ const Userform = () => {
         }) => (
           <form onSubmit={handleSubmit}>
             <Box
-              p={2}
+              pt={1}
               height={'59vh'}
               overflow={"auto"}
               display="grid"
@@ -120,9 +121,26 @@ const Userform = () => {
               />
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">
-              <Button type="submit" sx={{backgroundColor:"#cb3cff"}} variant="contained">
+              <Button onClick={()=>setOpen(true)} sx={{ backgroundColor: "#cb3cff" }} variant="contained">
                 Create New User
               </Button>
+              <Modal
+                open={open}
+                onClose={() => { setOpen(!open) }}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+                sx={{ display: "flex", alignItems: "center", justifyContent: 'center' }}
+              >
+                <Box display={'flex'} flexDirection={'column'} gap={3} sx={{ height: '150px', width: "250px", bgcolor: "white", borderRadius: '8px', p: 3 }} >
+                  <Typography id="modal-modal-title" variant="h4" component="h2" textAlign={'center'}>
+                    Create a New User ?
+                  </Typography>
+                  <Box display={'flex'} alignItems={'center'} justifyContent={'center'} gap={4}>
+                    <Button variant="outlined" onClick={() => setOpen(false)}>Cancel</Button>
+                    <Button onClick={() => { handleSubmit(), setOpen(false) }} type="submit" variant="outlined"  >Create</Button>
+                  </Box>
+                </Box>
+              </Modal>
             </Box>
           </form>
         )}

@@ -1,10 +1,10 @@
 import React from 'react'
 import {DataGrid} from '@mui/x-data-grid'
-import {Box, Typography, useTheme} from "@mui/material"
+import {Box, Button, Link, Typography, useTheme} from "@mui/material"
 import {tokens} from "../../theme"
 import { mockDataTasks} from '../../data/mockData'
 import Header from "../../components/Header"
-import { AdminPanelSettingsOutlined, AutorenewOutlined, BrandingWatermark, LockOpenOutlined, SecurityOutlined } from '@mui/icons-material'
+import { AdminPanelSettingsOutlined, AutorenewOutlined, BrandingWatermark, LockOpenOutlined, SecurityOutlined, Visibility } from '@mui/icons-material'
 
 const Tasks = () => {
   const theme = useTheme();
@@ -61,10 +61,23 @@ const Tasks = () => {
         </Typography>
         </Box>
       ),
-      }
+      },
+      {
+        field:"taskid",
+        headerName: "View",
+        flex: .5,
+        renderCell:(params)=>(
+          <Box>
+            <Button href={`/tasks/taskpage/${params.row.taskid}`} >
+            <Visibility/>
+            </Button>
+          </Box>
+       
+        )
+      },
   ];
   return (
-    <Box m="20px" width={'87%'} >
+    <Box p={2} m="20px" width={'87%'} >
       <Header title="TASKS" subtitle="Manage Tasks"/>
       <Box m="40px 0 0 0" height="65vh" width={'100%'}
       sx={{
