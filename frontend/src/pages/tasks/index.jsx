@@ -1,6 +1,6 @@
 import React from 'react'
 import {DataGrid} from '@mui/x-data-grid'
-import {Box, Button, Link, Typography, useTheme} from "@mui/material"
+import {Box, Button, IconButton, Link, Typography, useTheme} from "@mui/material"
 import {tokens} from "../../theme"
 import { mockDataTasks} from '../../data/mockData'
 import Header from "../../components/Header"
@@ -69,7 +69,10 @@ const Tasks = () => {
         renderCell:(params)=>(
           <Box>
             <Button href={`/tasks/taskpage/${params.row.taskid}`} >
+            <IconButton>
+
             <Visibility/>
+            </IconButton>
             </Button>
           </Box>
        
