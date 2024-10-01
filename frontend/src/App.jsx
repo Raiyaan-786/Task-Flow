@@ -11,6 +11,7 @@ import Invoices from './pages/invoices';
 import Userform from './pages/userform';
 import Taskform from './pages/taskform';
 import Taskpage from './pages/taskpage';
+import Dashboard from './pages/dashboard';
 
 
 function App() {
@@ -25,7 +26,7 @@ function App() {
             <main className='content'>
               <Topbar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed}/>
               <Routes>
-                <Route path='/' element={<Tasks/>}/>
+                <Route path='/' element={<Dashboard/>}/>
                 <Route path='/users' element={<Users/>}/>
                 <Route path='/invoices' element={<Invoices/>}/>
                 <Route path='/tasks' element={<Tasks/>}/>
