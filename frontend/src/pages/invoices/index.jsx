@@ -1,5 +1,5 @@
 import { Box, Container, Typography, useTheme } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import { mockDataInvoices } from "../../data/mockData";
 import Header from "../../components/Header";
@@ -46,7 +46,7 @@ const Invoices = () => {
   ];
 
   return (
-    <Box p={2} sx={{m:'20px'}} width={"87%"} >
+    <Box p={2} sx={{m:'20px'}}  >
       <Header title="INVOICES" subtitle="List of Invoice Balances" />
       <Box
         height={'65vh'}
@@ -78,7 +78,7 @@ const Invoices = () => {
           },
         }}
       >
-        <DataGrid  checkboxSelection rows={mockDataInvoices} columns={columns} scrollbarSize={0}/>
+        <DataGrid slots={{ toolbar: GridToolbar }} checkboxSelection rows={mockDataInvoices} columns={columns} scrollbarSize={0}/>
       </Box>
     </Box>
   );

@@ -5,6 +5,7 @@ import {tokens} from "../../theme"
 import { mockDataUsers } from '../../data/mockData'
 import Header from "../../components/Header"
 import { AdminPanelSettingsOutlined, LockOpenOutlined, SecurityOutlined } from '@mui/icons-material'
+import CustomToolbar from '../../components/CustomToolbar'
 
 const Users = () => {
   const theme = useTheme();
@@ -73,7 +74,7 @@ const Users = () => {
     },
   ];
   return (
-    <Box p={2} m="20px" width={'87%'}>
+    <Box p={2} m="20px">
       <Header title="USERS" subtitle="Manage Users"/>
       <Box m="40px 0 0 0" height="65vh"
       sx={{
@@ -103,7 +104,7 @@ const Users = () => {
         },
       }}
       >
-        <DataGrid  rows={mockDataUsers} columns={columns}/>
+        <DataGrid slots={{toolbar:CustomToolbar}} rows={mockDataUsers} columns={columns}/>
       </Box>
     </Box>
   )

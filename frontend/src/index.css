@@ -5,6 +5,9 @@ html,body,#root,.app,.content{
   width: 100%;
   font-family: "Inter", sans-serif;
 }
+.content{
+  overflow: hidden;
+}
 .app{
   display: flex;
   position: relative;

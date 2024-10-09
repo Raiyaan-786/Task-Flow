@@ -80,7 +80,7 @@ const Tasks = () => {
       },
   ];
   return (
-    <Box p={2} m="20px" width={'87%'} >
+    <Box p={2} m="20px" >
       <Header title="TASKS" subtitle="Manage Tasks"/>
       <Box m="40px 0 0 0" height="65vh" width={'100%'}
       sx={{
