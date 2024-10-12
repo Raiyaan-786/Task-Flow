@@ -23,16 +23,28 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
+    // Check if user exists
     const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ error: 'User not found' });
-    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    // Compare the provided password with the hashed password
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ error: 'Invalid credentials' });
+    if (!isMatch) {
+      return res.status(400).json({ error: 'Invalid credentials' });
+    }
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' } // Token expiration set to 1 day
+    );
+    // Respond with user data and token
+    return res.status(200).json({ user, token });
 
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
-    res.status(200).json({user , token });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    console.error('Error during login:', err.message);
+    return res.status(500).json({ error: 'Server error. Please try again later.' });
   }
 };
 // Create User by Admin only

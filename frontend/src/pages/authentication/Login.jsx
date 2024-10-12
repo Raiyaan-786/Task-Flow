@@ -30,7 +30,10 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await API.post('/auth/login', {inputs});
+      const { data } = await API.post('/auth/login', {
+        email: 'inzamam1@gmail.com',
+        password: '1234'
+      });
       localStorage.setItem('token', data.token);  
       navigate('/');
     } catch (err) {

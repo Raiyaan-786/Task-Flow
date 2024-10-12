@@ -21,11 +21,13 @@ const Signup = () => {
       [e.target.name]: [e.target.value],
     }))
   }
+
   //form handling
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(inputs);
-  }
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   console.log(inputs);
+  // }
+
   //paper style
   const paperStyle = { padding: '40px 30px', width: 350, margin: '50px auto' }
 
@@ -38,7 +40,7 @@ const Signup = () => {
     try {
       const response = await API.post('/auth/register',{
         name: 'Inazmam',
-        email: 'inzamam1234567@gmail.com',
+        email: 'inzamam1@gmail.com',
         password: '1234'
       },{
         headers: {
