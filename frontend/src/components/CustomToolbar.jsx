@@ -7,12 +7,12 @@ const CustomToolbar = () => {
     const theme=useTheme();
     const colors=tokens(theme.palette.mode)
     return (
-        <Box p={1} sx={{backgroundColor: colors.primary[900],color:colors.grey[100]}}>
-            <GridToolbarContainer>
-                <GridToolbarColumnsButton />
+        <Box p={1} sx={{background: colors.primary[900],color:colors.grey[100]}}>
+            <GridToolbarContainer sx={{"&.MuiBox-root":{color: `${colors.primary[900]} !important`,}}}>
+                <GridToolbarColumnsButton  />
                 <GridToolbarFilterButton />
                 <GridToolbarDensitySelector
-                    slotProps={{ tooltip: { title: 'Change density' } }}
+                    slotProps={{ tooltip: { title: 'Change density'} }}
                 />
                 <Box sx={{ flexGrow: 1 }} />
                 <GridToolbarExport

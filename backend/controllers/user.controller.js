@@ -5,13 +5,17 @@ import bcrypt from 'bcrypt'
 // Register User
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password , role} = req.body;
+    const { name, email, password} = req.body;
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'Name, email, and password are required' });
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ name, email, password: hashedPassword, role });
+    const user = new User({ name, email, password: hashedPassword});
     await user.save();
     res.status(201).json({ user ,message: 'Customer registered successfully' });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    console.error('Error during registration:', err.message);
+    res.status(400).json({error: err.message , message: 'Data Failed'});
   }
 };
 

@@ -5,6 +5,11 @@ import { ThemeProvider } from '@emotion/react';
 import { CssBaseline } from '@mui/material';
 import Sidebar from './pages/global/Sidebar'
 import Topbar from './pages/global/Topbar'
+import Signup from './pages/authentication/Signup'
+import Login from './pages/authentication/Login'
+import PrivateRoute from './pages/authentication/PrivateRoute'
+import PrivateLayout from './layout/PrivateLayout'
+
 import Tasks from './pages/tasks'
 import Users from './pages/users'
 import Invoices from './pages/invoices';
@@ -21,21 +26,21 @@ function App() {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline>
-          <div className='app'>
-            <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed}/>
-            <main className='content'>
-              <Topbar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed}/>
-              <Routes>
-                <Route path='/' element={<Dashboard/>}/>
-                <Route path='/users' element={<Users/>}/>
-                <Route path='/invoices' element={<Invoices/>}/>
-                <Route path='/tasks' element={<Tasks/>}/>
-                <Route path='/userform' element={<Userform/>}/>
-                <Route path='/taskform' element={<Taskform/>}/>
-                <Route path='/tasks/taskpage/:taskid' element={<Taskpage/>}/>
-              </Routes>
-            </main>
-          </div>
+          <Routes>
+            {/* Public routes */}
+            <Route path='/signup' element={<Signup/>}/>
+            <Route path='/login' element={<Login/>}/>
+            {/* Private routes only accessed after successful login */}
+            <Route element={<PrivateRoute><PrivateLayout isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed}/></PrivateRoute>} >
+              <Route path='/' element={ <PrivateRoute><Dashboard/></PrivateRoute>}/>
+              <Route path='/users' element={<PrivateRoute><Users/></PrivateRoute>}/>
+              <Route path='/invoices' element={<PrivateRoute><Invoices/></PrivateRoute>}/>
+              <Route path='/tasks' element={<PrivateRoute><Tasks/></PrivateRoute>}/>
+              <Route path='/userform' element={<PrivateRoute><Userform/></PrivateRoute>}/>
+              <Route path='/taskform' element={<PrivateRoute><Taskform/></PrivateRoute>}/>
+              <Route path='/tasks/taskpage/:taskid' element={<PrivateRoute><Taskpage/></PrivateRoute>}/>
+            </Route>
+          </Routes>
         </CssBaseline>
       </ThemeProvider>
     </ColorModeContext.Provider>
