@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 const Login = () => {
   const [email,setEmail]=useState("");
   const [password,setPassword]=useState("");
+  const [user , setUser] = useState([]);
   //paper style
   const paperStyle = {padding: '40px 30px', width: 350, margin: '50px auto' }
   // Login API  
@@ -18,7 +19,11 @@ const Login = () => {
         email: email,
         password: password
       });
-      localStorage.setItem('token', data.token);  
+      localStorage.setItem('token', data.token);
+      setUser(data.user);  
+      // console.log(data.user.name);
+      // console.log(data.user._id);
+      // console.log(data.user.email);
       navigate('/');
     } catch (err) {
       console.error(err);

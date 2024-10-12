@@ -23,31 +23,27 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-    // Check if user exists
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    // Compare the provided password with the hashed password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ error: 'Invalid credentials' });
     }
-    // Generate JWT token
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: '1d' } // Token expiration set to 1 day
+      { expiresIn: '1d' } 
     );
-    // Respond with user data and token
-    return res.status(200).json({ user, token });
-
+    const { password: pwd, ...userWithoutPassword } = user._doc;
+    return res.status(200).json({ user: userWithoutPassword, token });
   } catch (err) {
     console.error('Error during login:', err.message);
     return res.status(500).json({ error: 'Server error. Please try again later.' });
   }
 };
-// Create User by Admin only
+
 const createUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
