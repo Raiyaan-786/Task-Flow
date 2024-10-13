@@ -1,58 +1,104 @@
-import { Avatar, Box, Button,  Container,  Grid2, Link, Paper,  TextField, Typography } from '@mui/material';
-import React, { useState } from 'react'
+import { Avatar, Box, Button, Grid2, Paper, TextField, Typography, Link, useTheme } from '@mui/material';
+import React, { useState } from 'react';
 import { Lock } from '@mui/icons-material';
 import API from '../../api/api';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { login } from '../../features/authSlice';
+import { tokens } from '../../theme';
 
 const Login = () => {
-  const [email,setEmail]=useState("");
-  const [password,setPassword]=useState("");
-  const [user , setUser] = useState([]);
-  //paper style
-  const paperStyle = {padding: '40px 30px', width: 350, margin: '50px auto' }
-  // Login API  
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode)
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState(""); // Error message state
+  const [isLoading, setIsLoading] = useState(false); // Loading state
+
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const paperStyle = { padding: '40px 30px', width: 350, margin: '50px auto' };
+
   const handleLogin = async (e) => {
     e.preventDefault();
+    setErrorMessage(""); // Clear any previous error messages
+    setIsLoading(true); // Set loading to true
+
     try {
       const { data } = await API.post('/auth/login', {
-        email: email,
-        password: password
+        email,
+        password
       });
-      localStorage.setItem('token', data.token);
-      setUser(data.user);  
-      // console.log(data.user.name);
-      // console.log(data.user._id);
-      // console.log(data.user.email);
+
+      // Save token and user data
+      const { token, user } = data;
+
+      // Update Redux with user and token
+      dispatch(login({ user, token }));
+
+      // Redirect to homepage or protected route
       navigate('/');
     } catch (err) {
-      console.error(err);
-      alert('Login failed');
+      setErrorMessage('Login failed. Please check your credentials.');
+    } finally {
+      setIsLoading(false); // Stop loading regardless of success or failure
     }
   };
 
   return (
-    <Box  height={"100vh"} width={'100vw'}  sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} >
+    <Box height={"100vh"} width={'100vw'} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <Paper elevation={10} style={paperStyle}>
-        <Grid2 align='center' sx={{ paddingBottom: "20px" }}>
-          <Avatar sx={{ bgcolor: '#1976d2' }}><Lock /></Avatar>
-          <Typography variant="h3">Login</Typography>
+        <Grid2 align='center' sx={{ paddingBottom: "20px", height: '190px' }}>
+          <Avatar sx={{ height: '150px', width: '150px' }} src='/logoicon5.svg' />
         </Grid2>
-        <form onSubmit={handleLogin}>
-          <TextField size='small' fullWidth variant='outlined' name='email' type='email' value={email} onChange={(e)=>{setEmail(e.target.value)}} placeholder='Email'></TextField>
+        <form onSubmit={handleLogin} >
+          <TextField
+            size='small'
+            fullWidth
+            variant='outlined'
+            name='email'
+            type='email'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder='Email'
+            required
+          />
           <br />
           <br />
-          <TextField size='small' fullWidth variant='outlined' name='password' type='password' value={password} onChange={(e)=>{setPassword(e.target.value)}} varient="outlined" placeholder='Password'></TextField>
+          <TextField
+            size='small'
+            fullWidth
+            variant='outlined'
+            name='password'
+            type='password'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder='Password'
+            required
+          />
           <br />
           <br />
-          <Button fullWidth variant='contained' type="submit" sx={{ margin: '15px 0' }}>LOGIN</Button>
           <br />
-          <Typography variant="caption" sx={{paddingLeft:'30px'}} >Do you have an account? <Link href='/signup' underline="none">Sign Up</Link>
-          </Typography>
+          {errorMessage && (
+            <Typography color="error" variant="body2">
+              {errorMessage}
+            </Typography>
+          )}
+          <Button fullWidth variant='contained' type="submit" disabled={isLoading} sx={{ bgcolor: colors.teal[500] }}>
+            {isLoading ? "Logging in..." : "LOGIN"}
+          </Button>
+          <br />
+          <br />
+          <Box display={'flex'} alignItems={'center'} justifyContent={'center'}>
+            <Typography variant="caption">Already have an account? <Link href="/signup" underline="none" color={colors.teal[500]}>Signup</Link>
+            </Typography>
+          </Box>
         </form>
       </Paper>
     </Box>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
