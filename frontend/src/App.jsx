@@ -17,6 +17,7 @@ import Userform from './pages/userform';
 import Taskform from './pages/taskform';
 import Taskpage from './pages/taskpage';
 import Dashboard from './pages/dashboard';
+import BackendData from './pages/backenddata';
 
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
               <Route path='/tasks' element={<PrivateRoute><Tasks/></PrivateRoute>}/>
               <Route path='/userform' element={<PrivateRoute><Userform/></PrivateRoute>}/>
               <Route path='/taskform' element={<PrivateRoute><Taskform/></PrivateRoute>}/>
+              <Route path='/backenddata' element={<PrivateRoute><BackendData/></PrivateRoute>}/>
               <Route path='/tasks/taskpage/:taskid' element={<PrivateRoute><Taskpage/></PrivateRoute>}/>
             </Route>
           </Routes>
