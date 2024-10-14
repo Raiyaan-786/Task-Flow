@@ -1,225 +1,105 @@
-import React from 'react'
-import { Box, Paper, useTheme, Typography, IconButton } from "@mui/material"
-import Header from '../../components/Header'
-import { BarChart, PieChart } from '@mui/x-charts'
-import { tokens } from '../../theme'
-import StatBox from '../../components/StatBox'
-import { DownloadOutlined, Email, PersonAdd, PointOfSale, Traffic } from '@mui/icons-material'
-import { mockTransactions } from '../../data/mockData'
-import LineChartM from '../../components/LineChart'
-import BarChartM from '../../components/BarChart'
-import PieChartM from '../../components/PieChart'
-import AreaChartM from '../../components/AreaChart'
-import GaugeChart from '../../components/GaugeChart'
+import React, { useState } from 'react';
+import { Box, useTheme, Typography, Divider, Tabs, Tab } from "@mui/material";
+import { tokens } from '../../theme';
+import StatBox from '../../components/StatBox';
+import { AssignmentLateOutlined, AssignmentTurnedInOutlined, DateRangeRounded, EventAvailableRounded, HighlightOffRounded, PauseCircleOutlineRounded, ScheduleRounded } from '@mui/icons-material';
+import { styled } from '@mui/system';
+import MainDashboard from './MainDashboard';
+
+const RoundedTabs = styled(Tabs)({
+    padding: '10px', 
+    minHeight: '40px', 
+    '& .MuiTabs-indicator': {
+        display: 'none', // Remove the default indicator
+    },
+});
+
+const RoundedTab = styled(Tab)(({ theme }) => ({
+    marginRight:'5px',
+    textTransform: 'none',
+    fontWeight: 400,
+    borderRadius: '10px',
+    minHeight: '35px',
+    padding: '0px 10px',
+    color: 'obsidian',
+    // color: '#999999',
+    '&.Mui-selected': {
+        backgroundColor: '#007499', 
+        color: 'white',
+    },
+}));
 
 const Dashboard = () => {
     const theme = useTheme();
-    const colors = tokens(theme.palette.mode)
+    const colors = tokens(theme.palette.mode);
+
+    const [selectedTab, setSelectedTab] = useState(0);
+
+    const handleTabChange = (event, newValue) => {
+        setSelectedTab(newValue);
+    };
+
     return (
-        <Box p={2} m="20px">
-            {/* <Header title={"DASHBOARD"} subtitle={"Welcome to your dashboard"} /> */}
+        <Box p={.1} display="flex" flexDirection="column" height={'88%'} m={'10px'}>
+            <Box  bgcolor={colors.primary[900]} height={'70px'} display={'flex'} borderRadius={"5px 5px 0 0"} justifyContent={'space-evenly'}>
+                <StatBox value={3482} title={'Total Works'} icon={<DateRangeRounded fontSize='small' htmlColor='blue' />} divider={true} />
+                <Divider orientation='vertical' />
+                <StatBox value={3017} title={'Completed'} icon={<EventAvailableRounded fontSize='small' htmlColor='green' />} />
+                <Divider orientation='vertical' />
+                <StatBox value={96} title={'Pending'} icon={<ScheduleRounded fontSize='small' htmlColor='orange' />} />
+                <Divider orientation='vertical' />
+                <StatBox value={90} title={'Assigned'} icon={<AssignmentTurnedInOutlined fontSize='small' htmlColor='pink' />} />
+                <Divider orientation='vertical' />
+                <StatBox value={5} title={'Unassigned'} icon={<AssignmentLateOutlined fontSize='small' htmlColor='blue' />} />
+                <Divider orientation='vertical' />
+                <StatBox value={14} title={'Hold'} icon={<PauseCircleOutlineRounded fontSize='small' htmlColor='grey' />} />
+                <Divider orientation='vertical' />
+                <StatBox value={350} title={'Cancelled'} icon={<HighlightOffRounded fontSize='small' htmlColor='red' />} />
+            </Box>
+
             <Box
-                display="grid"
-                gridTemplateColumns="repeat(12, 1fr)"
-                gridAutoRows="90px"
-                gap="25px"
-            // overflow={'auto'}
-            // height={'65vh'}
+                bgcolor={colors.primary[900]}
+                flexGrow={1}
+                mt="2px"
+                display="flex"
+                flexDirection="column"
+                borderRadius={'0 0 5px 5px'}
+               
             >
-                {/* first row */}
-                <Box
-                    borderRadius={2}
-                    gridColumn="span 2"
-                    backgroundColor={colors.primary[900]}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                >
-                    <StatBox
-                        title="New Tasks"
-                        subtitle="7,342"
-                        icon={'increase'}
-                        increase="+17.03%"
-                    />
-                </Box>
-                <Box
-                    borderRadius={2}
-                    gridColumn="span 2"
-                    backgroundColor={colors.primary[900]}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                >
-                    <StatBox
-                        title="Emails Sent"
-                        subtitle="721K"
-                        increase="+14%"
-                    />
-                </Box>
-                <Box
-                    borderRadius={2}
-                    gridColumn="span 2"
-                    backgroundColor={colors.primary[900]}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                >
-                    <StatBox
-                        title="New Clients"
-                        subtitle="1,156"
-                        increase="+15.03%"
-                        icon={'increase'}
-                    />
-                </Box>
-                <Box
-                    borderRadius={2}
-                    gridColumn="span 2"
-                    backgroundColor={colors.primary[900]}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                >
-                    <StatBox
-                        title="Income"
-                        subtitle="$3772"
-                        increase="+23%"
-                        icon={'increase'}
-                    />
-                </Box>
-                {/* sfsfsf */}
-                <Box
-                    borderRadius={2}
-                    gridColumn="span 4"
-                    gridRow="span 2"
-                    backgroundColor={colors.primary[900]}
-                >
-                    <Typography
-                        variant="h6"
-                        fontWeight="bold"
-                        sx={{ padding: "15px 30px 20px 30px" }}
-                    >
-                        Sales Quantity
-                    </Typography>
-                    <Box height="150px" mt="-20px"  >
-                        <PieChartM />
-                        {/* <GaugeChart/> */}
+                {/* Rounded Tabs */}
+                <RoundedTabs value={selectedTab} onChange={handleTabChange} borderBottom={'1px solid black'}>
+                    <RoundedTab label="Main Dashboard" />
+                    <RoundedTab label="Employee Dashboard" />
+                    <RoundedTab label="Work Dashboard" />
+                    <RoundedTab label="Customer Dashboard" />
+                </RoundedTabs>
+                {/* Render All Tab Panels Once */}
+                <Box p='0 1px' flexGrow={1} position="relative" display="flex" flexDirection="column" height={'90%'}>
+                    <Box display={selectedTab === 0 ? 'block' : 'none'} flexGrow={1} height={'100%'} > 
+                        <MainDashboard />
                     </Box>
-                </Box>
-                {/* sfsfsf */}
-          
 
-                {/* second row */}
-                <Box
-                    gridColumn="span 5"
-                    gridRow="span 4"
-                    borderRadius={2}
-                    backgroundColor={colors.primary[900]}
-
-                >
-                    <Box
-                        mt="10px"
-                        p="5px  30px 20px 30px"
-                        display="flex "
-                        justifyContent="space-between"
-                        alignItems="center"
-                    >
-                        <Box display={'flex'} m={"5px 0"}>
-                            <Typography
-                                variant="p"
-                                fontWeight="bold"
-                                color={colors.grey[100]}
-                            >
-                                Revenue Generated :
-                            </Typography>
-                            <Typography
-                                variant="p"
-                                fontWeight="bold"
-                                color={colors.pink[500]}
-                            >
-                                $59,342.32
-                            </Typography>
-                        </Box>
-                    </Box>
-                    <Box height="90%" m="-20px 0 0 15px">
-                        <LineChartM />
-                    </Box>
-                </Box>
-                <Box
-                    gridColumn="span 3"
-                    gridRow="span 4"
-                    backgroundColor={colors.primary[900]}
-                    overflow="auto"
-                    borderRadius={2}
-                >
-                    <Box
-                        display="flex"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        borderBottom={`4px solid ${colors.bgc[100]}`}
-                        colors={colors.grey[100]}
-                        p="15px"
-                    >
-                        <Typography color={colors.grey[100]} variant="h6" fontWeight="bold">
-                            Recent Transactions
+                    <Box display={selectedTab === 1 ? 'block' : 'none'} flexGrow={1}>
+                        <Typography variant="h6" color={colors.grey[100]}>
+                            Employee Data
                         </Typography>
                     </Box>
-                    {mockTransactions.map((transaction, i) => (
-                        <Box
-                            key={`${transaction.txId}-${i}`}
-                            display="flex"
-                            justifyContent="space-between"
-                            alignItems="center"
-                            borderBottom={`4px solid ${colors.bgc[100]}`}
-                            p="15px"
-                        >
-                            <Box>
-                                <Typography
-                                    color={colors.teal[500]}
-                                    variant="p"
-                                    fontWeight="600"
-                                >
-                                    {transaction.txId}
-                                </Typography>
-                                <Typography color={colors.grey[100]}>
-                                    {transaction.user}
-                                </Typography>
-                            </Box>
-                            <Box color={colors.grey[100]}>{transaction.date}</Box>
-                            <Box
-                                backgroundColor={colors.teal[500]}
-                                p="5px 10px"
-                                borderRadius="4px"
-                            >
-                                ${transaction.cost}
-                            </Box>
-                        </Box>
-                    ))}
-                </Box>
-                <Box
-                    borderRadius={2}
-                    gridColumn="span 4"
-                    gridRow="span 3"
-                    backgroundColor={colors.primary[900]}
-                >
-                    <Typography
-                        variant="h6"
-                        fontWeight="bold"
-                        sx={{ padding: "15px 30px 20px 30px" }}
-                    >
-                        Sales Quantity
-                    </Typography>
-                    <Box height="280px" mt="-20px"  >
-                        <BarChartM />
+
+                    <Box display={selectedTab === 2 ? 'block' : 'none'} flexGrow={1}>
+                        <Typography variant="h6" color={colors.grey[100]}>
+                            Content for Work Dashboard
+                        </Typography>
+                    </Box>
+
+                    <Box display={selectedTab === 3 ? 'block' : 'none'} flexGrow={1}>
+                        <Typography variant="h6" color={colors.grey[100]}>
+                            Content for Customer Dashboard
+                        </Typography>
                     </Box>
                 </Box>
-
-
-                {/* end */}
             </Box>
-        </Box >
-    )
-}
+        </Box>
+    );
+};
 
-export default Dashboard
-
-
+export default Dashboard;

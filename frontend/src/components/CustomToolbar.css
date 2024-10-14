@@ -1,0 +1,7 @@
+.custom-toolbar .MuiButtonBase-root {
+    color: grey !important; /* Change this to your desired color */
+}
+
+.custom-toolbar .MuiSvgIcon-root {
+    color: grey !important; /* Change this to your desired color */
+}

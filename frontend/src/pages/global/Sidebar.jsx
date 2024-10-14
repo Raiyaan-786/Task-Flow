@@ -54,7 +54,7 @@ const Sidebar = ({isCollapsed}) => {
         <Menu iconShape="square">
           {/* LOGO AND MENU ICON */}
           <MenuItem
-            icon={isCollapsed ? <img height={'28px'} width={'28px'} src="logoicon4.svg"/> : undefined}
+            icon={isCollapsed ? <img height={'28px'} width={'32px'} src="logoicon1.png"/> : undefined}
             style={{
               margin: "10px 0 20px 0",
               color: colors.grey[100],
@@ -67,11 +67,11 @@ const Sidebar = ({isCollapsed}) => {
                 alignItems="center"
                 ml="15px"
               >
-                <img height={'28px'} width={'28px'} src="/logoicon4.svg" alt="brandlogo" />
-                <Typography ml={.3} variant="h3" color={colors.grey[100]} fontWeight={'bold'}>
-                  eskter.
+                <img height={'28px'} width={'32px'} src="/logoicon1.png" alt="brandlogo" />
+                <Typography ml={1} variant="h3" color={colors.grey[100]} fontWeight={'bold'}>
+                  deskter
                 </Typography>
-                <Typography mt={1} varient='h6' color={colors.grey[100]} >cloud</Typography>
+                <Typography mt={1} varient='h6' color={colors.grey[100]} >.cloud</Typography>
               </Box>
             )}
           </MenuItem>

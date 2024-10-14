@@ -42,7 +42,7 @@ const Signup = () => {
       <Box height={"100vh"} width={'100vw'}  sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} >
         <Paper elevation={5} style={paperStyle} square={false}  >
         <Grid2 align='center' sx={{ paddingBottom: "20px",height:'190px' }}>
-            <Avatar sx={{ height:'150px',width:'150px' }} src='/logoicon5.svg'/>
+            <Avatar sx={{ height:'150px',width:'150px' }} src='/logoicon2.png'/>
           </Grid2>
           <form onSubmit= {handleSignUp}>
             <TextField size='small' fullWidth variant='outlined' name='name' type='text' value={name} onChange={(e)=>{setName(e.target.value)}} placeholder='Name' required></TextField>

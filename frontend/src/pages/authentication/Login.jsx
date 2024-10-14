@@ -51,7 +51,7 @@ const Login = () => {
     <Box height={"100vh"} width={'100vw'} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <Paper elevation={10} style={paperStyle}>
         <Grid2 align='center' sx={{ paddingBottom: "20px", height: '190px' }}>
-          <Avatar sx={{ height: '150px', width: '150px' }} src='/logoicon5.svg' />
+          <Avatar sx={{ height: '150px', width: '150px' }} src='/logoicon2.png' />
         </Grid2>
         <form onSubmit={handleLogin} >
           <TextField
