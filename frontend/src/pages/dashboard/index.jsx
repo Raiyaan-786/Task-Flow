@@ -41,20 +41,20 @@ const Dashboard = () => {
 
     return (
         <Box p={.1} display="flex" flexDirection="column" height={'88%'} m={'10px'}>
-            <Box  bgcolor={colors.primary[900]} height={'70px'} display={'flex'} borderRadius={"5px 5px 0 0"} justifyContent={'space-evenly'}>
-                <StatBox value={3482} title={'Total Works'} icon={<DateRangeRounded fontSize='small' htmlColor='blue' />} divider={true} />
-                <Divider orientation='vertical' />
-                <StatBox value={3017} title={'Completed'} icon={<EventAvailableRounded fontSize='small' htmlColor='green' />} />
-                <Divider orientation='vertical' />
-                <StatBox value={96} title={'Pending'} icon={<ScheduleRounded fontSize='small' htmlColor='orange' />} />
-                <Divider orientation='vertical' />
-                <StatBox value={90} title={'Assigned'} icon={<AssignmentTurnedInOutlined fontSize='small' htmlColor='pink' />} />
-                <Divider orientation='vertical' />
+            <Box  bgcolor={colors.primary[900]} height={'60px'} display={'flex'} borderRadius={"10px"} justifyContent={'space-evenly'}>
+                <StatBox value={3482} title={'Total Works'}  icon={<DateRangeRounded fontSize='small' htmlColor='blue' />} divider={true} />
+                <Divider orientation='vertical' sx={{borderColor:colors.bgc[100]}}/>
+                <StatBox value={3017} title={'Completed'} textcolor={'green'} icon={<EventAvailableRounded fontSize='small' htmlColor='green' />} />
+                <Divider orientation='vertical' sx={{borderColor:colors.bgc[100]}}/>
+                <StatBox value={96} title={'Pending'} textcolor={'orange'} icon={<ScheduleRounded fontSize='small' htmlColor='orange' />} />
+                <Divider orientation='vertical' sx={{borderColor:colors.bgc[100]}}/>
+                <StatBox value={90} title={'Assigned'}  icon={<AssignmentTurnedInOutlined fontSize='small' htmlColor='pink' />} />
+                <Divider orientation='vertical' sx={{borderColor:colors.bgc[100]}}/>
                 <StatBox value={5} title={'Unassigned'} icon={<AssignmentLateOutlined fontSize='small' htmlColor='blue' />} />
-                <Divider orientation='vertical' />
-                <StatBox value={14} title={'Hold'} icon={<PauseCircleOutlineRounded fontSize='small' htmlColor='grey' />} />
-                <Divider orientation='vertical' />
-                <StatBox value={350} title={'Cancelled'} icon={<HighlightOffRounded fontSize='small' htmlColor='red' />} />
+                <Divider orientation='vertical' sx={{borderColor:colors.bgc[100]}}/>
+                <StatBox value={14} title={'Hold'}  icon={<PauseCircleOutlineRounded fontSize='small' htmlColor='grey' />} />
+                <Divider orientation='vertical' sx={{borderColor:colors.bgc[100]}} />
+                <StatBox value={350} title={'Cancelled'} textcolor={'red'} icon={<HighlightOffRounded fontSize='small' htmlColor='red' />} />
             </Box>
 
             <Box
@@ -63,11 +63,11 @@ const Dashboard = () => {
                 mt="2px"
                 display="flex"
                 flexDirection="column"
-                borderRadius={'0 0 5px 5px'}
+                borderRadius={'10px'}
                
             >
                 {/* Rounded Tabs */}
-                <RoundedTabs value={selectedTab} onChange={handleTabChange} borderBottom={'1px solid black'}>
+                <RoundedTabs value={selectedTab} onChange={handleTabChange} >
                     <RoundedTab label="Main Dashboard" />
                     <RoundedTab label="Employee Dashboard" />
                     <RoundedTab label="Work Dashboard" />

@@ -5,7 +5,8 @@ import {
     GridToolbarContainer,
     GridToolbarDensitySelector,
     GridToolbarExport,
-    GridToolbarFilterButton
+    GridToolbarFilterButton,
+    GridToolbarQuickFilter
 } from '@mui/x-data-grid';
 import { tokens } from '../theme';
 import './CustomToolbar.css'; // Make sure to import your CSS
@@ -16,8 +17,8 @@ const CustomToolbar = () => {
 
     return (
         <Box className="custom-toolbar" sx={{ background: colors.primary[900], color: colors.grey[100] }} ml={2} >
-            <GridToolbarContainer  >
-                <GridToolbarColumnsButton />
+            <GridToolbarContainer >
+                <GridToolbarColumnsButton  />
                 <GridToolbarFilterButton />
                 <GridToolbarDensitySelector
                     slotProps={{ tooltip: { title: 'Change density' } }}
@@ -25,7 +26,16 @@ const CustomToolbar = () => {
                 <GridToolbarExport
                     slotProps={{
                         tooltip: { title: 'Export data' },
-                       
+                    }}
+                />
+                {/* Custom Quick Filter without hover styles */}
+                <GridToolbarQuickFilter
+                    sx={{
+                        height:'28px',
+                        width:'200px',
+                        padding: ' 2px 5px 0px 10px',
+                        borderRadius: '5px',
+                        bgcolor: colors.bgc[100],
                     }}
                 />
             </GridToolbarContainer>

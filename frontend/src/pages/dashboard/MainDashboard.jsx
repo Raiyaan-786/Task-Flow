@@ -131,7 +131,7 @@ const MainDashboard = () => {
   return (
       <Box display={'flex'} 
       sx={{
-         height:'66vh',
+         height:'67vh',
         "& .MuiDataGrid-root": {
           border: "none",
         },

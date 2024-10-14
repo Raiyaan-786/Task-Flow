@@ -6,16 +6,16 @@ import { Gauge, gaugeClasses } from "@mui/x-charts";
 
 
 
-const StatBox = ({ title,value,icon}) => {
+const StatBox = ({ title,value,icon,textcolor}) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   return (
-    <Box display={'flex'} p={2} borderRight={'1px solid colors.grey[100]'} flexDirection={'column'}  alignItems={'center'} justifyContent={'center'}>
+    <Box display={'flex'} p={1} borderRight={'1px solid colors.grey[100]'} flexDirection={'column'}  alignItems={'center'} justifyContent={'center'}>
       
-        <Typography p={.5} variant="h4" color={colors.grey[200]} textAlign={'center'} fontWeight={'bold'}>{value}</Typography>
-      <Box  display={'flex'}  alignItems={'center'} justifyContent={'center'} gap={1} >
+        <Typography variant="h4" color={textcolor} textAlign={'center'} fontWeight={'bold'}>{value}</Typography>
+      <Box  display={'flex'}  alignItems={'center'} justifyContent={'center'} gap={0} >
         {/* {icon} */}
-        <Typography  variant="h6" color={colors.grey[300]} fontWeight={300}>{title}</Typography>
+        <Typography textTransform={'uppercase'} variant="p" color={colors.grey[500]} fontWeight={400}>{title}</Typography>
       </Box>
     </Box>
   )
