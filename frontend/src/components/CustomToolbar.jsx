@@ -17,8 +17,8 @@ const CustomToolbar = () => {
 
     return (
         <Box className="custom-toolbar" sx={{ background: colors.primary[900], color: colors.grey[100] }} ml={2} >
-            <GridToolbarContainer >
-                <GridToolbarColumnsButton  />
+            <GridToolbarContainer sx={{gap:0}}>
+                <GridToolbarColumnsButton />
                 <GridToolbarFilterButton />
                 <GridToolbarDensitySelector
                     slotProps={{ tooltip: { title: 'Change density' } }}
@@ -31,6 +31,7 @@ const CustomToolbar = () => {
                 {/* Custom Quick Filter without hover styles */}
                 <GridToolbarQuickFilter
                     sx={{
+                        ml:3,
                         height:'28px',
                         width:'200px',
                         padding: ' 2px 5px 0px 10px',

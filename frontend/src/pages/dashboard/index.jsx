@@ -5,6 +5,8 @@ import StatBox from '../../components/StatBox';
 import { AssignmentLateOutlined, AssignmentTurnedInOutlined, DateRangeRounded, EventAvailableRounded, HighlightOffRounded, PauseCircleOutlineRounded, ScheduleRounded } from '@mui/icons-material';
 import { styled } from '@mui/system';
 import MainDashboard from './MainDashboard';
+import EmployeeDashboard from './EmployeeDashboard'
+import WorkDashboard from './WorkDashboard';
 
 const RoundedTabs = styled(Tabs)({
     padding: '10px', 
@@ -76,19 +78,16 @@ const Dashboard = () => {
                 {/* Render All Tab Panels Once */}
                 <Box p='0 1px' flexGrow={1} position="relative" display="flex" flexDirection="column" height={'90%'}>
                     <Box display={selectedTab === 0 ? 'block' : 'none'} flexGrow={1} height={'100%'} > 
-                        <MainDashboard />
+                        <MainDashboard/>
                     </Box>
 
-                    <Box display={selectedTab === 1 ? 'block' : 'none'} flexGrow={1}>
-                        <Typography variant="h6" color={colors.grey[100]}>
-                            Employee Data
-                        </Typography>
+                    <Box display={selectedTab === 1 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
+                        <EmployeeDashboard/>
+                        
                     </Box>
 
-                    <Box display={selectedTab === 2 ? 'block' : 'none'} flexGrow={1}>
-                        <Typography variant="h6" color={colors.grey[100]}>
-                            Content for Work Dashboard
-                        </Typography>
+                    <Box display={selectedTab === 2 ? 'block' : 'none'} flexGrow={1} height={'100%'}>
+                       <WorkDashboard/>
                     </Box>
 
                     <Box display={selectedTab === 3 ? 'block' : 'none'} flexGrow={1}>
