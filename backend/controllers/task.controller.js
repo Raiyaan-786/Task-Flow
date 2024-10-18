@@ -5,11 +5,24 @@ import { User } from '../models/user.model.js';
 const createTaskByAdmin = async (req, res) => {
   try {
     const { title, description, assignedTo } = req.body;
-    const task = new Task({ title, description, assignedTo, createdBy: req.user.id });
-    await task.save();
-    res.status(201).json({ message: 'Task created successfully', task });
+
+    // Check if assignedTo is a valid user ID
+    const userExists = await User.findById(assignedTo);
+    if (!userExists) {
+      return res.status(400).json({ error: 'Invalid user ID for assignment' });
+    }
+
+    // Create a new task
+    const newTask = new Task({
+      title,
+      description,
+      assignedTo,
+    });
+
+    await newTask.save();
+    res.status(201).json({ message: 'Task created successfully', task: newTask });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -56,20 +69,10 @@ const createTaskByCustomer = async (req, res) => {
 // Get All Tasks (Admin can view all tasks, Manager can view own and assigned tasks)
 const getAllTasks = async (req, res) => {
   try {
-    const role = req.user.role;
-    let tasks;
-    
-    if (role === 'Admin') {
-      tasks = await Task.find().populate('assignedTo');
-    } else if (role === 'Manager') {
-      tasks = await Task.find({ $or: [{ createdBy: req.user.id }, { assignedTo: req.user.id }] }).populate('assignedTo');
-    } else {
-      tasks = await Task.find({ assignedTo: req.user.id }).populate('assignedTo');
-    }
-    
+    const tasks = await Task.find().populate('assignedTo', 'name email'); 
     res.status(200).json({ tasks });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
