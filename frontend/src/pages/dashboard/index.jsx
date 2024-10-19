@@ -75,6 +75,7 @@ const Dashboard = () => {
                     <RoundedTab label="Work Dashboard" />
                     <RoundedTab label="Customer Dashboard" />
                 </RoundedTabs>
+                <Divider  sx={{borderColor:colors.bgc[100]}}/>
                 {/* Render All Tab Panels Once */}
                 <Box p='0 1px' flexGrow={1} position="relative" display="flex" flexDirection="column" height={'90%'}>
                     <Box display={selectedTab === 0 ? 'block' : 'none'} flexGrow={1} height={'100%'} > 

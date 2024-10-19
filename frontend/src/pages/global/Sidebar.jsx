@@ -4,7 +4,7 @@ import { Box, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
-import { AutoAwesomeOutlined, CalculateOutlined, CalendarMonthOutlined, ChatOutlined, HomeOutlined, ListAltOutlined, PeopleOutlined, PersonAddAlt1Outlined, PlaylistAddOutlined, ReceiptOutlined } from "@mui/icons-material";
+import { AssessmentOutlined, AutoAwesomeOutlined, BadgeOutlined, CalculateOutlined, CalendarMonthOutlined, ChatOutlined, DashboardOutlined, FolderOpenOutlined, GroupOutlined, HomeOutlined, LinkOutlined, ListAltOutlined, PeopleOutlined, PersonAddAlt1Outlined, PlaylistAddOutlined, ReceiptLongOutlined, ReceiptOutlined, SupervisorAccountOutlined, WorkOffOutlined, WorkOutline, WorkOutlineOutlined } from "@mui/icons-material";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -103,97 +103,89 @@ const Sidebar = ({isCollapsed}) => {
             </Box>
           )}
 
-          <Box paddingLeft={isCollapsed ? undefined : "10%"}>
+          <Box paddingLeft={isCollapsed ? undefined : "10%"} >
             <Item
               title="Dashboard"
               to="/"
-              icon={<HomeOutlined/>}
+              icon={<DashboardOutlined/>}
               selected={selected}
               setSelected={setSelected}
             />
-
             <Typography
               variant="h6"
               color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
+              sx={{ m: "15px 0 5px 15px" }}
             >
-              Data
+              Manage
             </Typography>
             <Item
-              title="Tasks"
-              to="/tasks"
-              icon={<ListAltOutlined/>}
+              title="Work Manager"
+              to="/workmanager"
+              icon={<WorkOutlineOutlined/>}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="Users"
-              to="/users"
-              icon={<PeopleOutlined />}
+              title="Customer Manager"
+              to="/customermanager"
+              icon={<GroupOutlined/>}
               selected={selected}
               setSelected={setSelected}
             />
+            <Item
+              title="Consultant Manager"
+              to="/consultantmanager"
+              icon={<SupervisorAccountOutlined/>}
+              selected={selected}
+              setSelected={setSelected}
+            />
+              <Item
+              title="Employee"
+              to="/employee"
+              icon={<BadgeOutlined/>}
+              selected={selected}
+              setSelected={setSelected}
+            />
+               <Typography
+              variant="h6"
+              color={colors.grey[300]}
+              sx={{ m: "15px 0 5px 15px" }}
+            >
+            Finance
+            </Typography>
             <Item
               title="Invoices"
               to="/invoices"
-              icon={<ReceiptOutlined />}
+              icon={< ReceiptLongOutlined/>}
               selected={selected}
               setSelected={setSelected}
             />
 
-            <Typography
-              variant="h6"
-              color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
-            >
-              Pages
-            </Typography>
             <Item
-              title="Create Task"
-              to="/taskform"
-              icon={<PlaylistAddOutlined/>}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Create User"
-              to="/userform"
-              icon={<PersonAddAlt1Outlined />}
+              title="Report"
+              to="/report"
+              icon={<AssessmentOutlined/>}
               selected={selected}
               setSelected={setSelected}
             />
             <Typography
               variant="h6"
               color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
+              sx={{ m: "15px 0 5px 15px" }}
             >
-              Apps
+            Files
             </Typography>
             <Item
-              title="Calendar"
-              to="/calendar"
-              icon={<CalendarMonthOutlined />}
+              title="File Manager"
+              to="/filemanager"
+              icon={<FolderOpenOutlined/>}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="Calculator"
-              to="/calculator"
-              icon={<CalculateOutlined />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="AI assistant"
-              to="/aiassistant"
-              icon={<AutoAwesomeOutlined />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Chat"
-              to="/chat"
-              icon={<ChatOutlined/>}
+              title="Useful Links"
+              to="/usefullinks"
+              icon={<LinkOutlined/>}
               selected={selected}
               setSelected={setSelected}
             />

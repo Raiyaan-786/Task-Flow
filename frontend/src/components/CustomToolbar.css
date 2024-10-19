@@ -1,10 +1,26 @@
+.custom-toolbar{
+    background-color: red;
+}
 .custom-toolbar .MuiButtonBase-root {
-    font-size: 9px;
-    height: 14px !important;
+    font-size: 10px;
+    height: 20px !important;
     color: rgb(165, 163, 163) !important; /* Change this to your desired color */
 }
 
 .custom-toolbar .MuiSvgIcon-root {
-    height: 12px !important;
+    height: 15px !important;
     color:rgb(165, 163, 163) !important; /* Change this to your desired color */
+}
+.custom-toolbar .css-1bm3gor-MuiDataGrid-toolbarContainer {
+    padding: 0 ;
+}
+.custom-toolbar .css-1bx5fvn-MuiInputBase-root-MuiInput-root::before {
+ display: none;
+}
+.custom-toolbar .css-1bx5fvn-MuiInputBase-root-MuiInput-root::after{
+display: none;
+}
+.custom-toolbar .css-h180dl-MuiFormControl-root-MuiTextField-root-MuiDataGrid-toolbarQuickFilter{
+    padding: 0 0 0 15px;
+    height: 26px;
 }

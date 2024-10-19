@@ -3,7 +3,6 @@ import { Box, Divider, styled, Tab, Tabs, Typography } from '@mui/material'
 import Header from '../../components/Header'
 import { useTheme } from '@emotion/react';
 import { tokens } from '../../theme';
-import InvoiceList from './InvoiceList';
 // import DuplicateCustomer from './DuplicateCustomer';
 
 
@@ -33,7 +32,7 @@ const RoundedTab = styled(Tab)(({ theme }) => ({
     },
 }));
 
-const Invoices = () => {
+const FileManager = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
@@ -44,7 +43,7 @@ const Invoices = () => {
     };
     return (
         <Box display={'flex'} flexDirection={'column'} height={'88%'} margin={'10px'} p={.1}>
-            <Header title={'Invoices'}/>
+            <Header title={'File Manager'}/>
             <Box
                 bgcolor={colors.primary[900]}
                 flexGrow={1}
@@ -56,15 +55,16 @@ const Invoices = () => {
             >
                 {/* Rounded Tabs */}
                 <RoundedTabs value={selectedTab} onChange={handleTabChange} >
-                    <RoundedTab label="Invoice List" />
-                    <RoundedTab label="Payment In" />
-                    <RoundedTab label="Bulk Payment" />
+                    <RoundedTab label="File Manager" />
+                    <RoundedTab label="Multi FileShare" />
+                    <RoundedTab label="Master File Manager" />
+                    <RoundedTab label="Share File Report" />
                 </RoundedTabs>
                 <Divider  sx={{borderColor:colors.bgc[100]}}/>
                 {/* Render All Tab Panels Once */}
                 <Box p='0 1px' flexGrow={1} position="relative" display="flex" flexDirection="column" height={'90%'}>
                     <Box display={selectedTab === 0 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
-                       <InvoiceList/>
+                       {/* <AddConsultant/> */}hello
                     </Box>
 
                     <Box display={selectedTab === 1 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
@@ -74,10 +74,14 @@ const Invoices = () => {
                     <Box display={selectedTab === 2 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
                        {/* <ConsultantList/> */}hello
                     </Box>
+
+                    <Box display={selectedTab === 3 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
+                       {/* <ConsultantList/> */}hello
+                    </Box>
                 </Box>
             </Box>
         </Box>
     )
 }
 
-export default Invoices
+export default FileManager

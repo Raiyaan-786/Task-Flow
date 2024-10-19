@@ -3,7 +3,6 @@ import { Box, Divider, styled, Tab, Tabs, Typography } from '@mui/material'
 import Header from '../../components/Header'
 import { useTheme } from '@emotion/react';
 import { tokens } from '../../theme';
-import InvoiceList from './InvoiceList';
 // import DuplicateCustomer from './DuplicateCustomer';
 
 
@@ -33,7 +32,7 @@ const RoundedTab = styled(Tab)(({ theme }) => ({
     },
 }));
 
-const Invoices = () => {
+const Report = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
@@ -44,7 +43,7 @@ const Invoices = () => {
     };
     return (
         <Box display={'flex'} flexDirection={'column'} height={'88%'} margin={'10px'} p={.1}>
-            <Header title={'Invoices'}/>
+            <Header title={'Report'}/>
             <Box
                 bgcolor={colors.primary[900]}
                 flexGrow={1}
@@ -56,22 +55,17 @@ const Invoices = () => {
             >
                 {/* Rounded Tabs */}
                 <RoundedTabs value={selectedTab} onChange={handleTabChange} >
-                    <RoundedTab label="Invoice List" />
-                    <RoundedTab label="Payment In" />
-                    <RoundedTab label="Bulk Payment" />
+                    <RoundedTab label="Report" />
+                    <RoundedTab label="Work Report" />
                 </RoundedTabs>
                 <Divider  sx={{borderColor:colors.bgc[100]}}/>
                 {/* Render All Tab Panels Once */}
                 <Box p='0 1px' flexGrow={1} position="relative" display="flex" flexDirection="column" height={'90%'}>
                     <Box display={selectedTab === 0 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
-                       <InvoiceList/>
+                       {/* <AddConsultant/> */}hello
                     </Box>
 
                     <Box display={selectedTab === 1 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
-                       {/* <ConsultantList/> */}hello
-                    </Box>
-
-                    <Box display={selectedTab === 2 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
                        {/* <ConsultantList/> */}hello
                     </Box>
                 </Box>
@@ -80,4 +74,4 @@ const Invoices = () => {
     )
 }
 
-export default Invoices
+export default Report

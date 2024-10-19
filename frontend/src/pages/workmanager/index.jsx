@@ -3,10 +3,10 @@ import { Box, Divider, styled, Tab, Tabs, Typography } from '@mui/material'
 import Header from '../../components/Header'
 import { useTheme } from '@emotion/react';
 import { tokens } from '../../theme';
-import InvoiceList from './InvoiceList';
-// import DuplicateCustomer from './DuplicateCustomer';
-
-
+import AddWork from './AddWork';
+import AddTurnoverCertificate from './AddTurnover';
+import TurnoverList from './TurnoverList';
+import WorkList from './WorkList';
 
 const RoundedTabs = styled(Tabs)({
     // background:'red',A
@@ -33,7 +33,7 @@ const RoundedTab = styled(Tab)(({ theme }) => ({
     },
 }));
 
-const Invoices = () => {
+const WorkManager = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
@@ -44,7 +44,7 @@ const Invoices = () => {
     };
     return (
         <Box display={'flex'} flexDirection={'column'} height={'88%'} margin={'10px'} p={.1}>
-            <Header title={'Invoices'}/>
+            <Header title={'Work Manager'}/>
             <Box
                 bgcolor={colors.primary[900]}
                 flexGrow={1}
@@ -56,23 +56,28 @@ const Invoices = () => {
             >
                 {/* Rounded Tabs */}
                 <RoundedTabs value={selectedTab} onChange={handleTabChange} >
-                    <RoundedTab label="Invoice List" />
-                    <RoundedTab label="Payment In" />
-                    <RoundedTab label="Bulk Payment" />
+                    <RoundedTab label="Add Work" />
+                    <RoundedTab label="Add Turnover" />
+                    <RoundedTab label="Turnover List" />
+                    <RoundedTab label="Work List" />
                 </RoundedTabs>
                 <Divider  sx={{borderColor:colors.bgc[100]}}/>
                 {/* Render All Tab Panels Once */}
                 <Box p='0 1px' flexGrow={1} position="relative" display="flex" flexDirection="column" height={'90%'}>
                     <Box display={selectedTab === 0 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
-                       <InvoiceList/>
+                       <AddWork/>
                     </Box>
 
                     <Box display={selectedTab === 1 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
-                       {/* <ConsultantList/> */}hello
+                       <AddTurnoverCertificate/>
                     </Box>
 
-                    <Box display={selectedTab === 2 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
-                       {/* <ConsultantList/> */}hello
+                    <Box display={selectedTab === 2 ? 'block' : 'none'} flexGrow={1} height={'100%'}>
+                        <TurnoverList/>
+                    </Box>
+
+                    <Box display={selectedTab === 3 ? 'block' : 'none'} flexGrow={1} height={'100%'}>
+                        <WorkList/>
                     </Box>
                 </Box>
             </Box>
@@ -80,4 +85,4 @@ const Invoices = () => {
     )
 }
 
-export default Invoices
+export default WorkManager

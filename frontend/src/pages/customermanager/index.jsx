@@ -3,8 +3,8 @@ import { Box, Divider, styled, Tab, Tabs, Typography } from '@mui/material'
 import Header from '../../components/Header'
 import { useTheme } from '@emotion/react';
 import { tokens } from '../../theme';
-import InvoiceList from './InvoiceList';
-// import DuplicateCustomer from './DuplicateCustomer';
+import DuplicateCustomer from './DuplicateCustomer';
+import AddCustomer from './AddCustomer';
 
 
 
@@ -33,7 +33,7 @@ const RoundedTab = styled(Tab)(({ theme }) => ({
     },
 }));
 
-const Invoices = () => {
+const CustomerManager = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
@@ -44,7 +44,7 @@ const Invoices = () => {
     };
     return (
         <Box display={'flex'} flexDirection={'column'} height={'88%'} margin={'10px'} p={.1}>
-            <Header title={'Invoices'}/>
+            <Header title={'Customer Manager'}/>
             <Box
                 bgcolor={colors.primary[900]}
                 flexGrow={1}
@@ -56,15 +56,17 @@ const Invoices = () => {
             >
                 {/* Rounded Tabs */}
                 <RoundedTabs value={selectedTab} onChange={handleTabChange} >
-                    <RoundedTab label="Invoice List" />
-                    <RoundedTab label="Payment In" />
-                    <RoundedTab label="Bulk Payment" />
+                    <RoundedTab label="Add Customer" />
+                    <RoundedTab label="Customer Group" />
+                    <RoundedTab label="Customer List" />
+                    <RoundedTab label="Customer Update" />
+                    <RoundedTab label="Duplicate Customer" />
                 </RoundedTabs>
                 <Divider  sx={{borderColor:colors.bgc[100]}}/>
                 {/* Render All Tab Panels Once */}
                 <Box p='0 1px' flexGrow={1} position="relative" display="flex" flexDirection="column" height={'90%'}>
                     <Box display={selectedTab === 0 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
-                       <InvoiceList/>
+                      <AddCustomer/>
                     </Box>
 
                     <Box display={selectedTab === 1 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
@@ -74,10 +76,18 @@ const Invoices = () => {
                     <Box display={selectedTab === 2 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
                        {/* <ConsultantList/> */}hello
                     </Box>
+
+                    <Box display={selectedTab === 3 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
+                       {/* <ConsultantList/> */}hello
+                    </Box>
+
+                    <Box display={selectedTab === 4 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
+                       <DuplicateCustomer/>
+                    </Box>
                 </Box>
             </Box>
         </Box>
     )
 }
 
-export default Invoices
+export default CustomerManager

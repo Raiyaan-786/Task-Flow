@@ -16,7 +16,7 @@ const CustomToolbar = () => {
     const colors = tokens(theme.palette.mode);
 
     return (
-        <Box className="custom-toolbar" sx={{ background: colors.primary[900], color: colors.grey[100] }} ml={2} >
+        <Box className="custom-toolbar" sx={{display:'flex', background: colors.primary[900], color: colors.grey[100],height:'50px' }} ml={2} >
             <GridToolbarContainer sx={{gap:0}}>
                 <GridToolbarColumnsButton />
                 <GridToolbarFilterButton />
