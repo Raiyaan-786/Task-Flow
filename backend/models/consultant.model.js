@@ -1,17 +1,8 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema(
+const consultantSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
-    },
-    username: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    password: {
+    consultantName: {
       type: String,
       required: true,
     },
@@ -29,13 +20,31 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    role: {
+    username: {
       type: String,
-      enum: ["Admin", "Manager", "Employee" , "Inactive"],
-      default: "Employee",
+      required: true,
+      unique: true,
+    },
+    bankAccountNumber: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    bankIFSCCode: {
+      type: String,
+      required: true,
+    },
+    accountHolderName: {
+      type: String,
+      required: true,
+    },
+    signature: {
+      type: String,
+      default: '',
+      required: true,
     },
   },
   { timestamps: true }
 );
 
-export const User = mongoose.model("User", userSchema);
+export const Consultant = mongoose.model("Consultant", consultantSchema);

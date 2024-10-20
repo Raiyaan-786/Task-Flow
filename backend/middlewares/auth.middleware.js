@@ -19,7 +19,6 @@ export const verifyJWT = async (req, res, next) => {
     return res.status(400).json({ error: 'Invalid token' });
   }
 };
-
 // Role Authorization Middleware
 export const roleAuthorization = (...roles) => {
     return (req, res, next) => {

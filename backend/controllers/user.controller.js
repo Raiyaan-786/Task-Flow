@@ -1,21 +1,42 @@
 import { User } from '../models/user.model.js';
-import jwt from 'jsonwebtoken'
-import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
-// Register User
+// Register User (Customer registration)
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password , role} = req.body;
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: 'Name, email, and password are required' });
+    const { name, username, email, password, mobile, address ,role } = req.body;
+
+    // Validate required fields
+    if (!name || !username || !email || !password || !mobile || !address) {
+      return res.status(400).json({ message: 'All fields are required' });
     }
+
+    // Check if email or username already exists
+    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email or username already exists' });
+    }
+
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ name, email, password: hashedPassword, role});
+
+    // Create a new customer
+    const user = new User({
+      name,
+      username,
+      email,
+      password: hashedPassword,
+      mobile,
+      address,
+      role,
+    });
+
     await user.save();
-    res.status(201).json({ user ,message: 'Customer registered successfully' });
+    res.status(201).json({ user, message: 'Customer registered successfully' });
   } catch (err) {
     console.error('Error during registration:', err.message);
-    res.status(400).json({error: err.message , message: 'Data Failed'});
+    res.status(400).json({ error: err.message, message: 'Registration failed' });
   }
 };
 
@@ -24,18 +45,26 @@ const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
+
+    // Check if user exists
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
+
+    // Verify password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ error: 'Invalid credentials' });
     }
+
+    // Create JWT token
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: '1d' } 
+      { expiresIn: '1d' }
     );
+
+    // Return user without the password
     const { password: pwd, ...userWithoutPassword } = user._doc;
     return res.status(200).json({ user: userWithoutPassword, token });
   } catch (err) {
@@ -44,51 +73,76 @@ const loginUser = async (req, res) => {
   }
 };
 
+// Admin/Manager creating a user
 const createUser = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, username, email, password, mobile, address, role } = req.body;
 
-    // Ensure the role is valid and Admin is not creating a 'Customer'
-    const validRoles = ['Admin', 'Manager', 'User'];
+    // Validate the role
+    const validRoles = ['Admin', 'Manager', 'Employee'];
     if (!validRoles.includes(role)) {
       return res.status(400).json({ error: 'Invalid role specified' });
     }
-    // Check if email is already registered
-    const existingUser = await User.findOne({ email });
+
+    // Check if email or username already exists
+    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
-      return res.status(400).json({ error: 'Email already exists' });
+      return res.status(400).json({ error: 'Email or username already exists' });
     }
+
     // Create a new user
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       name,
+      username,
       email,
       password: hashedPassword,
-      role // Admin specifies the role
+      mobile,
+      address,
+      role // Admin/Manager specifies the role
     });
+
     await newUser.save();
     res.status(201).json({ message: `${role} created successfully`, user: newUser });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
-// Get all User 
+// Get single work
+const getUser = async (req, res) => {
+  try {
+    const { id } = req.params; // Extract the user ID from the request params
+
+    // Find the user by ID, selecting the relevant fields
+    const user = await User.findById(id, 'name email role mobile address username');
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.status(200).json({ user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+// Get all Users
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({}, 'name email role'); 
+    const users = await User.find({}, 'name email role mobile address username');
     res.status(200).json({ users });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
+// Update User Role
 const updateUserRole = async (req, res) => {
   try {
     const { id } = req.params;
     const { role } = req.body;
 
     // Ensure the role is valid
-    const validRoles = ['Admin', 'Manager', 'User'];
+    const validRoles = ['Admin', 'Manager', 'Employee' , 'Inactive'];
     if (!validRoles.includes(role)) {
       return res.status(400).json({ error: 'Invalid role specified' });
     }
@@ -100,7 +154,7 @@ const updateUserRole = async (req, res) => {
     }
 
     // Prevent Admin from downgrading their own role
-    if (user.id === req.user.id) {
+    if (user._id.toString() === req.user.id) {
       return res.status(403).json({ error: 'You cannot change your own role' });
     }
 
@@ -114,4 +168,4 @@ const updateUserRole = async (req, res) => {
   }
 };
 
-export { registerUser, loginUser , getAllUsers , updateUserRole ,createUser };
+export { registerUser, loginUser, createUser,getUser, getAllUsers, updateUserRole };

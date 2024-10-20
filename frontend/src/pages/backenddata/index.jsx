@@ -1,3 +1,30 @@
+import React from 'react'
+import CreateUser from './CreateUser'
+import DisplayUsers from './DisplayUser'
+import CreateConsultant from './CreateConsultant'
+import DisplayConsultants from './DisplayConsultant'
+import CreateCustomer from './CreateCustomer'
+import DisplayCustomers from './DisplayCustomer'
+import CreateWork from './CreateWork'
+import DisplayWork from './DisplayWork'
+
+const Backend = () => {
+  return (
+    <div>
+      {/* <CreateUser/> */}
+      {/* <DisplayUsers/> */}
+      {/* <CreateConsultant/> */}
+      {/* <DisplayConsultants/> */}
+      {/* <CreateCustomer/> */}
+      {/* <DisplayCustomers/> */}
+      <CreateWork/>
+      <DisplayWork/>
+    </div>
+  )
+}
+
+export default Backend
+
 // import React, { useEffect, useState } from 'react'
 // import API from '../../api/api';
 
@@ -16,7 +43,7 @@
 //         setLoading(false);
 //         return;
 //       }
-
+//  Changes done
 //       try {
 //         const response = await API.get('/auth/users', {
 //           headers: {
@@ -231,64 +258,64 @@
 // export default CreateTask;
 
 /// src/components/DisplayTasks.jsx
-import React, { useEffect, useState } from 'react';
-import API from '../../api/api'; // Make sure to have your API instance set up correctly
+// import React, { useEffect, useState } from 'react';
+// import API from '../../api/api'; // Make sure to have your API instance set up correctly
 
-const DisplayTasks = () => {
-  const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+// const DisplayTasks = () => {
+//   const [tasks, setTasks] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState('');
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      const token = localStorage.getItem('token');
-      try {
-        const response = await API.get('/tasks', {
-          headers: {
-            Authorization: `Bearer ${token}`, // Attach token for authentication
-          },
-        });
-        setTasks(response.data.tasks); // Assuming tasks are returned in this structure
-        setLoading(false);
-      } catch (err) {
-        setError(err.response?.data?.error || 'Failed to fetch tasks');
-        setLoading(false);
-      }
-    };
+//   useEffect(() => {
+//     const fetchTasks = async () => {
+//       const token = localStorage.getItem('token');
+//       try {
+//         const response = await API.get('/tasks', {
+//           headers: {
+//             Authorization: `Bearer ${token}`, // Attach token for authentication
+//           },
+//         });
+//         setTasks(response.data.tasks); // Assuming tasks are returned in this structure
+//         setLoading(false);
+//       } catch (err) {
+//         setError(err.response?.data?.error || 'Failed to fetch tasks');
+//         setLoading(false);
+//       }
+//     };
 
-    fetchTasks();
-  }, []);
+//     fetchTasks();
+//   }, []);
 
-  if (loading) {
-    return <p>Loading tasks...</p>;
-  }
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
+//   if (loading) {
+//     return <p>Loading tasks...</p>;
+//   }
+//   if (error) {
+//     return <p>Error: {error}</p>;
+//   }
 
-  return (
-    <div>
-      <h1>Task List</h1>
-      <table border="1" cellPadding="10" cellSpacing="0">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Assigned To</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tasks.map((task) => (
-            <tr key={task._id}>
-              <td>{task.title}</td>
-              <td>{task.description}</td>
-              <td>{task.assignedTo?.name} ({task.assignedTo?.email})</td> {/* Optional chaining to prevent errors */}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-};
+//   return (
+//     <div>
+//       <h1>Task List</h1>
+//       <table border="1" cellPadding="10" cellSpacing="0">
+//         <thead>
+//           <tr>
+//             <th>Title</th>
+//             <th>Description</th>
+//             <th>Assigned To</th>
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {tasks.map((task) => (
+//             <tr key={task._id}>
+//               <td>{task.title}</td>
+//               <td>{task.description}</td>
+//               <td>{task.assignedTo?.name} ({task.assignedTo?.email})</td> {/* Optional chaining to prevent errors */}
+//             </tr>
+//           ))}
+//         </tbody>
+//       </table>
+//     </div>
+//   );
+// };
 
-export default DisplayTasks;
+// export default DisplayTasks;
