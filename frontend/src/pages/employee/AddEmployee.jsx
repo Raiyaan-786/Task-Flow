@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { Box, Button, TextField, FormControl, Grid2, MenuItem, Select, InputLabel } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
+import API from '../../api/api';
 
 const AddEmployee = () => {
     // Individual state for each field
-    const [employeeName, setEmployeeName] = useState('');
+    const [employeeName, setEmployeeName] = useState('' );
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
@@ -13,7 +14,41 @@ const AddEmployee = () => {
     const [address, setAddress] = useState('');
     const [assignRole, setAssignRole] = useState('');
 
+    const [success, setSuccess] = useState('');
+    const [error, setError] = useState('');
+
+    // Create user function (formerly createUser)
+    const createUser = async () => {
+        const token = localStorage.getItem('token');
+        try {
+        const response = await API.post('/auth/users',{
+            name: employeeName,
+            username: username,
+            email: email,
+            password: password,
+            mobile: mobile,
+            address: address,
+            role: assignRole,
+        }, {
+            headers: {
+            Authorization: `Bearer ${token}`,
+            },
+        });
+        setSuccess(response.data.message);
+        setError('');
+        console.log("User created");
+        } catch (err) {
+        console.log(err);
+        setError(err.response?.data?.error || 'Failed to create user');
+        setSuccess('');
+        }
+    };
+    console.log(success);
+    console.log(error);
+    // Form submission handler
+    
     const handleFormSubmit = (values) => {
+        createUser();
         console.log(values);
     };
 

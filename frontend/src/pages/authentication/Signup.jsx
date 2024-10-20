@@ -9,9 +9,9 @@ const Signup = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode)
 
-  const [name,setName]=useState("");
-  const [email,setEmail]=useState("");
-  const [password,setPassword]=useState("");
+  const [name,setName] = useState("");
+  const [email,setEmail] = useState("");
+  const [password,setPassword] = useState("");
 
   //paper style
   const paperStyle = { padding: '40px 30px', width: 350, margin: '50px auto'}
