@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import API from '../../api/api'; // Adjust the import path based on your project structure
+import API from '../../api/api'; 
 
 const CreateConsultant = () => {
   const [newConsultant, setNewConsultant] = useState({
@@ -11,7 +11,7 @@ const CreateConsultant = () => {
     bankAccountNumber: '',
     bankIFSCCode: '',
     accountHolderName: '',
-    signature: '', // Assuming you have a way to handle file uploads if needed
+    signature: '', 
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -52,7 +52,7 @@ const CreateConsultant = () => {
 
   return (
     <form onSubmit={createConsultant}>
-      <h2>Create Consultant</h2>
+      <h2>Create Consultant Data</h2>
       <input
         type="text"
         name="consultantName"
