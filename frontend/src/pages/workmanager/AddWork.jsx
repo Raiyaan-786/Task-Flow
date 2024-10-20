@@ -6,6 +6,21 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { mockDataManagers } from "../../data/mockData";
 
 const AddWork = () => {
+    const [customer, setCustomer] = useState('');
+    const [billingName, setBillingName] = useState('');
+    const [email, setEmail] = useState('');
+    const [mobile, setMobile] = useState('');
+    const [pan, setPan] = useState('');
+    const [address, setAddress] = useState('');
+    const [service, setService] = useState('');
+    const [work, setWork] = useState('');
+    const [employee, setEmployee] = useState('');
+    const [month, setMonth] = useState('');
+    const [quarter, setQuarter] = useState('');
+    const [financialYear, setFinancialYear] = useState('');
+    const [price, setPrice] = useState('');
+    const [quantity, setQuantity] = useState('');
+    const [discount, setDiscount] = useState('');
     const [open, setOpen] = useState(false);
     const isNonMobile = useMediaQuery("(min-width:600px)");
 
@@ -22,7 +37,23 @@ const AddWork = () => {
             <Box p={2} m="20px" height={'67vh'} overflow={"auto"}>
                 <Formik
                     onSubmit={handleFormSubmit}
-                    initialValues={initialValues}
+                    initialValues={{
+                        customer,
+                        billingName,
+                        email,
+                        mobile,
+                        pan,
+                        address,
+                        service,
+                        work,
+                        employee,
+                        month,
+                        quarter,
+                        financialYear,
+                        price,
+                        quantity,
+                        discount
+                    }}
                     validationSchema={checkoutSchema}
                 >
                     {({
@@ -52,7 +83,10 @@ const AddWork = () => {
                                     name="customer"
                                     getOptionLabel={(option) => option.label}
                                     onBlur={handleBlur}
-                                    onChange={(e, value) => setFieldValue("customer", value !== null ? value.label : initialValues.customer)}
+                                    onChange={(e, value) => {
+                                        setFieldValue("customer", value !== null ? value.label : "");
+                                        setCustomer(value !== null ? value.label : "");
+                                    }}
                                     renderInput={(params) => (
                                         <TextField
                                             variant="outlined"
@@ -73,7 +107,10 @@ const AddWork = () => {
                                     name="billingName"
                                     getOptionLabel={(option) => option.label}
                                     onBlur={handleBlur}
-                                    onChange={(e, value) => setFieldValue("billingName", value !== null ? value.label : initialValues.billingName)}
+                                    onChange={(e, value) => {
+                                        setFieldValue("billingName", value !== null ? value.label : "");
+                                        setBillingName(value !== null ? value.label : "");
+                                    }}
                                     renderInput={(params) => (
                                         <TextField
                                             variant="outlined"
@@ -93,7 +130,10 @@ const AddWork = () => {
                                     type="email"
                                     label="Email"
                                     onBlur={handleBlur}
-                                    onChange={handleChange}
+                                    onChange={(e) => {
+                                        handleChange(e);
+                                        setEmail(e.target.value);
+                                    }}
                                     value={values.email}
                                     name="email"
                                     error={!!touched.email && !!errors.email}
@@ -107,7 +147,10 @@ const AddWork = () => {
                                     type="text"
                                     label="Mobile"
                                     onBlur={handleBlur}
-                                    onChange={handleChange}
+                                    onChange={(e) => {
+                                        handleChange(e);
+                                        setMobile(e.target.value);
+                                    }}
                                     value={values.mobile}
                                     name="mobile"
                                     error={!!touched.mobile && !!errors.mobile}
@@ -121,7 +164,10 @@ const AddWork = () => {
                                     type="text"
                                     label="PAN"
                                     onBlur={handleBlur}
-                                    onChange={handleChange}
+                                    onChange={(e) => {
+                                        handleChange(e);
+                                        setPan(e.target.value);
+                                    }}
                                     value={values.pan}
                                     name="pan"
                                     error={!!touched.pan && !!errors.pan}
@@ -135,7 +181,10 @@ const AddWork = () => {
                                     type="text"
                                     label="Address"
                                     onBlur={handleBlur}
-                                    onChange={handleChange}
+                                    onChange={(e) => {
+                                        handleChange(e);
+                                        setAddress(e.target.value);
+                                    }}
                                     value={values.address}
                                     name="address"
                                     error={!!touched.address && !!errors.address}
@@ -150,7 +199,10 @@ const AddWork = () => {
                                     name="service"
                                     getOptionLabel={(option) => option.label}
                                     onBlur={handleBlur}
-                                    onChange={(e, value) => setFieldValue("service", value !== null ? value.label : initialValues.service)}
+                                    onChange={(e, value) => {
+                                        setFieldValue("service", value !== null ? value.label : "");
+                                        setService(value !== null ? value.label : "");
+                                    }}
                                     renderInput={(params) => (
                                         <TextField
                                             variant="outlined"
@@ -171,7 +223,10 @@ const AddWork = () => {
                                     name="work"
                                     getOptionLabel={(option) => option.label}
                                     onBlur={handleBlur}
-                                    onChange={(e, value) => setFieldValue("work", value !== null ? value.label : initialValues.work)}
+                                    onChange={(e,value) => {
+                                        setFieldValue("work", value !== null ? value.label : "");
+                                        setWork(value !== null ? value.label : "");
+                                    }}
                                     renderInput={(params) => (
                                         <TextField
                                             variant="outlined"
@@ -192,7 +247,10 @@ const AddWork = () => {
                                     name="employee"
                                     getOptionLabel={(option) => option.label}
                                     onBlur={handleBlur}
-                                    onChange={(e, value) => setFieldValue("employee", value !== null ? value.label : initialValues.employee)}
+                                    onChange={(e,value) => {
+                                        setFieldValue("employee", value !== null ? value.label : "");
+                                        setEmployee(value !== null ? value.label : "");
+                                    }}
                                     renderInput={(params) => (
                                         <TextField
                                             variant="outlined"
@@ -213,7 +271,10 @@ const AddWork = () => {
                                     name="month"
                                     getOptionLabel={(option) => option.label}
                                     onBlur={handleBlur}
-                                    onChange={(e, value) => setFieldValue("month", value !== null ? value.label : initialValues.month)}
+                                    onChange={(e,value) => {
+                                        setFieldValue("month", value !== null ? value.label : "");
+                                        setMonth(value !== null ? value.label : "");
+                                    }}
                                     renderInput={(params) => (
                                         <TextField
                                             variant="outlined"
@@ -234,7 +295,10 @@ const AddWork = () => {
                                     name="quarter"
                                     getOptionLabel={(option) => option.label}
                                     onBlur={handleBlur}
-                                    onChange={(e, value) => setFieldValue("quarter", value !== null ? value.label : initialValues.quarter)}
+                                    onChange={(e,value) => {
+                                        setFieldValue("quarter", value !== null ? value.label : "");
+                                        setQuarter(value !== null ? value.label : "");
+                                    }}
                                     renderInput={(params) => (
                                         <TextField
                                             variant="outlined"
@@ -255,7 +319,10 @@ const AddWork = () => {
                                     name="financialYear"
                                     getOptionLabel={(option) => option.label}
                                     onBlur={handleBlur}
-                                    onChange={(e, value) => setFieldValue("financialYear", value !== null ? value.label : initialValues.financialYear)}
+                                    onChange={(e,value) => {
+                                        setFieldValue("financialYear", value !== null ? value.label : "");
+                                        setFinancialYear(value !== null ? value.label : "");
+                                    }}
                                     renderInput={(params) => (
                                         <TextField
                                             variant="outlined"
@@ -275,7 +342,10 @@ const AddWork = () => {
                                     type="text"
                                     label="Price"
                                     onBlur={handleBlur}
-                                    onChange={handleChange}
+                                    onChange={(e) => {
+                                        handleChange(e);
+                                        setPrice(e.target.value);
+                                    }}
                                     value={values.price}
                                     name="price"
                                     error={!!touched.price && !!errors.price}
@@ -289,7 +359,10 @@ const AddWork = () => {
                                     type="text"
                                     label="Quantity"
                                     onBlur={handleBlur}
-                                    onChange={handleChange}
+                                    onChange={(e) => {
+                                        handleChange(e);
+                                        setQuantity(e.target.value);
+                                    }}
                                     value={values.quantity}
                                     name="quantity"
                                     error={!!touched.quantity && !!errors.quantity}
@@ -303,7 +376,10 @@ const AddWork = () => {
                                     type="text"
                                     label="Discount"
                                     onBlur={handleBlur}
-                                    onChange={handleChange}
+                                    onChange={(e) => {
+                                        handleChange(e);
+                                        setDiscount(e.target.value);
+                                    }}
                                     value={values.discount}
                                     name="discount"
                                     error={!!touched.discount && !!errors.discount}
@@ -358,23 +434,5 @@ const checkoutSchema = yup.object().shape({
     quantity: yup.number().required("Quantity is required"),
     discount: yup.number().optional(),
 });
-
-const initialValues = {
-    customer: "",
-    billingName: "",
-    email: "",
-    mobile: "",
-    pan: "",
-    address: "",
-    service: "",
-    work: "",
-    employee: "",
-    month: "",
-    quarter: "",
-    financialYear: "",
-    price: "",
-    quantity: "",
-    discount: "",
-};
 
 export default AddWork;

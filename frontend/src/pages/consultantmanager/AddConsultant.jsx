@@ -1,10 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Button, Grid2, TextField } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 const AddConsultant = () => {
+
+   const [consultantName,setConsultantName]=useState("");
+   const [email,setEmail]=useState("")
+   const [mobile,setMobile]=useState("")
+   const [address,setAddress]=useState("")
+   const [username,setUsername]=useState("")
+   const [bankAccountNumber,setBankAccountNumber]=useState("")
+   const [ifscCode,setIfscCode]=useState("")
+   const [accountHolderName,setAccountHolderName]=useState("")
+   const [signature,setSignature]=useState(null) // For file uploads
+
     const isNonMobile = useMediaQuery("(min-width:600px)");
 
     const handleFormSubmit = (values) => {
@@ -14,8 +25,18 @@ const AddConsultant = () => {
     return (
         <Box p={2} m="20px" height={'67vh'} overflow={'auto'}>
             <Formik
+                 initialValues={{
+                    consultantName,
+                    email,
+                    mobile,
+                    address,
+                    username,
+                    bankAccountNumber,
+                    ifscCode,
+                    accountHolderName,
+                    signature,
+                }}
                 onSubmit={handleFormSubmit}
-                initialValues={initialValues}
                 validationSchema={checkoutSchema}
             >
                 {({
@@ -41,7 +62,10 @@ const AddConsultant = () => {
                                         fullWidth
                                         variant="outlined"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                        onChange={(e)=>{ 
+                                            handleChange(e) 
+                                            setConsultantName(e.target.value)
+                                        }}
                                         value={values.consultantName}
                                         name="consultantName"
                                         error={!!touched.consultantName && !!errors.consultantName}
@@ -59,7 +83,10 @@ const AddConsultant = () => {
                                         fullWidth
                                         variant="outlined"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                        onChange={(e)=>{
+                                            handleChange(e);
+                                            setEmail(e.target.value)}
+                                        }
                                         value={values.email}
                                         name="email"
                                         error={!!touched.email && !!errors.email}
@@ -77,7 +104,10 @@ const AddConsultant = () => {
                                         fullWidth
                                         variant="outlined"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                        onChange={(e)=>{
+                                            handleChange(e);
+                                            setMobile(e.target.value)
+                                        }}
                                         value={values.mobile}
                                         name="mobile"
                                         error={!!touched.mobile && !!errors.mobile}
@@ -95,7 +125,9 @@ const AddConsultant = () => {
                                         fullWidth
                                         variant="outlined"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                        onChange={(e)=>{
+                                            handleChange(e);
+                                            setAddress(e.target.value)}}
                                         value={values.address}
                                         name="address"
                                         error={!!touched.address && !!errors.address}
@@ -113,7 +145,9 @@ const AddConsultant = () => {
                                         fullWidth
                                         variant="outlined"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                        onChange={(e)=>{
+                                            handleChange(e);
+                                            setUsername(e.target.value)}}
                                         value={values.username}
                                         name="username"
                                         error={!!touched.username && !!errors.username}
@@ -131,7 +165,9 @@ const AddConsultant = () => {
                                         fullWidth
                                         variant="outlined"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                        onChange={(e)=>{
+                                            handleChange(e);
+                                            setBankAccountNumber(e.target.value)}}
                                         value={values.bankAccountNumber}
                                         name="bankAccountNumber"
                                         error={!!touched.bankAccountNumber && !!errors.bankAccountNumber}
@@ -149,7 +185,9 @@ const AddConsultant = () => {
                                         fullWidth
                                         variant="outlined"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                        onChange={(e)=>{
+                                            handleChange(e);
+                                            setIfscCode(e.target.value)}}
                                         value={values.ifscCode}
                                         name="ifscCode"
                                         error={!!touched.ifscCode && !!errors.ifscCode}
@@ -167,7 +205,9 @@ const AddConsultant = () => {
                                         fullWidth
                                         variant="outlined"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                        onChange={(e)=>{
+                                            handleChange(e);
+                                            setAccountHolderName(e.target.value)}}
                                         value={values.accountHolderName}
                                         name="accountHolderName"
                                         error={!!touched.accountHolderName && !!errors.accountHolderName}
@@ -184,7 +224,9 @@ const AddConsultant = () => {
                                         type="file"
                                         accept="image/jpeg"
                                         onChange={(event) => {
+                                            // handleChange(e);
                                             setFieldValue("signature", event.currentTarget.files[0]);
+                                            setSignature(event.target.files)
                                         }}
                                         onBlur={handleBlur}
                                         style={{ width: "100%" }}
@@ -226,17 +268,5 @@ const checkoutSchema = yup.object().shape({
         (value) => value && value.type === "image/jpeg"
     ),
 });
-
-const initialValues = {
-    consultantName: "",
-    email: "",
-    mobile: "",
-    address: "",
-    username: "",
-    bankAccountNumber: "",
-    ifscCode: "",
-    accountHolderName: "",
-    signature: null,  // For file uploads
-};
 
 export default AddConsultant;

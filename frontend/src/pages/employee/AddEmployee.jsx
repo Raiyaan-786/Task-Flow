@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
-import { Box, Button, TextField, Checkbox, FormControlLabel, Grid2, MenuItem, Select, InputLabel, FormControl } from "@mui/material";
+import { Box, Button, TextField, FormControl, Grid2, MenuItem, Select, InputLabel } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 
 const AddEmployee = () => {
+    // Individual state for each field
+    const [employeeName, setEmployeeName] = useState('');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
+    const [mobile, setMobile] = useState('');
+    const [address, setAddress] = useState('');
     const [assignRole, setAssignRole] = useState('');
 
     const handleFormSubmit = (values) => {
@@ -13,7 +20,15 @@ const AddEmployee = () => {
     return (
         <Box p={2} m="20px" height={'67vh'} overflow={'auto'}>
             <Formik
-                initialValues={initialValues}
+                initialValues={{
+                    employeeName,
+                    username,
+                    password,
+                    email,
+                    mobile,
+                    address,
+                    assignRole,
+                }}
                 validationSchema={validationSchema}
                 onSubmit={handleFormSubmit}
             >
@@ -39,7 +54,10 @@ const AddEmployee = () => {
                                         fullWidth
                                         variant="outlined"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                        onChange={(e) => {
+                                            handleChange(e);
+                                            setEmployeeName(e.target.value);
+                                        }}
                                         value={values.employeeName}
                                         name="employeeName"
                                         error={!!touched.employeeName && !!errors.employeeName}
@@ -57,7 +75,10 @@ const AddEmployee = () => {
                                         fullWidth
                                         variant="outlined"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                        onChange={(e) => {
+                                            handleChange(e);
+                                            setUsername(e.target.value);
+                                        }}
                                         value={values.username}
                                         name="username"
                                         error={!!touched.username && !!errors.username}
@@ -76,7 +97,10 @@ const AddEmployee = () => {
                                         variant="outlined"
                                         type="password"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                        onChange={(e) => {
+                                            handleChange(e);
+                                            setPassword(e.target.value);
+                                        }}
                                         value={values.password}
                                         name="password"
                                         error={!!touched.password && !!errors.password}
@@ -94,7 +118,10 @@ const AddEmployee = () => {
                                         fullWidth
                                         variant="outlined"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                        onChange={(e) => {
+                                            handleChange(e);
+                                            setEmail(e.target.value);
+                                        }}
                                         value={values.email}
                                         name="email"
                                         error={!!touched.email && !!errors.email}
@@ -112,7 +139,10 @@ const AddEmployee = () => {
                                         fullWidth
                                         variant="outlined"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                        onChange={(e) => {
+                                            handleChange(e);
+                                            setMobile(e.target.value);
+                                        }}
                                         value={values.mobile}
                                         name="mobile"
                                         inputProps={{
@@ -134,7 +164,10 @@ const AddEmployee = () => {
                                         fullWidth
                                         variant="outlined"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                        onChange={(e) => {
+                                            handleChange(e);
+                                            setAddress(e.target.value);
+                                        }}
                                         value={values.address}
                                         name="address"
                                         error={!!touched.address && !!errors.address}
@@ -152,7 +185,10 @@ const AddEmployee = () => {
                                         <Select
                                             name="assignRole"
                                             value={values.assignRole}
-                                            onChange={handleChange}
+                                            onChange={(e) => {
+                                                handleChange(e);
+                                                setAssignRole(e.target.value);
+                                            }}
                                             label="Role"
                                             error={!!touched.assignRole && !!errors.assignRole}
                                         >
@@ -168,7 +204,7 @@ const AddEmployee = () => {
                                 </Grid2>
 
                                 {/* Submit Button */}
-                                <Grid2 >
+                                <Grid2 size={12}>
                                     <Box display="flex" justifyContent="end" mt="20px">
                                         <Button type="submit" variant="contained">
                                             Submit
@@ -194,16 +230,5 @@ const validationSchema = yup.object().shape({
     address: yup.string().required("Address is required"),
     assignRole: yup.string().required("Assign Role is required"),
 });
-
-// Initial form values
-const initialValues = {
-    employeeName: "",
-    username: "",
-    password: "",
-    email: "",
-    mobile: "",
-    address: "",
-    assignRole: "",
-};
 
 export default AddEmployee;

@@ -4,6 +4,17 @@ import { Formik } from "formik";
 import * as yup from "yup";
 
 const AddCustomer = () => {
+    
+    const [customerName,setCustomerName]=useState("");
+    const [customerCode,setCustomerCode]=useState("");
+    const [billingName,setBillingName]=useState("");
+    const [companyFirmName,setCompanyFirmName]=useState("");
+    const [email,setEmail]=useState("");
+    const [whatsappNo,setWhatsappNo]=useState("");
+    const [mobile,setMobile]=useState("");
+    const [pan,setPan]=useState("");
+    const [address,setAddress]=useState("");
+    const [contactPerson,setContactPerson]=useState("");
     const [isWhatsappSame, setIsWhatsappSame] = useState(false);
 
     const handleFormSubmit = (values) => {
@@ -13,7 +24,18 @@ const AddCustomer = () => {
     return (
         <Box p={2} m="20px" height={'67vh'} overflow={'auto'}>
             <Formik
-                initialValues={initialValues}
+                initialValues={{
+                    customerName,
+                    customerCode,
+                    billingName,
+                    companyFirmName,
+                    email,
+                    whatsappNo,
+                    mobile,
+                    pan,
+                    address,
+                    contactPerson
+                }}
                 validationSchema={checkoutSchema}
                 onSubmit={handleFormSubmit}
             >
@@ -39,7 +61,9 @@ const AddCustomer = () => {
                                         fullWidth
                                         variant="outlined"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                        onChange={(e)=>{
+                                            handleChange(e);
+                                            setCustomerName(e.target.value)}}
                                         value={values.customerName}
                                         name="customerName"
                                         error={!!touched.customerName && !!errors.customerName}
@@ -57,7 +81,9 @@ const AddCustomer = () => {
                                         fullWidth
                                         variant="outlined"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                        onChange={(e)=>{
+                                            handleChange(e);
+                                            setCustomerCode(e.target.value)}}
                                         value={values.customerCode}
                                         name="customerCode"
                                         error={!!touched.customerCode && !!errors.customerCode}
@@ -75,7 +101,9 @@ const AddCustomer = () => {
                                         fullWidth
                                         variant="outlined"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                        onChange={(e)=>{
+                                            handleChange(e);
+                                            setBillingName(e.target.value)}}
                                         value={values.billingName}
                                         name="billingName"
                                         error={!!touched.billingName && !!errors.billingName}
@@ -93,7 +121,9 @@ const AddCustomer = () => {
                                         fullWidth
                                         variant="outlined"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                        onChange={(e)=>{
+                                            handleChange(e);
+                                            setCompanyFirmName(e.target.value)}}
                                         value={values.companyFirmName}
                                         name="companyFirmName"
                                         error={!!touched.companyFirmName && !!errors.companyFirmName}
@@ -111,7 +141,9 @@ const AddCustomer = () => {
                                         fullWidth
                                         variant="outlined"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                        onChange={(e)=>{
+                                            handleChange(e);
+                                            setEmail(e.target.value)}}
                                         value={values.email}
                                         name="email"
                                         error={!!touched.email && !!errors.email}
@@ -179,7 +211,9 @@ const AddCustomer = () => {
                                         fullWidth
                                         variant="outlined"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                       onChange={(e)=>{
+                                            handleChange(e);
+                                            setWhatsappNo(e.target.value)}}
                                         value={values.whatsappNo}
                                         name="whatsappNo"
                                         inputProps={{
@@ -201,7 +235,9 @@ const AddCustomer = () => {
                                         fullWidth
                                         variant="outlined"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                        onChange={(e)=>{
+                                            handleChange(e);
+                                            setPan(e.target.value)}}
                                         value={values.pan}
                                         name="pan"
                                         error={!!touched.pan && !!errors.pan}
@@ -219,7 +255,9 @@ const AddCustomer = () => {
                                         fullWidth
                                         variant="outlined"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                        onChange={(e)=>{
+                                            handleChange(e);
+                                            setAddress(e.target.value)}}
                                         value={values.address}
                                         name="address"
                                         error={!!touched.address && !!errors.address}
@@ -237,7 +275,9 @@ const AddCustomer = () => {
                                         fullWidth
                                         variant="outlined"
                                         onBlur={handleBlur}
-                                        onChange={handleChange}
+                                        onChange={(e)=>{
+                                            handleChange(e);
+                                            setContactPerson(e.target.value)}}
                                         value={values.contactPerson}
                                         name="contactPerson"
                                         error={!!touched.contactPerson && !!errors.contactPerson}
@@ -275,19 +315,5 @@ const checkoutSchema = yup.object().shape({
     address: yup.string().required("Address is required"),
     contactPerson: yup.string().required("Contact Person is required"),
 });
-
-// Initial form values
-const initialValues = {
-    customerName: "",
-    customerCode: "",
-    billingName: "",
-    companyFirmName: "",
-    email: "",
-    whatsappNo: "",
-    mobile: "",
-    pan: "",
-    address: "",
-    contactPerson: "",
-};
 
 export default AddCustomer;
