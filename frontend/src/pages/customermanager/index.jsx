@@ -5,6 +5,7 @@ import { useTheme } from '@emotion/react';
 import { tokens } from '../../theme';
 import DuplicateCustomer from './DuplicateCustomer';
 import AddCustomer from './AddCustomer';
+import CustomerList from './CustomerList';
 
 
 
@@ -74,7 +75,7 @@ const CustomerManager = () => {
                     </Box>
 
                     <Box display={selectedTab === 2 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
-                       {/* <ConsultantList/> */}hello
+                       <CustomerList/>
                     </Box>
 
                     <Box display={selectedTab === 3 ? 'block' : 'none'} flexGrow={1} height={'100%'} >

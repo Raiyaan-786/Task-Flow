@@ -5,6 +5,7 @@ import { useTheme } from '@emotion/react';
 import { tokens } from '../../theme';
 import AddEmployee from './AddEmployee';
 import AddEmployeeWork from './AddEmployeeWork';
+import EmployeeList from './EmployeeList';
 // import DuplicateCustomer from './DuplicateCustomer';
 
 
@@ -69,7 +70,7 @@ const Employee = () => {
                     </Box>
 
                     <Box display={selectedTab === 1 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
-                       {/* <ConsultantList/> */}hello
+                       <EmployeeList/>
                     </Box>
 
                     <Box display={selectedTab === 2 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
