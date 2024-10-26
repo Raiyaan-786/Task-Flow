@@ -83,6 +83,7 @@ const DisplayWork = () => {
     console.log("Customer ID:", customerId, "Found Customer:", customer); // Log the search process
     return customer ? customer.customerName : 'Unknown Customer'; // Return customer name or fallback
   };
+  
   return (
     <div>
       <h1>Work List</h1>
@@ -102,6 +103,7 @@ const DisplayWork = () => {
               <th>Price</th>
               <th>Quantity</th>
               <th>Discount</th>
+              <th>Current Status</th> {/* Added Current Status column */}
             </tr>
           </thead>
           <tbody>
@@ -119,6 +121,7 @@ const DisplayWork = () => {
                 <td>{work.price}</td>
                 <td>{work.quantity}</td>
                 <td>{work.discount}</td>
+                <td>{work.currentStatus || '-'}</td> {/* Display current status */}
               </tr>
             ))}
           </tbody>

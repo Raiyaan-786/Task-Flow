@@ -11,14 +11,14 @@ import DisplayWork from './DisplayWork'
 const Backend = () => {
   return (
     <div>
-      <CreateUser/>
+      {/* <CreateUser/> */}
       {/* <DisplayUsers/> */}
       {/* <CreateConsultant/> */}
       {/* <DisplayConsultants/> */}
       {/* <CreateCustomer/> */}
       {/* <DisplayCustomers/> */}
-      {/* <CreateWork/> */}
-      {/* <DisplayWork/> */}
+      <CreateWork/>
+      <DisplayWork/>
     </div>
   )
 }

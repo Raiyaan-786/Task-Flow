@@ -3,7 +3,7 @@ import { User } from '../models/user.model.js';
 
 const addWork = async (req, res) => {
     try {
-      const { customer, billingName, email, mobile, pan, address, service, workType, assignedEmployee, month, quarter, financialYear, price, quantity, discount , currentStatus = "assigned" } = req.body;
+      const { customer, billingName, email, mobile, pan, address, service, workType, assignedEmployee, month, quarter, financialYear, price, quantity, discount , currentStatus = "Assigned" } = req.body;
   
       const employeeExists = await User.findById(assignedEmployee);
       if (!employeeExists || (employeeExists.role !== 'Manager' && employeeExists.role !== 'Employee')) {

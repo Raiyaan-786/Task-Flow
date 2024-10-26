@@ -67,6 +67,7 @@ const workSchema = new mongoose.Schema(
     currentStatus: {
       type: String,
       enum: [
+        "Assigned",
         "Picked Up",
         "Customer Verification",
         "Ready for Checking",
@@ -75,7 +76,7 @@ const workSchema = new mongoose.Schema(
         "Cancel",
         "Completed"
       ],
-      default: "assigned",
+      default: "Assigned",
       required: true,
     },
   },
