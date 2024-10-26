@@ -64,6 +64,20 @@ const workSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    currentStatus: {
+      type: String,
+      enum: [
+        "Picked Up",
+        "Customer Verification",
+        "Ready for Checking",
+        "Hold Work",
+        "EVC Pending",
+        "Cancel",
+        "Completed"
+      ],
+      default: "assigned",
+      required: true,
+    },
   },
   { timestamps: true }
 );
