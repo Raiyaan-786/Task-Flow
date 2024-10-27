@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import API from '../../api/api'; // Adjust the import path according to your project structure
-
+import './WorkDashboard.css';
 
 const WorkSummary = () => {
   const [workSummary, setWorkSummary] = useState([]);
