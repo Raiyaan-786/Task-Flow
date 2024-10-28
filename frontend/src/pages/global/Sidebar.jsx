@@ -54,7 +54,7 @@ const Sidebar = ({isCollapsed}) => {
         <Menu iconShape="square">
           {/* LOGO AND MENU ICON */}
           <MenuItem
-            icon={isCollapsed ? <img height={'28px'} width={'32px'} src="logoicon1.png"/> : undefined}
+            icon={isCollapsed ? <img height={'28px'} width={'32px'} src="logoicon.svg"/> : undefined}
             style={{
               margin: "10px 0 20px 0",
               color: colors.grey[100],
@@ -67,11 +67,10 @@ const Sidebar = ({isCollapsed}) => {
                 alignItems="center"
                 ml="15px"
               >
-                <img height={'28px'} width={'32px'} src="/logoicon1.png" alt="brandlogo" />
+                <img height={'28px'} width={'32px'} src="/logoicon.svg" alt="brandlogo" />
                 <Typography ml={1} variant="h3" color={colors.grey[100]} fontWeight={'bold'}>
-                  deskter
+                  TASK-FLOW
                 </Typography>
-                <Typography mt={1} varient='h6' color={colors.grey[100]} >.cloud</Typography>
               </Box>
             )}
           </MenuItem>
@@ -83,7 +82,7 @@ const Sidebar = ({isCollapsed}) => {
                   alt="profile-user"
                   width="100px"
                   height="100px"
-                  src="/profileimg.png"
+                  src="/profileimg1.jpg"
                   style={{ cursor: "pointer", borderRadius: "50%" }}
                 />
               </Box>
@@ -94,7 +93,7 @@ const Sidebar = ({isCollapsed}) => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  Inzamam
+                  John Doe
                 </Typography>
                 <Typography variant="h6" color={colors.teal[500]}>
                   Admin
@@ -119,21 +118,21 @@ const Sidebar = ({isCollapsed}) => {
               Manage
             </Typography>
             <Item
-              title="Work Manager"
+              title="Work"
               to="/workmanager"
               icon={<WorkOutlineOutlined/>}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="Customer Manager"
+              title="Customer"
               to="/customermanager"
               icon={<GroupOutlined/>}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="Consultant Manager"
+              title="Consultant"
               to="/consultantmanager"
               icon={<SupervisorAccountOutlined/>}
               selected={selected}
