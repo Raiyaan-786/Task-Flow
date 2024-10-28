@@ -23,6 +23,7 @@ import workRoutes from './routes/work.routes.js'
 import customerRoutes from './routes/customer.routes.js'
 import consultantRoutes from './routes/consultant.routes.js'
 import dashboardRoutes from './routes/dashboard.routes.js'
+import turnoverRoutes from './routes/turnover.routes.js'
 
 app.use('/api/auth',userRoutes);
 app.use('/api' , taskRoutes);
@@ -30,5 +31,6 @@ app.use('/api' , workRoutes);
 app.use('/api' , customerRoutes);
 app.use('/api' , consultantRoutes);
 app.use('/api' , dashboardRoutes);
+app.use('/api' , turnoverRoutes);
 
 export { app } ;
