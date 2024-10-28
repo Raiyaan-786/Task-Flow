@@ -7,6 +7,7 @@ import { styled } from '@mui/system';
 import MainDashboard from './MainDashboard';
 import EmployeeDashboard from './EmployeeDashboard'
 import WorkDashboard from './WorkDashboard';
+import CustomerDashboard from './CustomerDashboard';
 
 const RoundedTabs = styled(Tabs)({
     padding: '10px', 
@@ -92,9 +93,7 @@ const Dashboard = () => {
                     </Box>
 
                     <Box display={selectedTab === 3 ? 'block' : 'none'} flexGrow={1}>
-                        <Typography variant="h6" color={colors.grey[100]}>
-                            Content for Customer Dashboard
-                        </Typography>
+                        <CustomerDashboard/>
                     </Box>
                 </Box>
             </Box>
