@@ -32,18 +32,14 @@ const Login = () => {
         password
       });
 
-      // Save token and user data
       const { token, user } = data;
 
-      // Update Redux with user and token
       dispatch(login({ user, token }));
-
-      // Redirect to homepage or protected route
       navigate('/');
     } catch (err) {
       setErrorMessage('Login failed. Please check your credentials.');
     } finally {
-      setIsLoading(false); // Stop loading regardless of success or failure
+      setIsLoading(false); 
     }
   };
 
