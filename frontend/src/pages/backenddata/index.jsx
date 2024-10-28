@@ -7,7 +7,8 @@ import CreateCustomer from './CreateCustomer'
 import DisplayCustomers from './DisplayCustomer'
 import CreateWork from './CreateWork'
 import DisplayWork from './DisplayWork'
-import WorkDashboard from './workDashboard'
+import EmployeeDashboard from './EmployeeDashboard'
+import WorkDashboard from './WorkDashboard'
 
 const Backend = () => {
   return (
@@ -20,6 +21,7 @@ const Backend = () => {
       {/* <DisplayCustomers/> */}
       {/* <CreateWork/> */}
       {/* <DisplayWork/> */}
+      {/* <EmployeeDashboard/> */}
       <WorkDashboard/>
     </div>
   )

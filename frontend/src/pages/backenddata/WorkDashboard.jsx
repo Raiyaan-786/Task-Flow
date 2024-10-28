@@ -1,54 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import API from '../../api/api'; // Adjust the import path according to your project structure
-import './WorkDashboard.css';
+import React, { useEffect, useState } from 'react';
+import './WorkDashboard.css'; // Import the CSS file
+import API from '../../api/api';
 
 const WorkSummary = () => {
   const [workSummary, setWorkSummary] = useState([]);
-  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const fetchData = async () => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      setError('No authentication token found. Please log in.');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const workResponse = await API.get('/workdashboard', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setWorkSummary(workResponse.data);
+    } catch (err) {
+      console.error('Error fetching work summary:', err);
+      setError('Failed to fetch work summary. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem('token');
-
-      if (!token) {
-        setError('No authentication token found. Please log in.');
-        setLoading(false);
-        return;
-      }
-
-      try {
-        // Fetch work summary data
-        const workResponse = await API.get('/workdashboard');
-        setWorkSummary(workResponse.data);
-
-        // Fetch users data
-        const userResponse = await API.get('/auth/allusers', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUsers(userResponse.data.users);
-      } catch (err) {
-        setError(err.response?.data?.error || 'Failed to fetch data');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }, []);
 
-  if (loading) return <p>Loading data...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (loading) return <div className="loading-message">Loading...</div>;
+  if (error) return <div className="error-message">Error: {error}</div>;
 
   return (
-    <div className="work-summary-container">
-      <table className="work-summary-table">
+    <div className="container">
+      <h1>Work Summary</h1>
+      <table className="summary-table">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Access Level</th>
+            <th>Work Type</th>
             <th>Total Works</th>
             <th>Works Done</th>
             <th>Assigned Work</th>
@@ -57,37 +51,24 @@ const WorkSummary = () => {
             <th>Ready for Checking</th>
             <th>Hold Work</th>
             <th>EVC Pending</th>
-            <th>Cancel</th>
+            <th>Cancelled</th>
           </tr>
         </thead>
         <tbody>
-          {workSummary.map((work) => {
-            const user = users.find((u) => u._id === work._id);
-            return (
-              <tr key={work._id}>
-                <td>
-                  <div className="user-info">
-                    <img src={user?.avatar || '/default-avatar.png'} alt={user?.name} className="avatar" />
-                    <span>{user?.name}</span>
-                  </div>
-                </td>
-                <td>
-                  <span className={`role ${user?.role.toLowerCase()}`}>
-                    {user?.role}
-                  </span>
-                </td>
-                <td>{work.workCounts.total}</td>
-                <td>{work.workCounts.done}</td>
-                <td>{work.workCounts.assigned}</td>
-                <td>{work.workCounts.pickedUp}</td>
-                <td>{work.workCounts.customerVerification}</td>
-                <td>{work.workCounts.readyForChecking}</td>
-                <td>{work.workCounts.holdWork}</td>
-                <td>{work.workCounts.evcPending}</td>
-                <td>{work.workCounts.cancel}</td>
-              </tr>
-            );
-          })}
+          {workSummary.map((item) => (
+            <tr key={item.workType}>
+              <td>{item.workType}</td>
+              <td>{item.totalWorks}</td>
+              <td>{item.worksDone}</td>
+              <td>{item.assignedWork}</td>
+              <td>{item.pickedUp}</td>
+              <td>{item.customerVerification}</td>
+              <td>{item.readyForChecking}</td>
+              <td>{item.holdWork}</td>
+              <td>{item.evcPending}</td>
+              <td>{item.cancel}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

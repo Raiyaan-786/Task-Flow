@@ -1,0 +1,48 @@
+.work-summary-container {
+    margin: 20px;
+  }
+  
+  .work-summary-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .work-summary-table th, .work-summary-table td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+  }
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .role.admin {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+  
+  .role.user {
+    background-color: #17a2b8;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+  
+  .role.manager {
+    background-color: #28a745;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+  
