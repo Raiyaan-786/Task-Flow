@@ -9,6 +9,8 @@ import CreateWork from './CreateWork'
 import DisplayWork from './DisplayWork'
 import EmployeeDashboard from './EmployeeDashboard'
 import WorkDashboard from './WorkDashboard'
+import CreateTurnover from './CreateTurnover'
+import DisplayTurnover from './DisplayTurnover'
 
 const Backend = () => {
   return (
@@ -22,7 +24,9 @@ const Backend = () => {
       {/* <CreateWork/> */}
       {/* <DisplayWork/> */}
       {/* <EmployeeDashboard/> */}
-      <WorkDashboard/>
+      {/* <WorkDashboard/> */}
+      <CreateTurnover/>
+      <DisplayTurnover/>
     </div>
   )
 }
