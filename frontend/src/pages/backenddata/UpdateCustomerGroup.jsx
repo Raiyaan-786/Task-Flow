@@ -7,6 +7,7 @@ const UpdateCustomerGroup = () => {
   const [error, setError] = useState('');
   const [editGroupId, setEditGroupId] = useState(null);
   const [newGroupName, setNewGroupName] = useState('');
+  const [expandedGroupId, setExpandedGroupId] = useState(null); // State to manage expanded groups
 
   useEffect(() => {
     const fetchGroups = async () => {
@@ -35,7 +36,7 @@ const UpdateCustomerGroup = () => {
     }
 
     try {
-      await API.put(`/group/${groupId}`, { groupName: newGroupName }, {
+      await API.put(`/updategroup/${groupId}`, { groupName: newGroupName }, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`, // Include JWT token if required
         },
@@ -69,6 +70,10 @@ const UpdateCustomerGroup = () => {
     }
   };
 
+  const toggleExpandGroup = (groupId) => {
+    setExpandedGroupId(prev => (prev === groupId ? null : groupId)); // Toggle expanded state
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
@@ -96,6 +101,23 @@ const UpdateCustomerGroup = () => {
                   Edit Name
                 </button>
                 <button onClick={() => handleDeleteGroup(group._id)}>Delete</button>
+                <button onClick={() => toggleExpandGroup(group._id)}>
+                  {expandedGroupId === group._id ? 'Hide Customers' : 'Show Customers'}
+                </button>
+                {expandedGroupId === group._id && (
+                  <div>
+                    <h4>Customers in this Group:</h4>
+                    <ul>
+                      {group.customers && group.customers.length > 0 ? (
+                        group.customers.map(customer => (
+                          <li key={customer._id}>{customer.customerName}</li>
+                        ))
+                      ) : (
+                        <li>No customers in this group.</li>
+                      )}
+                    </ul>
+                  </div>
+                )}
               </div>
             )}
           </li>

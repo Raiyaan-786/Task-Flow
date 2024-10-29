@@ -37,7 +37,7 @@ const CreateCustomerGroup = () => {
     try {
         const response = await API.post('/creategroup', {
             groupName: groupName,
-            customers: selectedCustomers,
+            customerIds: selectedCustomers,
         }, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
