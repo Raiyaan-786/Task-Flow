@@ -20,8 +20,8 @@ const Backend = () => {
     <div>
       {/* <CreateUser/> */}
       {/* <DisplayUsers/> */}
-      {/* <CreateConsultant/> */}
-      {/* <DisplayConsultants/> */}
+      <CreateConsultant/>
+      <DisplayConsultants/>
       {/* <CreateCustomer/> */}
       {/* <DisplayCustomers/> */}
       {/* <CreateWork/> */}
@@ -32,7 +32,7 @@ const Backend = () => {
       {/* <DisplayTurnover/> */}
       {/* <DisplayIndividualWork/> */}
       {/* <CreateCustomerGroup/> */}
-      <UpdateCustomerGroup/>
+      {/* <UpdateCustomerGroup/> */}
     </div>
   )
 }
