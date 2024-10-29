@@ -13,6 +13,7 @@ import CreateTurnover from './CreateTurnover'
 import DisplayTurnover from './DisplayTurnover'
 import DisplayIndividualWork from './DisplayIndividualWork'
 import CreateCustomerGroup from './CreateCustomerGroup'
+import UpdateCustomerGroup from './UpdateCustomerGroup'
 
 const Backend = () => {
   return (
@@ -30,7 +31,8 @@ const Backend = () => {
       {/* <CreateTurnover/> */}
       {/* <DisplayTurnover/> */}
       {/* <DisplayIndividualWork/> */}
-      <CreateCustomerGroup/>
+      {/* <CreateCustomerGroup/> */}
+      <UpdateCustomerGroup/>
     </div>
   )
 }

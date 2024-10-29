@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Customer, CustomerGroup } from "../models/customer.model.js";
 
 
@@ -185,7 +186,7 @@ const getAllGroups = async (req, res) => {
 
 const getSingleGroup = async (req, res) => {
   try {
-    const { id } = req.params; // Use id instead of groupId
+    const { id } = req.params; 
 
     const group = await CustomerGroup.findById(id).populate("customers");
     if (!group) {
@@ -198,4 +199,50 @@ const getSingleGroup = async (req, res) => {
   }
 };
 
-export {createCustomer ,getCustomer , getAllCustomers , updateCustomer , deleteCustomer , createGroup , addCustomerToGroup , removeCustomerFromGroup , getAllGroups , getSingleGroup}
+const deleteGroup = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid group ID format." });
+    }
+
+    const group = await CustomerGroup.findByIdAndDelete(id);
+
+    if (!group) {
+      return res.status(404).json({ error: "Group not found." });
+    }
+
+    res.status(200).json({ message: "Group deleted successfully." });
+  } catch (error) {
+    console.error("Error deleting group:", error);
+    res.status(500).json({ error: "An error occurred while deleting the group." });
+  }
+};
+
+const updateGroupName = async (req, res) => {
+  try {
+    const { id } = req.params; 
+    const { groupName } = req.body; 
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid group ID format." });
+    }
+    if (!groupName) {
+      return res.status(400).json({ error: "Group name is required." });
+    }
+
+    const updatedGroup = await CustomerGroup.findByIdAndUpdate(
+      id,
+      { groupName }, 
+      { new: true, runValidators: true } 
+    );
+    if (!updatedGroup) {
+      return res.status(404).json({ error: "Group not found." });
+    }
+    res.status(200).json({ message: "Group name updated successfully", group: updatedGroup });
+  } catch (error) {
+    console.error("Error updating group name:", error);
+    res.status(500).json({ error: "An error occurred while updating the group name." });
+  }
+};
+
+export {createCustomer ,getCustomer , getAllCustomers , updateCustomer , deleteCustomer , createGroup , addCustomerToGroup , removeCustomerFromGroup , getAllGroups , getSingleGroup , deleteGroup ,updateGroupName}
