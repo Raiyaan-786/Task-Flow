@@ -180,7 +180,7 @@ const CustomerDashboard = () => {
             </RoundedTabs>
             {/* Render All Tab Panels Once */}
             <Box p='0 1px' flexGrow={1} position="relative" display="flex" flexDirection="column" height={'100%'}>
-                <Box display={selectedTab === 0 ? 'block' : 'none'} flexGrow={1} height={'100%'} bgcolor={'red'}>
+                <Box display={selectedTab === 0 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
                     <Box display={'flex'}
                         sx={{
                             height: '60vh',
