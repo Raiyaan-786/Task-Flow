@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import {verifyJWT , roleAuthorization } from '../middlewares/auth.middleware.js';
-import { createCustomer, deleteCustomer, getAllCustomers, getCustomer, updateCustomer } from '../controllers/customer.controller.js';
+import { addCustomerToGroup, createCustomer, createGroup, deleteCustomer, getAllCustomers, getAllGroups, getCustomer, getSingleGroup, removeCustomerFromGroup, updateCustomer } from '../controllers/customer.controller.js';
 
 const router = Router();
 
@@ -9,5 +9,10 @@ router.route('/customer/:id').get(verifyJWT, roleAuthorization('Admin'), getCust
 router.route('/getallcustomers').get(verifyJWT, roleAuthorization('Admin'), getAllCustomers);
 router.route('/customer/:id').put(verifyJWT, roleAuthorization('Admin'), updateCustomer);
 router.route('/customer/:id').delete(verifyJWT, roleAuthorization('Admin'), deleteCustomer);
+router.route('/creategroup').post(verifyJWT, roleAuthorization('Admin'), createGroup);
+router.route('/group/addcustomers').post(verifyJWT, roleAuthorization('Admin'), addCustomerToGroup);
+router.route('/group/removecustomer').post(verifyJWT, roleAuthorization('Admin'), removeCustomerFromGroup);
+router.route('/group/:id').get(verifyJWT, roleAuthorization('Admin'), getSingleGroup);
+router.route('/allgroups').get(verifyJWT, roleAuthorization('Admin'), getAllGroups);
 
 export default router;

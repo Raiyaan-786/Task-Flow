@@ -14,90 +14,89 @@ import API from '../../api/api';
 const WorkList = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [data, setData] = useState(mockDataWorkList); // State to hold filtered data
+  const [data, setData] = useState(mockDataWorkList); 
 
-  const [workItems, setWorkItems] = useState([]); // State to hold work data
-  const [customers, setCustomers] = useState([]); // State to hold customer data
-  const [loading, setLoading] = useState(true); // State to track loading status
-  const [error, setError] = useState(""); // State to track error messages
+  // const [workItems, setWorkItems] = useState([]); 
+  // const [customers, setCustomers] = useState([]); 
+  // const [loading, setLoading] = useState(true); 
+  // const [error, setError] = useState(""); 
 
-  // Fetch customers on component mount
-  useEffect(() => {
-    const fetchCustomers = async () => {
-      const token = localStorage.getItem("token"); // Get token from localStorage
+  // useEffect(() => {
+  //   const fetchCustomers = async () => {
+  //     const token = localStorage.getItem("token"); // Get token from localStorage
 
-      if (!token) {
-        setError("No authentication token found. Please log in.");
-        setLoading(false);
-        return;
-      }
+  //     if (!token) {
+  //       setError("No authentication token found. Please log in.");
+  //       setLoading(false);
+  //       return;
+  //     }
 
-      try {
-        const response = await API.get("/getallcustomers", {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include token in request headers
-          },
-        });
+  //     try {
+  //       const response = await API.get("/getallcustomers", {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`, // Include token in request headers
+  //         },
+  //       });
 
-        const customerData = response.data.customers || []; // Fallback to empty array
-        setCustomers(customerData); // Set the customers state
-        console.log("Fetched Customers:", customerData); // Log fetched customers
-      } catch (err) {
-        setError(err.response?.data?.error || "Failed to fetch customers"); // Handle error
-        console.log(err);
-      }
-    };
+  //       const customerData = response.data.customers || []; // Fallback to empty array
+  //       setCustomers(customerData); // Set the customers state
+  //       console.log("Fetched Customers:", customerData); // Log fetched customers
+  //     } catch (err) {
+  //       setError(err.response?.data?.error || "Failed to fetch customers"); // Handle error
+  //       console.log(err);
+  //     }
+  //   };
 
-    fetchCustomers(); // Fetch customers on component mount
-  }, []);
+  //   fetchCustomers(); // Fetch customers on component mount
+  // }, []);
 
-  // Fetch work items on component mount
-  useEffect(() => {
-    const fetchWorkItems = async () => {
-      const token = localStorage.getItem("token"); // Get token from localStorage
+  
+  // useEffect(() => {
+  //   const fetchWorkItems = async () => {
+  //     const token = localStorage.getItem("token"); // Get token from localStorage
 
-      if (!token) {
-        setError("No authentication token found. Please log in.");
-        setLoading(false);
-        return;
-      }
+  //     if (!token) {
+  //       setError("No authentication token found. Please log in.");
+  //       setLoading(false);
+  //       return;
+  //     }
 
-      try {
-        const response = await API.get("/getallwork", {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include token in request headers
-          },
-        });
+  //     try {
+  //       const response = await API.get("/getallwork", {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`, // Include token in request headers
+  //         },
+  //       });
 
-        const workData = response.data.works || []; // Fallback to empty array
-        setWorkItems(workData); // Set the work state
-        console.log("Fetched Work Items:", workData); // Log fetched work items
-        setLoading(false); // Set loading to false
-      } catch (err) {
-        setError(err.response?.data?.error || "Failed to fetch work items"); // Handle error
-        console.log(err);
-        setLoading(false); // Set loading to false
-      }
-    };
+  //       const workData = response.data.works || []; // Fallback to empty array
+  //       setWorkItems(workData); // Set the work state
+  //       console.log("Fetched Work Items:", workData); // Log fetched work items
+  //       setLoading(false); // Set loading to false
+  //     } catch (err) {
+  //       setError(err.response?.data?.error || "Failed to fetch work items"); // Handle error
+  //       console.log(err);
+  //       setLoading(false); // Set loading to false
+  //     }
+  //   };
 
-    fetchWorkItems(); // Fetch work items on component mount
-  }, []);
+  //   fetchWorkItems(); // Fetch work items on component mount
+  // }, []);
 
-  if (loading) {
-    return <p>Loading work items...</p>; // Show loading message
-  }
+  // if (loading) {
+  //   return <p>Loading work items...</p>; // Show loading message
+  // }
 
-  if (error) {
-    return <p>Error: {error}</p>; // Show error message
-  }
-  console.log(workItems)
+  // if (error) {
+  //   return <p>Error: {error}</p>; // Show error message
+  // }
+  // console.log(workItems)
 
   // Function to get customer name by ID
-  const getCustomerNameById = (customerId) => {
-    const customer = customers.find((c) => c._id === customerId);
-    console.log("Customer ID:", customerId, "Found Customer:", customer); // Log the search process
-    return customer ? customer.customerName : "Unknown Customer"; // Return customer name or fallback
-  };
+  // const getCustomerNameById = (customerId) => {
+  //   const customer = customers.find((c) => c._id === customerId);
+  //   console.log("Customer ID:", customerId, "Found Customer:", customer); // Log the search process
+  //   return customer ? customer.customerName : "Unknown Customer"; // Return customer name or fallback
+  // };
 
   const handleFinish = (id) => {
     console.log(`Finish clicked for Row ID: ${id}`);
