@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, Grid2, TextField } from "@mui/material";
+import { Box, Button, Grid2, Modal, TextField, Typography } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -14,7 +14,8 @@ const AddConsultant = () => {
   const [bankAccountNumber, setBankAccountNumber] = useState("");
   const [ifscCode, setIfscCode] = useState("");
   const [accountHolderName, setAccountHolderName] = useState("");
-  const [signature, setSignature] = useState("");  
+  const [signature, setSignature] = useState("");
+  const [open, setOpen] = useState(false);
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
   const [error, setError] = useState("");
@@ -42,8 +43,8 @@ const AddConsultant = () => {
       setError("");
       console.log('Consultant created successfully')
     } catch (err) {
-        setError(err.response?.data?.error || "Failed to create consultant");
-        console.log(error)
+      setError(err.response?.data?.error || "Failed to create consultant");
+      console.log(error)
       setSuccess("");
     }
   };
@@ -77,6 +78,7 @@ const AddConsultant = () => {
           handleChange,
           handleSubmit,
           setFieldValue,
+          resetForm,
         }) => (
           <form onSubmit={handleSubmit}>
             <Box pt={1} sx={{ flexGrow: 1 }}>
@@ -281,12 +283,31 @@ const AddConsultant = () => {
                 {/* Submit Button */}
                 <Grid2 item>
                   <Box display="flex" justifyContent="end" mt="20px">
-                    <Button type="submit" variant="contained">
+                    <Button onClick={() => setOpen(true)} variant="contained">
                       Submit
                     </Button>
                   </Box>
                 </Grid2>
               </Grid2>
+            </Box>
+            <Box display="flex" justifyContent="end" mt="20px">
+              <Modal
+                open={open}
+                onClose={() => { setOpen(!open) }}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+                sx={{ display: "flex", alignItems: "center", justifyContent: 'center' }}
+              >
+                <Box display={'flex'} flexDirection={'column'} gap={3} sx={{ height: '150px', width: "250px", bgcolor: "white", borderRadius: '8px', p: 3 }} >
+                  <Typography id="modal-modal-title" variant="h4" component="h2" textAlign={'center'}>
+                    Create a New Consultant ?
+                  </Typography>
+                  <Box display={'flex'} alignItems={'center'} justifyContent={'center'} gap={4}>
+                    <Button variant="outlined" onClick={() => setOpen(false)}>Cancel</Button>
+                    <Button onClick={() => { handleSubmit(); setOpen(false);resetForm(); }} type="submit" variant="outlined">Create</Button>
+                  </Box>
+                </Box>
+              </Modal>
             </Box>
           </form>
         )}
