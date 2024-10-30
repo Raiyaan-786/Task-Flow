@@ -25,7 +25,7 @@ const Backend = () => {
 =======
       <CreateConsultant/>
 >>>>>>> c65e78ba06fe8443a76abd8cc4711f0ace6f2f02
-      <DisplayConsultants/>
+      {/* <DisplayConsultants/> */}
       {/* <CreateCustomer/> */}
       {/* <DisplayCustomers/> */}
       {/* <CreateWork/> */}

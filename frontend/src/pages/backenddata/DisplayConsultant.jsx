@@ -9,7 +9,7 @@ const DisplayConsultants = () => {
 
   useEffect(() => {
     const fetchConsultants = async () => {
-      const token = localStorage.getItem('token'); // Get token from localStorage
+      const token = localStorage.getItem('token');
 
       if (!token) {
         setError('No authentication token found. Please log in.');
