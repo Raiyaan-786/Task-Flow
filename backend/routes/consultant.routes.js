@@ -7,10 +7,13 @@ import {
   getConsultant,
   updateConsultant
 } from '../controllers/consultant.controller.js';
+import multer from 'multer';
+const upload = multer({ storage: multer.memoryStorage() });
 
 const router = Router();
 
-router.route('/createconsultant').post(verifyJWT, roleAuthorization('Admin'), createConsultant);
+// router.route('/createconsultant').post(verifyJWT, roleAuthorization('Admin'), createConsultant);
+router.route('/createconsultant').post(verifyJWT, roleAuthorization('Admin'), upload.single('signature'), createConsultant);
 router.route('/consultant/:id').get(verifyJWT, roleAuthorization('Admin'), getConsultant);
 router.route('/getallconsultants').get(verifyJWT, roleAuthorization('Admin'), getAllConsultants);
 router.route('/consultant/:id').put(verifyJWT, roleAuthorization('Admin'), updateConsultant);

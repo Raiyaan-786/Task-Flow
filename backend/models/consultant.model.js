@@ -39,8 +39,7 @@ const consultantSchema = new mongoose.Schema(
       required: true,
     },
     signature: {
-      type: String,
-      default: '',
+      type: Buffer, 
       required: true,
     },
   },

@@ -11,17 +11,29 @@ const CreateConsultant = () => {
     bankAccountNumber: '',
     bankIFSCCode: '',
     accountHolderName: '',
-    signature: '', 
   });
+  const [signatureFile, setSignatureFile] = useState(null); // State to hold the file
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
   const createConsultant = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
+    
+    const formData = new FormData(); // Create FormData object
+
+    // Append consultant details to formData
+    for (const key in newConsultant) {
+      formData.append(key, newConsultant[key]);
+    }
+
+    // Append the signature file to formData
+    if (signatureFile) {
+      formData.append('signature', signatureFile);
+    }
 
     try {
-      const response = await API.post('/createconsultant', newConsultant, {
+      const response = await API.post('/createconsultant', formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -36,8 +48,8 @@ const CreateConsultant = () => {
         bankAccountNumber: '',
         bankIFSCCode: '',
         accountHolderName: '',
-        signature: '',
       });
+      setSignatureFile(null); // Reset signature file
       setError('');
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to create consultant');
@@ -48,6 +60,10 @@ const CreateConsultant = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewConsultant({ ...newConsultant, [name]: value });
+  };
+
+  const handleFileChange = (e) => {
+    setSignatureFile(e.target.files[0]); // Set the selected file
   };
 
   return (
@@ -118,11 +134,9 @@ const CreateConsultant = () => {
         required
       />
       <input
-        type="text"
+        type="file"
         name="signature"
-        placeholder="Signature (File Path)"
-        value={newConsultant.signature}
-        onChange={handleChange}
+        onChange={handleFileChange} // Handle file input change
         required
       />
       <button type="submit">Create Consultant</button>
