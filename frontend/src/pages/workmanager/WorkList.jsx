@@ -1,102 +1,61 @@
-import React, { useState ,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Box, IconButton, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
-import { mockDataWorkList } from "../../data/mockData";
 import CustomToolbar from "../../components/CustomToolbar";
-import {
-  CheckCircleOutline,
-  EditOutlined,
-  ShareOutlined,
-} from "@mui/icons-material";
+import { CheckCircleOutline, EditOutlined, ShareOutlined } from "@mui/icons-material";
 import API from '../../api/api';
 
 const WorkList = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [data, setData] = useState(mockDataWorkList); 
+  const [workItems, setWorkItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // const [workItems, setWorkItems] = useState([]); 
-  // const [customers, setCustomers] = useState([]); 
-  // const [loading, setLoading] = useState(true); 
-  // const [error, setError] = useState(""); 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          setError("No authentication token found. Please log in.");
+          setLoading(false);
+          return;
+        }
+        
+        const response = await API.get("/getallwork", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-  // useEffect(() => {
-  //   const fetchCustomers = async () => {
-  //     const token = localStorage.getItem("token"); // Get token from localStorage
+        const workData = response.data.works.map((work, index) => ({
+          id: work._id,
+          Sn: index + 1,  // Add the serial number based on index
+          customerName: work.customer?.customerName || "Unknown Customer",
+          customerEmail: work.customer?.email || "-",
+          assignedEmployee: work.assignedEmployee?.name || "-",
+          employeeEmail: work.assignedEmployee?.email || "-",
+          service: work.service,
+          workType: work.workType,
+          month: work.month,
+          quarter: work.quarter,
+          financialYear: work.financialYear,
+          price: work.price,
+          quantity: work.quantity,
+          discount: work.discount,
+          currentStatus: work.currentStatus || "-"
+        }));
 
-  //     if (!token) {
-  //       setError("No authentication token found. Please log in.");
-  //       setLoading(false);
-  //       return;
-  //     }
+        setWorkItems(workData);
+      } catch (err) {
+        setError("Failed to fetch work data.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  //     try {
-  //       const response = await API.get("/getallcustomers", {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`, // Include token in request headers
-  //         },
-  //       });
-
-  //       const customerData = response.data.customers || []; // Fallback to empty array
-  //       setCustomers(customerData); // Set the customers state
-  //       console.log("Fetched Customers:", customerData); // Log fetched customers
-  //     } catch (err) {
-  //       setError(err.response?.data?.error || "Failed to fetch customers"); // Handle error
-  //       console.log(err);
-  //     }
-  //   };
-
-  //   fetchCustomers(); // Fetch customers on component mount
-  // }, []);
-
-  
-  // useEffect(() => {
-  //   const fetchWorkItems = async () => {
-  //     const token = localStorage.getItem("token"); // Get token from localStorage
-
-  //     if (!token) {
-  //       setError("No authentication token found. Please log in.");
-  //       setLoading(false);
-  //       return;
-  //     }
-
-  //     try {
-  //       const response = await API.get("/getallwork", {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`, // Include token in request headers
-  //         },
-  //       });
-
-  //       const workData = response.data.works || []; // Fallback to empty array
-  //       setWorkItems(workData); // Set the work state
-  //       console.log("Fetched Work Items:", workData); // Log fetched work items
-  //       setLoading(false); // Set loading to false
-  //     } catch (err) {
-  //       setError(err.response?.data?.error || "Failed to fetch work items"); // Handle error
-  //       console.log(err);
-  //       setLoading(false); // Set loading to false
-  //     }
-  //   };
-
-  //   fetchWorkItems(); // Fetch work items on component mount
-  // }, []);
-
-  // if (loading) {
-  //   return <p>Loading work items...</p>; // Show loading message
-  // }
-
-  // if (error) {
-  //   return <p>Error: {error}</p>; // Show error message
-  // }
-  // console.log(workItems)
-
-  // Function to get customer name by ID
-  // const getCustomerNameById = (customerId) => {
-  //   const customer = customers.find((c) => c._id === customerId);
-  //   console.log("Customer ID:", customerId, "Found Customer:", customer); // Log the search process
-  //   return customer ? customer.customerName : "Unknown Customer"; // Return customer name or fallback
-  // };
+    fetchData();
+  }, []);
 
   const handleFinish = (id) => {
     console.log(`Finish clicked for Row ID: ${id}`);
@@ -114,134 +73,59 @@ const WorkList = () => {
   };
 
   const columns = [
-    { field: "Sn", headerName: "Sn", flex: 0.5 },
+    { field: "Sn", headerName: "Sn", flex: .2 },
+    { field: "customerName", headerName: "Customer Name", flex: 1 },
+    // { field: "customerEmail", headerName: "Customer Email", flex: 1 },
+    { field: "assignedEmployee", headerName: "Assigned Employee", flex: 1 },
+    // { field: "employeeEmail", headerName: "Employee Email", flex: 1 },
+    // { field: "service", headerName: "Service", flex: 1 },
+    { field: "workType", headerName: "Work Type", flex: 1 },
+    // { field: "month", headerName: "Month", flex: 1 },
+    // { field: "quarter", headerName: "Quarter", flex: 1 },
+    { field: "financialYear", headerName: "Financial Year", flex: 1 },
+    { field: "price", headerName: "Price", flex: 1 },
+    { field: "quantity", headerName: "Quantity", flex: 1 },
+    { field: "discount", headerName: "Discount", flex: 1 },
+    { field: "currentStatus", headerName: "Current Status", flex: 1 },
     {
-      field: "action",
-      headerName: "Action",
-      headerAlign: "center",
-      align: "center",
+      field: "actions",
+      headerName: "Actions",
       flex: 1,
       renderCell: (params) => (
         <Box display="flex" gap={1} justifyContent="center">
-          <IconButton
-            size="small"
-            color="primary"
-            onClick={() => handleFinish(params.row.id)}
-          >
+          <IconButton size="small" color="primary" onClick={() => handleFinish(params.row.id)}>
             <CheckCircleOutline />
           </IconButton>
-          <IconButton
-            size="small"
-            color="secondary"
-            onClick={() => handleEdit(params.row.id)}
-          >
+          <IconButton size="small" color="secondary" onClick={() => handleEdit(params.row.id)}>
             <EditOutlined />
           </IconButton>
-          <IconButton
-            size="small"
-            color="success"
-            onClick={() => handleShare(params.row.id)}
-          >
+          <IconButton size="small" color="success" onClick={() => handleShare(params.row.id)}>
             <ShareOutlined />
           </IconButton>
         </Box>
       ),
     },
-    {
-      field: "status",
-      headerName: "Status",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "work",
-      headerName: "Work",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "name",
-      headerName: "Name",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "mobile",
-      headerName: "Mobile (Indian)",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "date",
-      headerName: "Date",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "modifyDate",
-      headerName: "Modify Date",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "assign",
-      headerName: "Assign",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "Remark",
-      headerName: "Remark",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "Reminder",
-      headerName: "Reminder",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "fy",
-      headerName: "Financial Year",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
   ];
+
+  if (loading) return <p>Loading work items...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <Box
-      display={"flex"}
+      display="flex"
       sx={{
         height: "67vh",
         "& .MuiDataGrid-root": { border: "none" },
         "& .MuiDataGrid-cell": { borderBottom: "none" },
-        "& .MuiDataGrid-columnHeader": {
-          backgroundColor: colors.primary[900],
-          borderBottom: "none",
-        },
+        "& .MuiDataGrid-columnHeader": { backgroundColor: colors.primary[900], borderBottom: "none" },
         "& .MuiDataGrid-virtualScroller": { backgroundColor: colors.bgc[100] },
-        "& .MuiDataGrid-footerContainer": {
-          borderTop: "none",
-          backgroundColor: colors.primary[900],
-        },
-        "& .MuiCheckbox-root": { color: `${colors.teal[200]} !important` },
+        "& .MuiDataGrid-footerContainer": { borderTop: "none", backgroundColor: colors.primary[900] },
       }}
     >
       <DataGrid
         disableColumnMenu
-        slots={{ toolbar: CustomToolbar }}
-        rows={data} // Use the filtered data
+        components={{ Toolbar: CustomToolbar }}
+        rows={workItems}
         columns={columns}
       />
     </Box>

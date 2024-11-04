@@ -14,26 +14,27 @@ import DisplayTurnover from './DisplayTurnover'
 import DisplayIndividualWork from './DisplayIndividualWork'
 import CreateCustomerGroup from './CreateCustomerGroup'
 import UpdateCustomerGroup from './UpdateCustomerGroup'
+import { Box } from '@mui/material'
 
 const Backend = () => {
   return (
-    <div>
-      {/* <CreateUser/> */}
-      {/* <DisplayUsers/> */}
-      <CreateConsultant/>
-      {/* <DisplayConsultants/> */}
+    <Box height={'75vh'} overflow={'auto'}>
+      {/* <CreateUser/> */} {/*done*/}
+      {/* <DisplayUsers/> */} {/*done*/}
+      {/* <CreateConsultant/> */} {/*done*/}
+      {/* <DisplayConsultants/> */} {/*done*/}
       {/* <CreateCustomer/> */}
       {/* <DisplayCustomers/> */}
-      {/* <CreateWork/> */}
-      {/* <DisplayWork/> */}
-      {/* <EmployeeDashboard/> */}
-      {/* <WorkDashboard/> */}
+      <CreateWork/>
+      <DisplayWork/>
+      {/* <EmployeeDashboard/> */} {/*done*/}
+      {/* <WorkDashboard/> {/*done*/}
       {/* <CreateTurnover/> */}
       {/* <DisplayTurnover/> */}
       {/* <DisplayIndividualWork/> */}
       {/* <CreateCustomerGroup/> */}
       {/* <UpdateCustomerGroup/> */}
-    </div>
+    </Box>
   )
 }
 

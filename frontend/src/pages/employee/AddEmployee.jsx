@@ -37,6 +37,7 @@ const AddEmployee = () => {
         setSuccess(response.data.message);
         setError('');
         console.log("User created");
+        alert('User Created');
         } catch (err) {
         console.log(err);
         setError(err.response?.data?.error || 'Failed to create user');

@@ -57,9 +57,9 @@ const WorkManager = () => {
                 {/* Rounded Tabs */}
                 <RoundedTabs value={selectedTab} onChange={handleTabChange} >
                     <RoundedTab label="Add Work" />
+                    <RoundedTab label="Work List" />
                     <RoundedTab label="Add Turnover" />
                     <RoundedTab label="Turnover List" />
-                    <RoundedTab label="Work List" />
                 </RoundedTabs>
                 <Divider  sx={{borderColor:colors.bgc[100]}}/>
                 {/* Render All Tab Panels Once */}
@@ -67,18 +67,18 @@ const WorkManager = () => {
                     <Box display={selectedTab === 0 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
                        <AddWork/>
                     </Box>
-
-                    <Box display={selectedTab === 1 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
+                    <Box display={selectedTab === 1 ? 'block' : 'none'} flexGrow={1} height={'100%'}>
+                        <WorkList/>
+                    </Box>
+                    <Box display={selectedTab === 2 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
                        <AddTurnoverCertificate/>
                     </Box>
 
-                    <Box display={selectedTab === 2 ? 'block' : 'none'} flexGrow={1} height={'100%'}>
+                    <Box display={selectedTab === 3 ? 'block' : 'none'} flexGrow={1} height={'100%'}>
                         <TurnoverList/>
                     </Box>
 
-                    <Box display={selectedTab === 3 ? 'block' : 'none'} flexGrow={1} height={'100%'}>
-                        <WorkList/>
-                    </Box>
+                  
                 </Box>
             </Box>
         </Box>
