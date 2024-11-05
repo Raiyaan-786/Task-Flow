@@ -1,55 +1,120 @@
 import React, { useEffect, useState } from 'react';
-import API from '../../api/api'; // Adjust the import path according to your project structure
+import { DataGrid } from '@mui/x-data-grid';
+import { Box, IconButton, useTheme } from "@mui/material";
+import { tokens } from "../../theme";
+import API from '../../api/api';
+import CustomToolbar from '../../components/CustomToolbar';
+import { Visibility } from '@mui/icons-material';
 
 const CustomerList = () => {
-  const [customers, setCustomers] = useState([]); // State to hold the customer data
-  const [loading, setLoading] = useState(true); // State to track loading status
-  const [error, setError] = useState(''); // State to track error messages
+    const theme = useTheme();
+    const colors = tokens(theme.palette.mode);
+    const [customers, setCustomers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
-  useEffect(() => {
-    const fetchCustomers = async () => {
-      const token = localStorage.getItem('token'); // Get token from localStorage
+    useEffect(() => {
+        const fetchCustomers = async () => {
+            const token = localStorage.getItem('token');
 
-      if (!token) {
-        setError('No authentication token found. Please log in.');
-        setLoading(false);
-        return;
-      }
+            if (!token) {
+                setError('No authentication token found. Please log in.');
+                setLoading(false);
+                return;
+            }
 
-      try {
-        const response = await API.get('/getallcustomers', {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include token in request headers
-          },
-        });
+            try {
+                const response = await API.get('/getallcustomers', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
 
-        // Check if customers data is defined and is an array
-        const customersData = response.data.customers || []; // Fallback to empty array
-        setCustomers(customersData); // Set the customers state
-        setLoading(false); // Set loading to false
-      } catch (err) {
-        setError(err.response?.data?.error || 'Failed to fetch customers'); // Handle error
-        console.log(err);
-        setLoading(false); // Set loading to false
-      }
+                const customersData = response.data.customers || [];
+                // Map the customers to include a serial number
+                const formattedData = customersData.map((customer, index) => ({
+                    id: customer._id,
+                    Sn: index + 1,  // Assign S.No based on index
+                    ...customer,
+                }));
+
+                setCustomers(formattedData);
+            } catch (err) {
+                setError(err.response?.data?.error || 'Failed to fetch customers');
+                console.log(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCustomers();
+    }, []);
+
+    const handleView = (id) => {
+        console.log(`Viewing details for customer with ID: ${id}`);
+        // Add additional view logic as needed
     };
 
-    fetchCustomers(); // Fetch customers on component mount
-  }, []);
+    const columns = [
+        { field: "Sn", headerName: "S.No", flex: 0.5, headerAlign: "center", align: "center" },
+        { field: "customerName", headerName: "Customer Name", flex: 1.5, headerAlign: "center", align: "center" },
+        { field: "customerCode", headerName: "Customer Code", flex: 1, headerAlign: "center", align: "center" },
+        { field: "billingName", headerName: "Billing Name", flex: 1.5, headerAlign: "center", align: "center" },
+        { field: "companyName", headerName: "Company/Firm Name", flex: 1, headerAlign: "center", align: "center" },
+        { field: "email", headerName: "Email", flex: 1.5, headerAlign: "center", align: "center" },
+        { field: "mobileNo", headerName: "Mobile No", flex: 1, headerAlign: "center", align: "center" },
+        { field: "whatsappNo", headerName: "WhatsApp No", flex: 1, headerAlign: "center", align: "center" },
+        { field: "PAN", headerName: "PAN", flex: 1, headerAlign: "center", align: "center" },
+        { field: "address", headerName: "Address", flex: 2, headerAlign: "center", align: "center" },
+        { field: "contactPerson", headerName: "Contact Person", flex: 1, headerAlign: "center", align: "center" },
+        {
+            field: "actions",
+            headerName: "Actions",
+            flex: 1,
+            headerAlign: "center",
+            align: "center",
+            renderCell: (params) => (
+                <Box display="flex" justifyContent="center">
+                    <IconButton onClick={() => handleView(params.row.id)} color="primary">
+                        <Visibility />
+                    </IconButton>
+                </Box>
+            ),
+        },
+    ];
 
-  if (loading) {
-    return <p>Loading customers...</p>; // Show loading message
-  }
-
-  if (error) {
-    return <p>Error: {error}</p>; // Show error message
-  }
-  console.log(customers)
-  return (
-    <div>
-      <h1>Customer List</h1>
-    </div>
-  );
-};
+    return (
+        <Box sx={{
+            height: '70vh',
+            "& .MuiDataGrid-root": { border: "none" },
+            "& .MuiDataGrid-cell": { borderBottom: "none" },
+            "& .MuiDataGrid-columnHeaders": {
+                backgroundColor: colors.primary[900],
+                borderBottom: "none"
+            },
+            "& .MuiDataGrid-virtualScroller": {
+                backgroundColor: colors.bgc[100],
+            },
+            "& .MuiDataGrid-footerContainer": {
+                borderTop: "none",
+                backgroundColor: colors.primary[900],
+            },
+        }}>
+            {loading ? (
+                <p>Loading customers...</p>
+            ) : error ? (
+                <p style={{ color: 'red' }}>Error: {error}</p>
+            ) : (
+                <DataGrid
+                    disableColumnMenu
+                    slots={{ toolbar: CustomToolbar }}
+                    rows={customers}
+                    columns={columns}
+                    pageSize={10}
+                />
+            )}
+        </Box>
+    );
+}
 
 export default CustomerList;

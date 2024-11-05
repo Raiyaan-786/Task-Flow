@@ -529,8 +529,8 @@ const AddWork = () => {
 
   return (
     <Box component="form" onSubmit={formik.handleSubmit} sx={{ p: 4 }} overflow={'auto'} height={'70vh'}>
-      {error && <Alert severity="error">{error}</Alert>}
-      {success && <Alert severity="success">{success}</Alert>}
+      {/* {error && <Alert severity="error">{error}</Alert>}
+      {success && <Alert severity="success">{success}</Alert>} */}
 
       <Grid container spacing={2}>
         <Grid item xs={12}>

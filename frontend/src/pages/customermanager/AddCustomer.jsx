@@ -50,6 +50,8 @@ const AddCustomer = () => {
       setSuccess(response.data.message);
       setError("");
       console.log('Customer Created')
+      alert('Customer Created')
+      resetForm();
     } catch (err) {
       console.log(err)
       setError(err.response?.data?.error || "Failed to create customer");

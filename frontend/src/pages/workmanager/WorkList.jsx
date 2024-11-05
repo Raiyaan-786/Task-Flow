@@ -123,8 +123,7 @@ const WorkList = () => {
       }}
     >
       <DataGrid
-        disableColumnMenu
-        components={{ Toolbar: CustomToolbar }}
+       disableColumnMenu slots={{ toolbar: CustomToolbar }}
         rows={workItems}
         columns={columns}
       />

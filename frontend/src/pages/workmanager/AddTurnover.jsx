@@ -1,16 +1,69 @@
-import React from 'react';
-import { Autocomplete, Box, Button, IconButton, TextField } from "@mui/material";
+import React, { useState, useEffect } from 'react';
+import { Box, Button, TextField, Autocomplete } from "@mui/material";
 import { Formik, FieldArray } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { mockDataManagers } from "../../data/mockData";  // Assuming mockDataManagers is used for customer data
-import { AddCircleOutline, AddOutlined, DeleteOutline, RemoveCircleOutline } from '@mui/icons-material';
+import { AddCircleOutline, RemoveCircleOutline } from '@mui/icons-material';
+import API from '../../api/api';
 
-const AddTurnoverCertificate = () => {
+const AddTurnover = () => {
     const isNonMobile = useMediaQuery("(min-width:600px)");
+    const [customers, setCustomers] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
-    const handleFormSubmit = (values) => {
-        console.log(values);
+    // Fetch customers from backend
+    const fetchCustomers = async () => {
+        const token = localStorage.getItem('token'); 
+
+        if (!token) {
+            setError('No authentication token found. Please log in.');
+            return;
+        }
+
+        try {
+            const response = await API.get('/getallcustomers', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setCustomers(response.data.customers);
+        } catch (err) {
+            console.error('Error fetching customers:', err);
+            setError('Failed to fetch customers. Please try again later.');
+        }
+    };
+
+    useEffect(() => {
+        fetchCustomers(); 
+    }, []);
+
+    // Handle form submission to create turnover
+    const handleFormSubmit = async (values) => {
+        setLoading(true);
+        setError('');
+        setSuccess('');
+
+        const token = localStorage.getItem('token'); 
+
+        if (!token) {
+            setError('No authentication token found. Please log in.');
+            setLoading(false);
+            return;
+        }
+
+        try {
+            await API.post('/createturnover', values, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setSuccess('Turnover created successfully!');
+            alert('Turnover created successfully!');
+            
+        } catch (err) {
+            console.error('Error creating turnover:', err);
+            setError('Failed to create turnover. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -43,16 +96,12 @@ const AddTurnoverCertificate = () => {
                             <Autocomplete
                                 size="small"
                                 disablePortal
-                                options={mockDataManagers}
+                                options={customers}
                                 fullWidth
-                                name="customer"
-                                getOptionLabel={(option) => option.label}
+                                getOptionLabel={(option) => `${option.companyName} (${option.customerName})`}
                                 onBlur={handleBlur}
                                 onChange={(e, value) => {
-                                    setFieldValue(
-                                        "customer",
-                                        value !== null ? value.label : initialValues.customer
-                                    );
+                                    setFieldValue("customer", value ? value._id : initialValues.customer);
                                 }}
                                 renderInput={(params) => (
                                     <TextField
@@ -67,102 +116,30 @@ const AddTurnoverCertificate = () => {
                                 sx={{ gridColumn: "span 8" }}
                             />
 
-                            {/* Company/Firm Name */}
-                            <TextField
-                                size="small"
-                                fullWidth
-                                variant="outlined"
-                                label="Company/Firm Name"
-                                onBlur={handleBlur}
-                                onChange={handleChange}
-                                value={values.companyName}
-                                name="companyName"
-                                error={!!touched.companyName && !!errors.companyName}
-                                helperText={touched.companyName && errors.companyName}
-                                sx={{ gridColumn: "span 8" }}
-                            />
-
-                            {/* Name */}
-                            <TextField
-                                size="small"
-                                fullWidth
-                                variant="outlined"
-                                label="Name"
-                                onBlur={handleBlur}
-                                onChange={handleChange}
-                                value={values.name}
-                                name="name"
-                                error={!!touched.name && !!errors.name}
-                                helperText={touched.name && errors.name}
-                                sx={{ gridColumn: "span 8" }}
-                            />
-
-                            {/* Code */}
-                            <TextField
-                                size="small"
-                                fullWidth
-                                variant="outlined"
-                                label="Code"
-                                onBlur={handleBlur}
-                                onChange={handleChange}
-                                value={values.code}
-                                name="code"
-                                error={!!touched.code && !!errors.code}
-                                helperText={touched.code && errors.code}
-                                sx={{ gridColumn: "span 8" }}
-                            />
-
-                            {/* PAN */}
-                            <TextField
-                                size="small"
-                                fullWidth
-                                variant="outlined"
-                                label="PAN"
-                                onBlur={handleBlur}
-                                onChange={handleChange}
-                                value={values.pan}
-                                name="pan"
-                                error={!!touched.pan && !!errors.pan}
-                                helperText={touched.pan && errors.pan}
-                                sx={{ gridColumn: "span 8" }}
-                            />
-
-                            {/* Address */}
-                            <TextField
-                                size="small"
-                                fullWidth
-                                variant="outlined"
-                                label="Address"
-                                onBlur={handleBlur}
-                                onChange={handleChange}
-                                value={values.address}
-                                name="address"
-                                error={!!touched.address && !!errors.address}
-                                helperText={touched.address && errors.address}
-                                sx={{ gridColumn: "span 8" }}
-                            />
-
-                            {/* Types */}
-                            <TextField
-                                size="small"
-                                fullWidth
-                                variant="outlined"
-                                label="Types"
-                                onBlur={handleBlur}
-                                onChange={handleChange}
-                                value={values.types}
-                                name="types"
-                                error={!!touched.types && !!errors.types}
-                                helperText={touched.types && errors.types}
-                                sx={{ gridColumn: "span 8" }}
-                            />
+                            {/* Static Fields */}
+                            {['companyName', 'name', 'code', 'pan', 'address', 'types'].map((field, index) => (
+                                <TextField
+                                    key={index}
+                                    size="small"
+                                    fullWidth
+                                    variant="outlined"
+                                    label={field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
+                                    value={values[field]}
+                                    name={field}
+                                    error={!!touched[field] && !!errors[field]}
+                                    helperText={touched[field] && errors[field]}
+                                    sx={{ gridColumn: "span 8" }}
+                                />
+                            ))}
 
                             {/* Dynamic Fields for Financial Year, Turnover, and Status */}
                             <FieldArray
                                 name="turnoverDetails"
                                 render={(arrayHelpers) => (
                                     <>
-                                        {values.turnoverDetails.map((turnoverDetail, index) => (
+                                        {values.turnoverDetails.map((_, index) => (
                                             <React.Fragment key={index}>
                                                 <TextField
                                                     size="small"
@@ -205,30 +182,30 @@ const AddTurnoverCertificate = () => {
                                                 />
 
                                                 {/* Remove Button */}
-                                                <Box gridColumn="span 1" display="flex" justifyContent="end" >
+                                                <Box gridColumn="span 1" display="flex" justifyContent="end">
                                                     <Button
                                                         type="button"
                                                         color="error"
-                                                        variant='outlined'
-                                                        size='small'
+                                                        variant="outlined"
+                                                        size="small"
                                                         onClick={() => arrayHelpers.remove(index)}
-                                                        disabled={values.turnoverDetails.length === 1} // Disable if there's only one item
+                                                        disabled={values.turnoverDetails.length === 1}
                                                     >
-                                                        <RemoveCircleOutline/>
+                                                        <RemoveCircleOutline />
                                                     </Button>
                                                 </Box>
                                             </React.Fragment>
                                         ))}
 
                                         {/* Add More Button */}
-                                        <Box gridColumn="span 1" display="flex" justifyContent="end" >
+                                        <Box gridColumn="span 1" display="flex" justifyContent="end">
                                             <Button
                                                 type="button"
                                                 variant="contained"
-                                                 size='small'
+                                                size="small"
                                                 onClick={() => arrayHelpers.push({ financialYear: "", turnover: "", status: "" })}
                                             >
-                                                <AddCircleOutline/>
+                                                <AddCircleOutline />
                                             </Button>
                                         </Box>
                                     </>
@@ -237,11 +214,15 @@ const AddTurnoverCertificate = () => {
 
                             {/* Submit Button */}
                             <Box gridColumn="span 8" display="flex" justifyContent="end" mt="20px">
-                                <Button type="submit" variant="contained">
-                                    Submit
+                                <Button type="submit" variant="contained" disabled={loading}>
+                                    {loading ? 'Creating...' : 'Submit'}
                                 </Button>
                             </Box>
                         </Box>
+
+                        {/* Display Error or Success Messages */}
+                        {error && <div className="error-message">{error}</div>}
+                        {success && <div className="success-message">{success}</div>}
                     </form>
                 )}
             </Formik>
@@ -249,6 +230,7 @@ const AddTurnoverCertificate = () => {
     );
 };
 
+// Validation Schema with Yup
 const checkoutSchema = yup.object().shape({
     customer: yup.string().required("Customer is required"),
     companyName: yup.string().required("Company/Firm Name is required"),
@@ -274,13 +256,7 @@ const initialValues = {
     pan: "",
     address: "",
     types: "",
-    turnoverDetails: [
-        {
-            financialYear: "",
-            turnover: "",
-            status: ""
-        }
-    ]
+    turnoverDetails: [{ financialYear: "", turnover: "", status: "" }]
 };
 
-export default AddTurnoverCertificate;
+export default AddTurnover;

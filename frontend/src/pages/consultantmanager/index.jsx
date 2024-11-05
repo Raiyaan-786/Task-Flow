@@ -43,7 +43,7 @@ const ConsultantManager = () => {
     };
     return (
         <Box display={'flex'} flexDirection={'column'} height={'88%'} margin={'10px'} p={.1}>
-            <Header title={'Consultant Manager'}/>
+            <Header title={'Consultant Management'}/>
             <Box
                 bgcolor={colors.primary[900]}
                 flexGrow={1}

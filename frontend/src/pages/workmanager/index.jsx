@@ -7,6 +7,7 @@ import AddWork from './AddWork';
 import AddTurnoverCertificate from './AddTurnover';
 import TurnoverList from './TurnoverList';
 import WorkList from './WorkList';
+import AddTurnover from './AddTurnover';
 
 const RoundedTabs = styled(Tabs)({
     // background:'red',A
@@ -44,7 +45,7 @@ const WorkManager = () => {
     };
     return (
         <Box display={'flex'} flexDirection={'column'} height={'88%'} margin={'10px'} p={.1}>
-            <Header title={'Work Manager'}/>
+            <Header title={'Work Management'}/>
             <Box
                 bgcolor={colors.primary[900]}
                 flexGrow={1}
@@ -71,14 +72,12 @@ const WorkManager = () => {
                         <WorkList/>
                     </Box>
                     <Box display={selectedTab === 2 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
-                       <AddTurnoverCertificate/>
+                       <AddTurnover/>
                     </Box>
 
                     <Box display={selectedTab === 3 ? 'block' : 'none'} flexGrow={1} height={'100%'}>
                         <TurnoverList/>
                     </Box>
-
-                  
                 </Box>
             </Box>
         </Box>

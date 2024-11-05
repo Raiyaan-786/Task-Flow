@@ -46,7 +46,7 @@ const Employee = () => {
     };
     return (
         <Box display={'flex'} flexDirection={'column'} height={'88%'} margin={'10px'} p={.1}>
-            <Header title={'Employee'}/>
+            <Header title={'Employee Management'}/>
             <Box
                 bgcolor={colors.primary[900]}
                 flexGrow={1}

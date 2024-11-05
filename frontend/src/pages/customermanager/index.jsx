@@ -6,6 +6,7 @@ import { tokens } from '../../theme';
 import DuplicateCustomer from './DuplicateCustomer';
 import AddCustomer from './AddCustomer';
 import CustomerList from './CustomerList';
+import CustomerGroup from './CustomerGroup';
 
 
 
@@ -45,7 +46,7 @@ const CustomerManager = () => {
     };
     return (
         <Box display={'flex'} flexDirection={'column'} height={'88%'} margin={'10px'} p={.1}>
-            <Header title={'Customer Manager'}/>
+            <Header title={'Customer Management'}/>
             <Box
                 bgcolor={colors.primary[900]}
                 flexGrow={1}
@@ -61,7 +62,7 @@ const CustomerManager = () => {
                     <RoundedTab label="Customer Group" />
                     <RoundedTab label="Customer List" />
                     <RoundedTab label="Customer Update" />
-                    <RoundedTab label="Duplicate Customer" />
+                    {/* <RoundedTab label="Duplicate Customer" /> */}
                 </RoundedTabs>
                 <Divider  sx={{borderColor:colors.bgc[100]}}/>
                 {/* Render All Tab Panels Once */}
@@ -71,7 +72,7 @@ const CustomerManager = () => {
                     </Box>
 
                     <Box display={selectedTab === 1 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
-                       {/* <ConsultantList/> */}hello
+                      <CustomerGroup/>
                     </Box>
 
                     <Box display={selectedTab === 2 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
@@ -82,9 +83,9 @@ const CustomerManager = () => {
                        {/* <ConsultantList/> */}hello
                     </Box>
 
-                    <Box display={selectedTab === 4 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
+                    {/* <Box display={selectedTab === 4 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
                        <DuplicateCustomer/>
-                    </Box>
+                    </Box> */}
                 </Box>
             </Box>
         </Box>

@@ -44,7 +44,7 @@ const Dashboard = () => {
 
     return (
         <Box p={.1} display="flex" flexDirection="column" height={'88%'} m={'10px'}>
-            <Box  bgcolor={colors.primary[900]} height={'60px'} display={'flex'} borderRadius={"10px"} justifyContent={'space-evenly'}>
+            <Box bgcolor={colors.primary[900]} height={'60px'} display={'flex'} borderRadius={"10px"} justifyContent={'space-evenly'}>
                 <StatBox value={3482} title={'Total Works'}  icon={<DateRangeRounded fontSize='small' htmlColor='blue' />} divider={true} />
                 <Divider orientation='vertical' sx={{borderColor:colors.bgc[100]}}/>
                 <StatBox value={3017} title={'Completed'} textcolor={'green'} icon={<EventAvailableRounded fontSize='small' htmlColor='green' />} />
