@@ -79,7 +79,16 @@ const workSchema = new mongoose.Schema(
       default: "Assigned",
       required: true,
     },
+    reminder: {
+      type: Date,
+      default: null,
+    },
+    remark: {
+      type: String,
+      default: "",
+    },
   },
   { timestamps: true }
 );
+
 export const Work = mongoose.model("Work", workSchema);

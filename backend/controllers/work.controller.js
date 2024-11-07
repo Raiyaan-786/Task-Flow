@@ -20,6 +20,8 @@ const addWork = async (req, res) => {
       quantity,
       discount,
       currentStatus = "Assigned",
+      reminder = null, // Default to null if not provided
+      remark = "", // Default to an empty string if not provided
     } = req.body;
 
     const employeeExists = await User.findById(assignedEmployee);
@@ -31,6 +33,7 @@ const addWork = async (req, res) => {
         .status(400)
         .json({ error: "Invalid employee ID for assignment" });
     }
+
     const newWork = new Work({
       customer,
       billingName,
@@ -48,8 +51,9 @@ const addWork = async (req, res) => {
       quantity,
       discount,
       currentStatus,
+      reminder,
+      remark,
     });
-
     await newWork.save();
     res
       .status(201)
@@ -58,6 +62,7 @@ const addWork = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
 const getWork = async (req, res) => {
   try {
     const { id } = req.params;
@@ -139,6 +144,7 @@ const deleteWork = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
+
 const getTotalWorks = async (req, res) => {
   try {
     const totalWorks = await Work.find(); // Fetch all works

@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import API from '../../api/api'; // Adjust the import path according to your project structure
+import API from '../../api/api';
 
 const DisplayWork = () => {
-  const [workItems, setWorkItems] = useState([]); // State to hold work data
-  const [customers, setCustomers] = useState([]); // State to hold customer data
-  const [loading, setLoading] = useState(true); // State to track loading status
-  const [error, setError] = useState(''); // State to track error messages
+  const [workItems, setWorkItems] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // Fetch customers on component mount
   useEffect(() => {
     const fetchCustomers = async () => {
-      const token = localStorage.getItem('token'); // Get token from localStorage
-
+      const token = localStorage.getItem('token');
       if (!token) {
         setError('No authentication token found. Please log in.');
         setLoading(false);
@@ -21,27 +19,24 @@ const DisplayWork = () => {
       try {
         const response = await API.get('/getallcustomers', {
           headers: {
-            Authorization: `Bearer ${token}`, // Include token in request headers
+            Authorization: `Bearer ${token}`,
           },
         });
-        
-        const customerData = response.data.customers || []; // Fallback to empty array
-        setCustomers(customerData); // Set the customers state
-        console.log("Fetched Customers:", customerData); // Log fetched customers
+        const customerData = response.data.customers || [];
+        setCustomers(customerData);
+        console.log("Fetched Customers:", customerData);
       } catch (err) {
-        setError(err.response?.data?.error || 'Failed to fetch customers'); // Handle error
+        setError(err.response?.data?.error || 'Failed to fetch customers');
         console.log(err);
       }
     };
 
-    fetchCustomers(); // Fetch customers on component mount
+    fetchCustomers();
   }, []);
 
-  // Fetch work items on component mount
   useEffect(() => {
     const fetchWorkItems = async () => {
-      const token = localStorage.getItem('token'); // Get token from localStorage
-
+      const token = localStorage.getItem('token');
       if (!token) {
         setError('No authentication token found. Please log in.');
         setLoading(false);
@@ -51,43 +46,41 @@ const DisplayWork = () => {
       try {
         const response = await API.get('/getallwork', {
           headers: {
-            Authorization: `Bearer ${token}`, // Include token in request headers
+            Authorization: `Bearer ${token}`,
           },
         });
-
-        const workData = response.data.works || []; // Fallback to empty array
-        setWorkItems(workData); // Set the work state
-        console.log("Fetched Work Items:", workData); // Log fetched work items
-        setLoading(false); // Set loading to false
+        const workData = response.data.works || [];
+        setWorkItems(workData);
+        console.log("Fetched Work Items:", workData);
+        setLoading(false);
       } catch (err) {
-        setError(err.response?.data?.error || 'Failed to fetch work items'); // Handle error
+        setError(err.response?.data?.error || 'Failed to fetch work items');
         console.log(err);
-        setLoading(false); // Set loading to false
+        setLoading(false);
       }
     };
 
-    fetchWorkItems(); // Fetch work items on component mount
+    fetchWorkItems();
   }, []);
 
   if (loading) {
-    return <p>Loading work items...</p>; // Show loading message
+    return <p>Loading work items...</p>;
   }
 
   if (error) {
-    return <p>Error: {error}</p>; // Show error message
+    return <p>Error: {error}</p>;
   }
 
-  // Function to get customer name by ID
   const getCustomerNameById = (customerId) => {
     const customer = customers.find(c => c._id === customerId);
-    console.log("Customer ID:", customerId, "Found Customer:", customer); // Log the search process
-    return customer ? customer.customerName : 'Unknown Customer'; // Return customer name or fallback
+    console.log("Customer ID:", customerId, "Found Customer:", customer);
+    return customer ? customer.customerName : 'Unknown Customer';
   };
-  
+
   return (
     <div>
       <h1>Work List</h1>
-      {workItems.length > 0 ? ( // Check if work items are available
+      {workItems.length > 0 ? (
         <table border="1" cellPadding="10" cellSpacing="0">
           <thead>
             <tr>
@@ -103,13 +96,17 @@ const DisplayWork = () => {
               <th>Price</th>
               <th>Quantity</th>
               <th>Discount</th>
-              <th>Current Status</th> {/* Added Current Status column */}
+              <th>Current Status</th>
+              <th>Reminder</th>
+              <th>Remark</th>
+              <th>Date</th>
+              <th>Modified Date</th>
             </tr>
           </thead>
           <tbody>
             {workItems.map((work) => (
               <tr key={work._id}>
-                <td>{getCustomerNameById(work.customer._id) || '-'}</td> {/* Fetching customer name */}
+                <td>{getCustomerNameById(work.customer._id) || '-'}</td>
                 <td>{work.customer?.email || '-'}</td>
                 <td>{work.assignedEmployee?.name || '-'}</td>
                 <td>{work.assignedEmployee?.email || '-'}</td>
@@ -121,13 +118,17 @@ const DisplayWork = () => {
                 <td>{work.price}</td>
                 <td>{work.quantity}</td>
                 <td>{work.discount}</td>
-                <td>{work.currentStatus || '-'}</td> {/* Display current status */}
+                <td>{work.currentStatus || '-'}</td>
+                <td>{work.reminder || 'No Reminder'}</td> {/* Display reminder */}
+                <td>{work.remark || 'No Remark'}</td> {/* Display remark */}
+                <td>{new Date(work.createdAt).toLocaleDateString()}</td> {/* Format created date */}
+                <td>{work.updatedAt ? new Date(work.updatedAt).toLocaleDateString() : '-'}</td> {/* Format modified date */}
               </tr>
             ))}
           </tbody>
         </table>
       ) : (
-        <p>No work items found.</p> // Message if no work items are available
+        <p>No work items found.</p>
       )}
     </div>
   );
