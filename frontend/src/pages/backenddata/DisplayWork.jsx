@@ -73,8 +73,22 @@ const DisplayWork = () => {
 
   const getCustomerNameById = (customerId) => {
     const customer = customers.find(c => c._id === customerId);
-    console.log("Customer ID:", customerId, "Found Customer:", customer);
     return customer ? customer.customerName : 'Unknown Customer';
+  };
+
+  const handleUpdate = (workId) => {
+    console.log("Update clicked for work ID:", workId);
+    // Add your update logic here
+  };
+
+  const handleShare = (workId) => {
+    console.log("Share clicked for work ID:", workId);
+    // Add your share logic here
+  };
+
+  const handleTemp = (workId) => {
+    console.log("Temp clicked for work ID:", workId);
+    // Add your temporary logic here
   };
 
   return (
@@ -86,7 +100,7 @@ const DisplayWork = () => {
             <tr>
               <th>Name</th>
               <th>Customer Email</th>
-              <th>Moblie No.</th> {/* Added Customer Phone column */}
+              <th>Mobile No.</th>
               <th>Assigned Employee</th>
               <th>Employee Email</th>
               <th>Service</th>
@@ -102,6 +116,7 @@ const DisplayWork = () => {
               <th>Remark</th>
               <th>Created Date</th>
               <th>Modified Date</th>
+              <th>Status Actions</th> {/* New Status column */}
             </tr>
           </thead>
           <tbody>
@@ -109,7 +124,7 @@ const DisplayWork = () => {
               <tr key={work._id}>
                 <td>{getCustomerNameById(work.customer._id) || '-'}</td>
                 <td>{work.customer?.email || '-'}</td>
-                <td>{work.customer?.mobileNo || '-'}</td> {/* Display customer phone number */}
+                <td>{work.customer?.mobileNo || '-'}</td>
                 <td>{work.assignedEmployee?.name || '-'}</td>
                 <td>{work.assignedEmployee?.email || '-'}</td>
                 <td>{work.service}</td>
@@ -125,6 +140,11 @@ const DisplayWork = () => {
                 <td>{work.remark || 'No Remark'}</td>
                 <td>{new Date(work.createdAt).toLocaleDateString()}</td>
                 <td>{work.updatedAt ? new Date(work.updatedAt).toLocaleDateString() : '-'}</td>
+                <td>
+                  <button onClick={() => handleUpdate(work._id)}>Update</button>
+                  <button onClick={() => handleShare(work._id)}>Share</button>
+                  <button onClick={() => handleTemp(work._id)}>Temp</button>
+                </td>
               </tr>
             ))}
           </tbody>
