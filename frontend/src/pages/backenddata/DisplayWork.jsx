@@ -84,8 +84,9 @@ const DisplayWork = () => {
         <table border="1" cellPadding="10" cellSpacing="0">
           <thead>
             <tr>
-              <th>Customer Name</th>
+              <th>Name</th>
               <th>Customer Email</th>
+              <th>Moblie No.</th> {/* Added Customer Phone column */}
               <th>Assigned Employee</th>
               <th>Employee Email</th>
               <th>Service</th>
@@ -99,7 +100,7 @@ const DisplayWork = () => {
               <th>Current Status</th>
               <th>Reminder</th>
               <th>Remark</th>
-              <th>Date</th>
+              <th>Created Date</th>
               <th>Modified Date</th>
             </tr>
           </thead>
@@ -108,6 +109,7 @@ const DisplayWork = () => {
               <tr key={work._id}>
                 <td>{getCustomerNameById(work.customer._id) || '-'}</td>
                 <td>{work.customer?.email || '-'}</td>
+                <td>{work.customer?.mobileNo || '-'}</td> {/* Display customer phone number */}
                 <td>{work.assignedEmployee?.name || '-'}</td>
                 <td>{work.assignedEmployee?.email || '-'}</td>
                 <td>{work.service}</td>
@@ -119,10 +121,10 @@ const DisplayWork = () => {
                 <td>{work.quantity}</td>
                 <td>{work.discount}</td>
                 <td>{work.currentStatus || '-'}</td>
-                <td>{work.reminder || 'No Reminder'}</td> {/* Display reminder */}
-                <td>{work.remark || 'No Remark'}</td> {/* Display remark */}
-                <td>{new Date(work.createdAt).toLocaleDateString()}</td> {/* Format created date */}
-                <td>{work.updatedAt ? new Date(work.updatedAt).toLocaleDateString() : '-'}</td> {/* Format modified date */}
+                <td>{work.reminder || 'No Reminder'}</td>
+                <td>{work.remark || 'No Remark'}</td>
+                <td>{new Date(work.createdAt).toLocaleDateString()}</td>
+                <td>{work.updatedAt ? new Date(work.updatedAt).toLocaleDateString() : '-'}</td>
               </tr>
             ))}
           </tbody>

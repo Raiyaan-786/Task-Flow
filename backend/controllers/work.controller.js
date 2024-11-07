@@ -69,7 +69,7 @@ const getWork = async (req, res) => {
     // Find work by ID and populate the assigned employee and customer fields
     const work = await Work.findById(id)
       .populate("assignedEmployee", "name email")
-      .populate("customer", "customerName email");
+      .populate("customer", "customerName email mobileNo");
 
     if (!work) {
       return res.status(404).json({ error: "Work not found" });
@@ -95,7 +95,7 @@ const getAllWork = async (req, res) => {
   try {
     const works = await Work.find()
       .populate("assignedEmployee", "name email")
-      .populate("customer", "customerName email");
+      .populate("customer", "customerName email mobileNo");
 
     res.status(200).json({ works });
   } catch (err) {
