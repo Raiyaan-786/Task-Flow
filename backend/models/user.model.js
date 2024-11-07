@@ -31,8 +31,12 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["Admin", "Manager", "Employee" , "Inactive"],
+      enum: ["Admin", "Manager", "Employee", "Inactive"],
       default: "Employee",
+    },
+    image: {
+      type: Buffer,  // Store image as binary data (Buffer)
+      required: false,
     },
   },
   { timestamps: true }

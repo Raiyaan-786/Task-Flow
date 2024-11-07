@@ -90,7 +90,7 @@ const createUser = async (req, res) => {
       return res.status(400).json({ error: 'Email or username already exists' });
     }
 
-    // Create a new user
+    // Create a new user with image as empty (null or undefined)
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       name,
@@ -99,7 +99,8 @@ const createUser = async (req, res) => {
       password: hashedPassword,
       mobile,
       address,
-      role // Admin/Manager specifies the role
+      role, 
+      image: null, 
     });
 
     await newUser.save();
@@ -108,13 +109,13 @@ const createUser = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-// Get single work
+// Get single User
 const getUser = async (req, res) => {
   try {
     const { id } = req.params; // Extract the user ID from the request params
 
-    // Find the user by ID, selecting the relevant fields
-    const user = await User.findById(id, 'name email role mobile address username');
+    // Find the user by ID, including the image and password fields
+    const user = await User.findById(id, 'name email role mobile address username image password');
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
@@ -128,7 +129,7 @@ const getUser = async (req, res) => {
 // Get all Users
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({}, 'name email role mobile address username');
+    const users = await User.find({}, 'name email role mobile address username image password');
     res.status(200).json({ users });
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import API from '../../api/api'; 
+import { Avatar } from '@mui/material';  // Import MUI Avatar component
+import PeopleIcon from '@mui/icons-material/People';  // Import MUI People icon
 
 const DisplayUsers = () => {
   const [users, setUsers] = useState([]);
@@ -50,23 +52,35 @@ const DisplayUsers = () => {
         <table border="1" cellPadding="10" cellSpacing="0">
           <thead>
             <tr>
+              <th>Image</th>
               <th>Name</th>
               <th>Username</th>
               <th>Email</th>
               <th>Mobile</th>
               <th>Address</th>
               <th>Role</th>
+              <th>Password</th> {/* New column for password */}
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
               <tr key={user._id}>
+                <td>
+                  {user.image ? (
+                    <Avatar src={`data:image/jpeg;base64,${user.image}`} alt={user.name} />
+                  ) : (
+                    <Avatar>
+                      <PeopleIcon />
+                    </Avatar>
+                  )}
+                </td>
                 <td>{user.name}</td>
                 <td>{user.username}</td>
                 <td>{user.email}</td>
                 <td>{user.mobile}</td>
                 <td>{user.address}</td>
                 <td>{user.role}</td>
+                <td>{user.password}</td> {/* Display password (Not recommended for production) */}
               </tr>
             ))}
           </tbody>
