@@ -25,9 +25,7 @@ const DisplayIndividualWork = () => {
       setError('No authentication token found. Please log in.');
       return;
     }
-
     setLoading(true);
-
     try {
       const workData = await fetchFunction(token);
       console.log('Fetched Work Data:', workData);
@@ -40,7 +38,6 @@ const DisplayIndividualWork = () => {
       setLoading(false);
     }
   };
-
   const fetchEmployeesData = async () => {
     const token = localStorage.getItem('token');
 
@@ -48,7 +45,6 @@ const DisplayIndividualWork = () => {
       setError('No authentication token found. Please log in.');
       return;
     }
-
     try {
       const employeeData = await fetchAllEmployees(token);
       console.log('Fetched Employees:', employeeData);
