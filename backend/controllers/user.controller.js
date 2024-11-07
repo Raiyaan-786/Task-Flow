@@ -100,6 +100,7 @@ const createUser = async (req, res) => {
       mobile,
       address,
       role, 
+      status: 'Active',
       image: null, 
     });
 
@@ -115,7 +116,7 @@ const getUser = async (req, res) => {
     const { id } = req.params; // Extract the user ID from the request params
 
     // Find the user by ID, including the image and password fields
-    const user = await User.findById(id, 'name email role mobile address username image password');
+    const user = await User.findById(id, 'name email role mobile address username image password status');
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
@@ -129,7 +130,7 @@ const getUser = async (req, res) => {
 // Get all Users
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({}, 'name email role mobile address username image password');
+    const users = await User.find({}, 'name email role mobile address username image password status');
     res.status(200).json({ users });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -169,6 +170,30 @@ const updateUserRole = async (req, res) => {
   }
 };
 
+const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find the user by ID
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Prevent deletion of admin user (optional, based on your requirements)
+    if (user.role === 'Admin') {
+      return res.status(403).json({ error: 'You cannot delete an admin user' });
+    }
+
+    // Delete the user
+    await User.findByIdAndDelete(id);
+
+    res.status(200).json({ message: 'User deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 
-export { registerUser, loginUser, createUser,getUser, getAllUsers, updateUserRole };
+
+export { registerUser, loginUser, createUser,getUser, getAllUsers, updateUserRole , deleteUser };

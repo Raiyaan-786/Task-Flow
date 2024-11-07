@@ -34,6 +34,10 @@ const userSchema = new mongoose.Schema(
       enum: ["Admin", "Manager", "Employee", "Inactive"],
       default: "Employee",
     },
+    status: {
+      type: String,
+      enum: ["Active", "Block","Inactive"],
+    },
     image: {
       type: Buffer,  // Store image as binary data (Buffer)
       required: false,
