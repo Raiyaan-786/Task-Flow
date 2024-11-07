@@ -15,25 +15,29 @@ import DisplayIndividualWork from './DisplayIndividualWork'
 import CreateCustomerGroup from './CreateCustomerGroup'
 import UpdateCustomerGroup from './UpdateCustomerGroup'
 import { Box } from '@mui/material'
+import CustomerSummary from './CustomerDashboard'
+import CustomerGroupSummary from './CustomerDashboardbyGroup'
 
 const Backend = () => {
   return (
     <Box height={'75vh'} overflow={'auto'}>
       {/* <CreateUser/> */} {/*done*/}
       {/* <DisplayUsers/> */} {/*done*/}
-      {/* <CreateConsultant/> */} {/*done*/}
+      {/* <CreateConsultant/> */} 
       {/* <DisplayConsultants/> */}
       {/* <CreateWork/>  */}
       {/* <DisplayWork/>   */}
       {/* <EmployeeDashboard/> */} {/*done*/}
       {/* <WorkDashboard/> {/*done*/}
-      {/* <CreateCustomer/> */} {/*done*/}
-      {/* <DisplayCustomers/> */} {/*done*/}
+      {/* <CreateCustomer/> */} 
+      {/* <DisplayCustomers/> */} 
       {/* <DisplayTurnover/>  */} {/*done*/}
       {/* <CreateTurnover/>  */} {/*Not working*/}
       {/* <CreateCustomerGroup/> */} {/*done*/}
       {/* <UpdateCustomerGroup/> */}  {/*done*/}
-      <DisplayIndividualWork/>
+      {/* <DisplayIndividualWork/> */}
+      {/* <CustomerSummary/> */}
+      <CustomerGroupSummary/>
     </Box>
   )
 }

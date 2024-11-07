@@ -182,7 +182,7 @@ const getUnassignedWorks = async (req, res) => {
       assignedEmployee: null,
     }); // Fetch works that are unassigned
     res.status(200).json(unassignedWorks); // Send back the array of unassigned work documents
-  } catch (err) {
+  } catch (serr) {
     res.status(500).json({ error: err.message });
   }
 };
@@ -190,6 +190,30 @@ const getUnassignedWorks = async (req, res) => {
 const getHoldWorks = async (req, res) => {
   try {
     const holdWorks = await Work.find({ currentStatus: "Hold Work" }); // Fetch works with hold status
+    res.status(200).json(holdWorks); // Send back the array of hold work documents
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+const getReadyForChecking = async (req, res) => {
+  try {
+    const holdWorks = await Work.find({ currentStatus: "Ready for Checking" }); // Fetch works with hold status
+    res.status(200).json(holdWorks); // Send back the array of hold work documents
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+const getCustomerVerification = async (req, res) => {
+  try {
+    const holdWorks = await Work.find({ currentStatus: "Customer Verification" }); // Fetch works with hold status
+    res.status(200).json(holdWorks); // Send back the array of hold work documents
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+const getEvcPending = async (req, res) => {
+  try {
+    const holdWorks = await Work.find({ currentStatus: "EVC Pending" }); // Fetch works with hold status
     res.status(200).json(holdWorks); // Send back the array of hold work documents
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -218,4 +242,7 @@ export {
   getUnassignedWorks,
   getHoldWorks,
   getCanceledWorks,
+  getCustomerVerification,
+  getEvcPending,
+  getReadyForChecking,
 };

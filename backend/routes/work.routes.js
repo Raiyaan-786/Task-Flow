@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import {verifyJWT , roleAuthorization } from '../middlewares/auth.middleware.js';
-import { addWork, deleteWork, getAllWork, getAssignedWorks, getCanceledWorks, getCompletedWorks, getHoldWorks, getTotalWorks, getUnassignedWorks, getWork, updateWork } from '../controllers/work.controller.js';
+import { addWork, deleteWork, getAllWork, getAssignedWorks, getCanceledWorks, getCompletedWorks, getCustomerVerification, getEvcPending, getHoldWorks, getReadyForChecking, getTotalWorks, getUnassignedWorks, getWork, updateWork } from '../controllers/work.controller.js';
 
 const router = Router();
 
@@ -14,6 +14,9 @@ router.route('/completed-works').get(verifyJWT, getCompletedWorks);
 router.route('/assigned-works').get(verifyJWT, getAssignedWorks);
 router.route('/unassigned-works').get(verifyJWT, getUnassignedWorks);
 router.route('/hold-works').get(verifyJWT, getHoldWorks);
-router.route('/canceled-works').get(verifyJWT, getCanceledWorks);
+router.route('/cancelled-works').get(verifyJWT, getCanceledWorks);
+router.route('/ready-for-checking-works').get(verifyJWT, getReadyForChecking);
+router.route('/customer-verification-works').get(verifyJWT, getCustomerVerification);
+router.route('/evc-pending-works').get(verifyJWT, getEvcPending);
 
 export default router;

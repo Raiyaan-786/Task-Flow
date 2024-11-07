@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { Customer, CustomerGroup } from "../models/customer.model.js";
-
+import { Work } from "../models/work.model.js"; 
 
 const createCustomer = async (req, res) => {
     try {
@@ -244,5 +244,125 @@ const updateGroupName = async (req, res) => {
     res.status(500).json({ error: "An error occurred while updating the group name." });
   }
 };
+
+const getTotalWorks = async (req, res) => {
+  try {
+    const { customerId } = req.params;
+
+    // Validate customer ID
+    if (!customerId) {
+      return res.status(400).json({ message: "Customer ID is required" });
+    }
+
+    // Fetch total work assigned to the customer
+    const totalWorks = await Work.countDocuments({ customer: customerId });
+
+    return res.status(200).json({ totalWorks });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Fetch completed works for a specific customer
+const getCompletedWorks = async (req, res) => {
+  try {
+    const { customerId } = req.params;
+
+    // Validate customer ID
+    if (!customerId) {
+      return res.status(400).json({ message: "Customer ID is required" });
+    }
+
+    // Fetch completed works for the customer
+    const completedWorks = await Work.countDocuments({
+      customer: customerId,
+      currentStatus: "Completed"
+    });
+
+    return res.status(200).json({ completedWorks });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Fetch assigned works for a specific customer
+const getAssignedWorks = async (req, res) => {
+  try {
+    const { customerId } = req.params;
+
+    // Validate customer ID
+    if (!customerId) {
+      return res.status(400).json({ message: "Customer ID is required" });
+    }
+
+    // Fetch assigned works for the customer
+    const assignedWorks = await Work.countDocuments({
+      customer: customerId,
+      currentStatus: "Assigned"
+    });
+
+    return res.status(200).json({ assignedWorks });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Fetch work status counts for a specific customer
+const getWorkStatusSummary = async (req, res) => {
+  try {
+    const { customerId } = req.params;
+
+    // Validate customer ID
+    if (!customerId) {
+      return res.status(400).json({ message: "Customer ID is required" });
+    }
+
+    // Fetch the counts of work statuses for the customer
+    const workSummary = await Work.aggregate([
+      { $match: { customer: mongoose.Types.ObjectId(customerId) } },
+      {
+        $group: {
+          _id: "$currentStatus",
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
+    const summary = workSummary.reduce((acc, item) => {
+      acc[item._id] = item.count;
+      return acc;
+    }, {});
+
+    return res.status(200).json(summary);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Fetch all works assigned to a specific user (employee)
+const getWorksByEmployee = async (req, res) => {
+  try {
+    const { employeeId } = req.params;
+
+    // Validate employee ID
+    if (!employeeId) {
+      return res.status(400).json({ message: "Employee ID is required" });
+    }
+
+    // Fetch all works assigned to the employee
+    const worksByEmployee = await Work.find({ assignedEmployee: employeeId });
+
+    return res.status(200).json(worksByEmployee);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+
 
 export {createCustomer ,getCustomer , getAllCustomers , updateCustomer , deleteCustomer , createGroup , addCustomerToGroup , removeCustomerFromGroup , getAllGroups , getSingleGroup , deleteGroup ,updateGroupName}
