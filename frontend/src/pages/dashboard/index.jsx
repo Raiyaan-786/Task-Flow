@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, useTheme, Typography, Divider, Tabs, Tab } from "@mui/material";
+import { Box, useTheme, Typography, Divider, Tabs, Tab, Button } from "@mui/material";
 import { tokens } from '../../theme';
 import StatBox from '../../components/StatBox';
 import { AssignmentLateOutlined, AssignmentTurnedInOutlined, DateRangeRounded, EventAvailableRounded, HighlightOffRounded, PauseCircleOutlineRounded, ScheduleRounded } from '@mui/icons-material';
@@ -8,6 +8,7 @@ import MainDashboard from './MainDashboard';
 import EmployeeDashboard from './EmployeeDashboard'
 import WorkDashboard from './WorkDashboard';
 import CustomerDashboard from './CustomerDashboard';
+import TotalWorks from './individualworks/TotalWorks';
 
 const RoundedTabs = styled(Tabs)({
     padding: '10px', 
@@ -37,30 +38,76 @@ const Dashboard = () => {
     const colors = tokens(theme.palette.mode);
 
     const [selectedTab, setSelectedTab] = useState(2);
+    const [individualWorksTab,setIndividualWorksTab]=useState(-1);
+    const [individualWorks,setIndividualWorks]=useState(false);
 
     const handleTabChange = (event, newValue) => {
         setSelectedTab(newValue);
+    };
+     // Click handler for StatBox to change the selected tab
+     const handleStatBoxClick = (tabIndex) => {
+        setIndividualWorksTab(tabIndex);
+        setIndividualWorks(true)
     };
 
     return (
         <Box p={.1} display="flex" flexDirection="column" height={'88%'} m={'10px'}>
             <Box bgcolor={colors.primary[900]} height={'60px'} display={'flex'} borderRadius={"10px"} justifyContent={'space-evenly'}>
-                <StatBox value={3482} title={'Total Works'}  icon={<DateRangeRounded fontSize='small' htmlColor='blue' />} divider={true} />
+                <Box onClick={()=>handleStatBoxClick(0)} width={'100%'} display={'felx'} ><StatBox value={3482} title={'Total Works'} /></Box>
                 <Divider orientation='vertical' sx={{borderColor:colors.bgc[100]}}/>
-                <StatBox value={3017} title={'Completed'} textcolor={'green'} icon={<EventAvailableRounded fontSize='small' htmlColor='green' />} />
+                <Box onClick={()=>handleStatBoxClick(1)} width={'100%'} display={'felx'} ><StatBox  value={3017} title={'Completed'} textcolor={'green'}/></Box>
                 <Divider orientation='vertical' sx={{borderColor:colors.bgc[100]}}/>
-                <StatBox value={96} title={'Pending'} textcolor={'orange'} icon={<ScheduleRounded fontSize='small' htmlColor='orange' />} />
+                <Box onClick={()=>handleStatBoxClick(2)} width={'100%'} display={'felx'} ><StatBox  value={96} title={'Pending'} textcolor={'orange'} /></Box>
                 <Divider orientation='vertical' sx={{borderColor:colors.bgc[100]}}/>
-                <StatBox value={90} title={'Assigned'}  icon={<AssignmentTurnedInOutlined fontSize='small' htmlColor='pink' />} />
+                <Box onClick={()=>handleStatBoxClick(3)} width={'100%'} display={'felx'} ><StatBox value={90} title={'Assigned'} /></Box>
                 <Divider orientation='vertical' sx={{borderColor:colors.bgc[100]}}/>
-                <StatBox value={5} title={'Unassigned'} icon={<AssignmentLateOutlined fontSize='small' htmlColor='blue' />} />
+                <Box onClick={()=>handleStatBoxClick(4)} width={'100%'} display={'felx'} ><StatBox  value={5} title={'Unassigned'}/></Box>
                 <Divider orientation='vertical' sx={{borderColor:colors.bgc[100]}}/>
-                <StatBox value={14} title={'Hold'}  icon={<PauseCircleOutlineRounded fontSize='small' htmlColor='grey' />} />
+                <Box onClick={()=>handleStatBoxClick(5)} width={'100%'} display={'felx'} ><StatBox  value={14} title={'Hold'}  /></Box>
                 <Divider orientation='vertical' sx={{borderColor:colors.bgc[100]}} />
-                <StatBox value={350} title={'Cancelled'} textcolor={'red'} icon={<HighlightOffRounded fontSize='small' htmlColor='red' />} />
+                <Box onClick={()=>handleStatBoxClick(6)} width={'100%'} display={'felx'} ><StatBox  value={350} title={'Cancelled'} textcolor={'red'} /></Box>
             </Box>
-
+            {individualWorks?
             <Box
+            bgcolor={colors.primary[900]}
+            flexGrow={1}
+            mt="2px"
+            display="flex"
+            flexDirection="column"
+            borderRadius={'10px'}
+            >
+                
+                <Box display={individualWorksTab === 0 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
+                       <Box p={1} display={'flex'} flexDirection={'row'} alignItems={'center'} gap={2}>
+                       <Button size='small' onClick={()=>setIndividualWorks(false)} variant='contained' sx={{bgcolor:colors.teal[400]}} >Go Back</Button>
+                       <Typography variant="h4" fontWeight={'bold'}>Total Works</Typography>
+                       </Box> 
+                       <TotalWorks/>
+                </Box>
+                <Box display={individualWorksTab === 1 ? 'block' : 'none'} flexGrow={1} height={'100%'} > 
+                        hello 1
+                </Box>
+                <Box display={individualWorksTab === 2 ? 'block' : 'none'} flexGrow={1} height={'100%'} > 
+                        hello 2
+                </Box>
+                <Box display={individualWorksTab === 3 ? 'block' : 'none'} flexGrow={1} height={'100%'} > 
+                        hello 3
+                </Box>
+                <Box display={individualWorksTab === 4 ? 'block' : 'none'} flexGrow={1} height={'100%'} > 
+                        hello 4
+                </Box>
+                <Box display={individualWorksTab === 5 ? 'block' : 'none'} flexGrow={1} height={'100%'} > 
+                        hello5
+                </Box>
+                <Box display={individualWorksTab === 6 ? 'block' : 'none'} flexGrow={1} height={'100%'} > 
+                        hello6
+                </Box>
+             
+
+            </Box>
+            :
+            <Box
+                //this is box 2
                 bgcolor={colors.primary[900]}
                 flexGrow={1}
                 mt="2px"
@@ -97,6 +144,7 @@ const Dashboard = () => {
                     </Box>
                 </Box>
             </Box>
+            }
         </Box>
     );
 };

@@ -22,7 +22,7 @@ const Backend = () => {
   return (
     <Box height={'75vh'} overflow={'auto'}>
       {/* <CreateUser/> */} {/*done*/}
-      <DisplayUsers/> 
+      {/* <DisplayUsers/>  */}
       {/* <CreateConsultant/> */} 
       {/* <DisplayConsultants/> */}
       {/* <CreateWork/>  */}
@@ -35,7 +35,7 @@ const Backend = () => {
       {/* <CreateTurnover/>  */} {/*Not working*/}
       {/* <CreateCustomerGroup/> */} {/*done*/}
       {/* <UpdateCustomerGroup/> */}  {/*done*/}
-      {/* <DisplayIndividualWork/> */}
+      <DisplayIndividualWork/>
       {/* <CustomerSummary/> */}
       {/* <CustomerGroupSummary/> */}
     </Box>
