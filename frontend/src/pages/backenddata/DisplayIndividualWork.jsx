@@ -7,7 +7,9 @@ import {
   fetchHoldWorks,
   fetchCanceledWorks,
   fetchAllEmployees,
-  fetchWorkById
+  fetchWorkById,
+  deleteWork,
+  updateWork
 } from './IndividualWork';
 
 const DisplayIndividualWork = () => {
@@ -81,6 +83,38 @@ const DisplayIndividualWork = () => {
       setError('Failed to fetch work details. Please try again later.');
     }
   };
+  const handleUpdate = async (workId, updatedData) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError('No authentication token found. Please log in.');
+      return;
+    }
+    try {
+      const updatedWork = await updateWork(workId, updatedData, token);
+      setWorks((prevWorks) =>
+        prevWorks.map((work) => (work._id === workId ? updatedWork : work))
+      );
+      setSelectedWork(null);
+    } catch (err) {
+      setError('Failed to update work. Please try again later.');
+    }
+  };
+
+  const handleDelete = async (workId) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError('No authentication token found. Please log in.');
+      return;
+    }
+    try {
+      await deleteWork(workId, token);
+      setWorks((prevWorks) => prevWorks.filter((work) => work._id !== workId));
+      setSelectedWork(null);
+    } catch (err) {
+      setError('Failed to delete work. Please try again later.');
+    }
+  };
+
 
   const renderTable = () => (
     <table className="works-table">

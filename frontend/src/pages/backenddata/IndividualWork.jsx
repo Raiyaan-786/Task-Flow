@@ -60,6 +60,31 @@ const fetchWorkById = async (id, token) => {
     throw new Error(error.response?.data?.error || "Failed to fetch work");
   }
 };
+const updateWork = async (workId, updatedWorkData, token) => {
+  try {
+    const response = await API.put(`/updatework/${workId}`, updatedWorkData, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    console.log('Work updated successfully:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating work:", error);
+    throw new Error(error.response?.data?.error || "Failed to update work");
+  }
+};
+
+const deleteWork = async (workId, token) => {
+  try {
+    const response = await API.delete(`/deletework/${workId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    console.log('Work deleted successfully:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting work:", error);
+    throw new Error(error.response?.data?.error || "Failed to delete work");
+  }
+};
 
 export {
   fetchTotalWorks,
@@ -69,5 +94,7 @@ export {
   fetchHoldWorks,
   fetchCanceledWorks,
   fetchAllEmployees,
-  fetchWorkById
+  fetchWorkById,
+  deleteWork,
+  updateWork
 };
