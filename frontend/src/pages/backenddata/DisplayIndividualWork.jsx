@@ -9,7 +9,8 @@ import {
   fetchAllEmployees,
   fetchWorkById,
   deleteWork,
-  updateWork
+  updateWork,
+  updateWorkStatus
 } from './IndividualWork';
 
 const DisplayIndividualWork = () => {
@@ -115,6 +116,14 @@ const DisplayIndividualWork = () => {
     }
   };
 
+  const updateStatus = async (workId, newStatus) => {
+    try {
+      const updatedWork = await updateWorkStatus(workId, newStatus, token);
+      console.log("Updated Work:", updatedWork);
+    } catch (error) {
+      console.error("Error updating work status:", error);
+    }
+  };
 
   const renderTable = () => (
     <table className="works-table">

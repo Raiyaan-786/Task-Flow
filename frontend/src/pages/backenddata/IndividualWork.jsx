@@ -48,6 +48,12 @@ const fetchCanceledWorks = async (token) => {
   });
   return response.data; 
 };
+const fetchMutedWorks = async (token) => {
+  const response = await API.get('/muted-works', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data; 
+};
 
 const fetchWorkById = async (id, token) => {
   try {
@@ -86,6 +92,19 @@ const deleteWork = async (workId, token) => {
   }
 };
 
+const updateWorkStatus = async (workId, newStatus, token) => {
+  try {
+    const response = await API.put(`/updateworkstatus/${workId}`, { newStatus }, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    console.log('Work status updated successfully:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating work status:", error);
+    throw new Error(error.response?.data?.error || "Failed to update work status");
+  }
+};
+
 export {
   fetchTotalWorks,
   fetchCompletedWorks,
@@ -96,5 +115,6 @@ export {
   fetchAllEmployees,
   fetchWorkById,
   deleteWork,
-  updateWork
+  updateWork,
+  updateWorkStatus
 };

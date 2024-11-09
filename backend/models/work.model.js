@@ -74,7 +74,8 @@ const workSchema = new mongoose.Schema(
         "Hold Work",
         "EVC Pending",
         "Cancel",
-        "Completed"
+        "Completed",
+        "Mute"
       ],
       default: "Assigned",
       required: true,

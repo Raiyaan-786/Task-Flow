@@ -159,7 +159,7 @@ const getCompletedWorks = async (req, res) => {
       currentStatus: "Completed",
     }).populate("assignedEmployee", "name email")
     .populate("customer", "customerName email mobileNo");
-    res.status(200).json(completedWorks); // Send back the array of completed work documents
+    res.status(200).json(completedWorks); 
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -170,8 +170,8 @@ const getAssignedWorks = async (req, res) => {
     const assignedWorks = await Work.find({
       currentStatus: "Assigned",
     }).populate("assignedEmployee", "name email")
-    .populate("customer", "customerName email mobileNo"); // Fetch works with assigned status
-    res.status(200).json(assignedWorks); // Send back the array of assigned work documents
+    .populate("customer", "customerName email mobileNo"); 
+    res.status(200).json(assignedWorks); 
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -182,8 +182,8 @@ const getUnassignedWorks = async (req, res) => {
     const unassignedWorks = await Work.find({
       assignedEmployee: null,
     }).populate("assignedEmployee", "name email")
-    .populate("customer", "customerName email mobileNo"); // Fetch works that are unassigned
-    res.status(200).json(unassignedWorks); // Send back the array of unassigned work documents
+    .populate("customer", "customerName email mobileNo"); 
+    res.status(200).json(unassignedWorks); 
   } catch (serr) {
     res.status(500).json({ error: err.message });
   }
@@ -192,8 +192,8 @@ const getUnassignedWorks = async (req, res) => {
 const getHoldWorks = async (req, res) => {
   try {
     const holdWorks = await Work.find({ currentStatus: "Hold Work" }).populate("assignedEmployee", "name email")
-    .populate("customer", "customerName email mobileNo"); // Fetch works with hold status
-    res.status(200).json(holdWorks); // Send back the array of hold work documents
+    .populate("customer", "customerName email mobileNo"); 
+    res.status(200).json(holdWorks); 
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -201,8 +201,8 @@ const getHoldWorks = async (req, res) => {
 const getReadyForChecking = async (req, res) => {
   try {
     const holdWorks = await Work.find({ currentStatus: "Ready for Checking" }).populate("assignedEmployee", "name email")
-    .populate("customer", "customerName email mobileNo"); // Fetch works with hold status
-    res.status(200).json(holdWorks); // Send back the array of hold work documents
+    .populate("customer", "customerName email mobileNo"); 
+    res.status(200).json(holdWorks); 
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -210,8 +210,8 @@ const getReadyForChecking = async (req, res) => {
 const getCustomerVerification = async (req, res) => {
   try {
     const holdWorks = await Work.find({ currentStatus: "Customer Verification" }).populate("assignedEmployee", "name email")
-    .populate("customer", "customerName email mobileNo"); // Fetch works with hold status
-    res.status(200).json(holdWorks); // Send back the array of hold work documents
+    .populate("customer", "customerName email mobileNo"); 
+    res.status(200).json(holdWorks); 
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -226,7 +226,7 @@ const getEvcPending = async (req, res) => {
   }
 };
 
-const getCanceledWorks = async (req, res) => {
+const getCancelledWorks = async (req, res) => {
   try {
     const canceledWorks = await Work.find({
       currentStatus: "Cancel",
@@ -235,6 +235,48 @@ const getCanceledWorks = async (req, res) => {
     res.status(200).json(canceledWorks);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+const getMutedWorks = async (req, res) => {
+  try {
+    const mutedWorks = await Work.find({
+      currentStatus: "Mute",
+    }).populate("assignedEmployee", "name email")
+    .populate("customer", "customerName email mobileNo"); 
+    res.status(200).json(mutedWorks);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+const updateWorkStatus = async (req, res) => {
+  const { workId } = req.params;
+  const { newStatus } = req.body;
+  const validStatuses = [
+    "Assigned",
+    "Picked Up",
+    "Customer Verification",
+    "Ready for Checking",
+    "Hold Work",
+    "EVC Pending",
+    "Cancel",
+    "Completed",
+    "Mute"
+  ];
+  if (!validStatuses.includes(newStatus)) {
+    return res.status(400).json({ error: "Invalid status value" });
+  }
+  try {
+    const work = await Work.findById(workId);
+    
+    if (!work) {
+      return res.status(404).json({ error: "Work not found" });
+    }
+    work.currentStatus = newStatus;
+    await work.save();
+    return res.status(200).json({ message: "Work status updated successfully", work });
+  } catch (error) {
+    console.error("Error updating work status:", error);
+    return res.status(500).json({ error: "Failed to update work status" });
   }
 };
 export {
@@ -248,8 +290,10 @@ export {
   getAssignedWorks,
   getUnassignedWorks,
   getHoldWorks,
-  getCanceledWorks,
+  getCancelledWorks,
   getCustomerVerification,
   getEvcPending,
   getReadyForChecking,
+  getMutedWorks,
+  updateWorkStatus
 };
