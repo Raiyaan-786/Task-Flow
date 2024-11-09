@@ -30,12 +30,12 @@ const Backend = () => {
       {/* <EmployeeDashboard/> */} {/*done*/}
       {/* <WorkDashboard/> {/*done*/}
       {/* <CreateCustomer/>  */}
-      <DisplayCustomers/> 
+      {/* <DisplayCustomers/>  */}
       {/* <DisplayTurnover/>  */} {/*done*/}
       {/* <CreateTurnover/>  */} {/*Not working*/}
       {/* <CreateCustomerGroup/> */} {/*done*/}
       {/* <UpdateCustomerGroup/> */}  {/*done*/}
-      {/* <DisplayIndividualWork/> */}
+      <DisplayIndividualWork/>
       {/* <CustomerSummary/> */}
       {/* <CustomerGroupSummary/> */}
     </Box>

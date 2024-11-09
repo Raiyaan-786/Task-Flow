@@ -16,7 +16,7 @@ const DisplayIndividualWork = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [workType, setWorkType] = useState('');
-  const [selectedWork, setSelectedWork] = useState(null); // State to store the selected work details
+  const [selectedWork, setSelectedWork] = useState(null); 
 
   const fetchWorks = async (fetchFunction) => {
     const token = localStorage.getItem('token');
@@ -73,8 +73,9 @@ const DisplayIndividualWork = () => {
     }
 
     try {
-      const workData = await fetchWorkById(workId, token); // Fetch the work by ID
-      setSelectedWork(workData); // Set the selected work in the state
+      const workData = await fetchWorkById(workId, token); 
+      console.log("Fetched single work : " ,workData);
+      setSelectedWork(workData); 
     } catch (err) {
       console.error('Error fetching work details:', err);
       setError('Failed to fetch work details. Please try again later.');
@@ -106,7 +107,7 @@ const DisplayIndividualWork = () => {
       <tbody>
         {works.map((work) => (
           <tr key={work._id} onClick={() => handleRowClick(work._id)}>
-            <td>{work.customer ? work.customer.customerName : 'N/A'}</td>
+            <td>{work.customer ? work.customer?.customerName : 'N/A'}</td>
             <td>{work.billingName || 'N/A'}</td>
             <td>{work.email || 'N/A'}</td>
             <td>{work.mobile || 'N/A'}</td>
@@ -152,7 +153,6 @@ const DisplayIndividualWork = () => {
 
       {works.length > 0 && renderTable()}
 
-      {/* Display details of the selected work */}
       {selectedWork && (
         <div className="work-details">
           <h3>Work Details</h3>
@@ -162,7 +162,6 @@ const DisplayIndividualWork = () => {
           <p><strong>Status:</strong> {selectedWork.currentStatus || 'N/A'}</p>
           <p><strong>Price:</strong> {selectedWork.price || 'N/A'}</p>
           <p><strong>Quantity:</strong> {selectedWork.quantity || 'N/A'}</p>
-          {/* Add more fields to display as needed */}
         </div>
       )}
     </div>

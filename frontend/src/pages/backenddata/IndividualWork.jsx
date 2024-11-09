@@ -43,7 +43,7 @@ const fetchHoldWorks = async (token) => {
 };
 
 const fetchCanceledWorks = async (token) => {
-  const response = await API.get('/canceled-works', {
+  const response = await API.get('/cancelled-works', {
     headers: { Authorization: `Bearer ${token}` },
   });
   return response.data; 
@@ -54,12 +54,13 @@ const fetchWorkById = async (id, token) => {
     const response = await API.get(`/getwork/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    return response.data.work; // Returns the work data
+    return response.data.work; 
   } catch (error) {
     console.error("Error fetching work:", error);
     throw new Error(error.response?.data?.error || "Failed to fetch work");
   }
 };
+
 export {
   fetchTotalWorks,
   fetchCompletedWorks,

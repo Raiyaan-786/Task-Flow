@@ -41,7 +41,7 @@ const DisplayCustomers = () => {
       });
       alert(response.data.message);
       setCustomers((prev) => prev.map((cust) => (cust._id === customerId ? response.data.customer : cust)));
-      setEditingCustomer(null); // Reset after update
+      setEditingCustomer(null); 
     } catch (error) {
       console.error('Error updating customer:', error);
       alert('Failed to update customer');

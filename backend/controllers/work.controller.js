@@ -66,7 +66,6 @@ const addWork = async (req, res) => {
 const getWork = async (req, res) => {
   try {
     const { id } = req.params;
-    // Find work by ID and populate the assigned employee and customer fields
     const work = await Work.findById(id)
       .populate("assignedEmployee", "name email")
       .populate("customer", "customerName email mobileNo");
@@ -74,8 +73,6 @@ const getWork = async (req, res) => {
     if (!work) {
       return res.status(404).json({ error: "Work not found" });
     }
-
-    // Only allow Admins, Managers, the assigned Employee, or the Customer to view the work
     if (
       req.user.role !== "Admin" &&
       req.user.role !== "Manager" &&
@@ -147,7 +144,9 @@ const deleteWork = async (req, res) => {
 
 const getTotalWorks = async (req, res) => {
   try {
-    const totalWorks = await Work.find(); // Fetch all works
+    const totalWorks = await Work.find()
+      .populate("assignedEmployee", "name email")
+      .populate("customer", "customerName email mobileNo"); 
     res.status(200).json(totalWorks); // Send back the array of work documents
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -158,7 +157,8 @@ const getCompletedWorks = async (req, res) => {
   try {
     const completedWorks = await Work.find({
       currentStatus: "Completed",
-    }); // Fetch works with completed status
+    }).populate("assignedEmployee", "name email")
+    .populate("customer", "customerName email mobileNo");
     res.status(200).json(completedWorks); // Send back the array of completed work documents
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -169,7 +169,8 @@ const getAssignedWorks = async (req, res) => {
   try {
     const assignedWorks = await Work.find({
       currentStatus: "Assigned",
-    }); // Fetch works with assigned status
+    }).populate("assignedEmployee", "name email")
+    .populate("customer", "customerName email mobileNo"); // Fetch works with assigned status
     res.status(200).json(assignedWorks); // Send back the array of assigned work documents
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -180,7 +181,8 @@ const getUnassignedWorks = async (req, res) => {
   try {
     const unassignedWorks = await Work.find({
       assignedEmployee: null,
-    }); // Fetch works that are unassigned
+    }).populate("assignedEmployee", "name email")
+    .populate("customer", "customerName email mobileNo"); // Fetch works that are unassigned
     res.status(200).json(unassignedWorks); // Send back the array of unassigned work documents
   } catch (serr) {
     res.status(500).json({ error: err.message });
@@ -189,7 +191,8 @@ const getUnassignedWorks = async (req, res) => {
 
 const getHoldWorks = async (req, res) => {
   try {
-    const holdWorks = await Work.find({ currentStatus: "Hold Work" }); // Fetch works with hold status
+    const holdWorks = await Work.find({ currentStatus: "Hold Work" }).populate("assignedEmployee", "name email")
+    .populate("customer", "customerName email mobileNo"); // Fetch works with hold status
     res.status(200).json(holdWorks); // Send back the array of hold work documents
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -197,7 +200,8 @@ const getHoldWorks = async (req, res) => {
 };
 const getReadyForChecking = async (req, res) => {
   try {
-    const holdWorks = await Work.find({ currentStatus: "Ready for Checking" }); // Fetch works with hold status
+    const holdWorks = await Work.find({ currentStatus: "Ready for Checking" }).populate("assignedEmployee", "name email")
+    .populate("customer", "customerName email mobileNo"); // Fetch works with hold status
     res.status(200).json(holdWorks); // Send back the array of hold work documents
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -205,7 +209,8 @@ const getReadyForChecking = async (req, res) => {
 };
 const getCustomerVerification = async (req, res) => {
   try {
-    const holdWorks = await Work.find({ currentStatus: "Customer Verification" }); // Fetch works with hold status
+    const holdWorks = await Work.find({ currentStatus: "Customer Verification" }).populate("assignedEmployee", "name email")
+    .populate("customer", "customerName email mobileNo"); // Fetch works with hold status
     res.status(200).json(holdWorks); // Send back the array of hold work documents
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -213,7 +218,8 @@ const getCustomerVerification = async (req, res) => {
 };
 const getEvcPending = async (req, res) => {
   try {
-    const holdWorks = await Work.find({ currentStatus: "EVC Pending" }); // Fetch works with hold status
+    const holdWorks = await Work.find({ currentStatus: "EVC Pending" }).populate("assignedEmployee", "name email")
+    .populate("customer", "customerName email mobileNo"); // Fetch works with hold status
     res.status(200).json(holdWorks); // Send back the array of hold work documents
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -224,7 +230,8 @@ const getCanceledWorks = async (req, res) => {
   try {
     const canceledWorks = await Work.find({
       currentStatus: "Cancel",
-    }); 
+    }).populate("assignedEmployee", "name email")
+    .populate("customer", "customerName email mobileNo"); 
     res.status(200).json(canceledWorks);
   } catch (err) {
     res.status(500).json({ error: err.message });
