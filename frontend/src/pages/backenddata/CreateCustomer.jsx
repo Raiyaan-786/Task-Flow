@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import API from '../../api/api'; // Adjust the import path based on your project structure
 
 const CreateCustomer = () => {
@@ -13,11 +13,33 @@ const CreateCustomer = () => {
     sameAsMobileNo: false,
     PAN: '',
     address: '',
-    contactPerson: '',
+    contactPersonName: '',
+    contactPersonPhone: '',
+    AadharNo: '',
   });
   
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [firmNames, setFirmNames] = useState([]); // To store the unique firm names
+
+  // Fetch unique firm names on component mount
+  useEffect(() => {
+    const fetchFirmNames = async () => {
+      const token = localStorage.getItem('token');
+      try {
+        const response = await API.get('/companyNames', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setFirmNames(response.data.firmNames);
+      } catch (err) {
+        setError(err.response?.data?.message || 'Failed to fetch firm names');
+      }
+    };
+
+    fetchFirmNames();
+  }, []);
 
   const createCustomer = async (e) => {
     e.preventDefault();
@@ -41,7 +63,9 @@ const CreateCustomer = () => {
         sameAsMobileNo: false,
         PAN: '',
         address: '',
-        contactPerson: '',
+        contactPersonName: '',
+        contactPersonPhone: '',
+        AadharNo: '',
       });
       setError('');
     } catch (err) {
@@ -91,7 +115,13 @@ const CreateCustomer = () => {
         placeholder="Company/Firm Name"
         value={newCustomer.companyName}
         onChange={handleChange}
+        list="firmNamesList" // Link to the list of firm names
       />
+      <datalist id="firmNamesList">
+        {firmNames.map((name, index) => (
+          <option key={index} value={name} />
+        ))}
+      </datalist>
       <input
         type="email"
         name="email"
@@ -142,11 +172,31 @@ const CreateCustomer = () => {
       />
       <input
         type="text"
-        name="contactPerson"
-        placeholder="Contact Person"
-        value={newCustomer.contactPerson}
+        name="AadharNo"
+        placeholder="Aadhar Number"
+        value={newCustomer.AadharNo}
         onChange={handleChange}
+        required
       />
+
+      <h3>Contact Person</h3>
+      <input
+        type="text"
+        name="contactPersonName"
+        placeholder="Contact Person Name"
+        value={newCustomer.contactPersonName}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="text"
+        name="contactPersonPhone"
+        placeholder="Contact Person Phone"
+        value={newCustomer.contactPersonPhone}
+        onChange={handleChange}
+        required
+      />
+
       <button type="submit">Create Customer</button>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {success && <p style={{ color: 'green' }}>{success}</p>}

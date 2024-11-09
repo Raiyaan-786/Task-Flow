@@ -8,12 +8,10 @@ const customerSchema = new mongoose.Schema(
     },
     customerCode: {
       type: String,
-      required: true,
       unique: true,
     },
     billingName: {
       type: String,
-      required: true,
     },
     companyName: {
       type: String,
@@ -21,7 +19,6 @@ const customerSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
     },
     mobileNo: {
       type: String,
@@ -37,15 +34,20 @@ const customerSchema = new mongoose.Schema(
     },
     PAN: {
       type: String,
-      required: true,
+      unique: true,
+    },
+    AadharNo: {
+      type: String,
       unique: true,
     },
     address: {
       type: String,
-      required: true,
     },
-    contactPerson: {
+    contactPersonName: {
       type: String,
+    },
+    contactPersonPhone: {
+      type: Number,
     },
   },
   { timestamps: true }

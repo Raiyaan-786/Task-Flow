@@ -22,15 +22,15 @@ const Backend = () => {
   return (
     <Box height={'75vh'} overflow={'auto'}>
       {/* <CreateUser/> */} {/*done*/}
-      <DisplayUsers/> 
+      {/* <DisplayUsers/>  */}
       {/* <CreateConsultant/> */} 
       {/* <DisplayConsultants/> */}
       {/* <CreateWork/>  */}
       {/* <DisplayWork/>   */}
       {/* <EmployeeDashboard/> */} {/*done*/}
       {/* <WorkDashboard/> {/*done*/}
-      {/* <CreateCustomer/> */} 
-      {/* <DisplayCustomers/> */} 
+      <CreateCustomer/> 
+      {/* <DisplayCustomers/>  */}
       {/* <DisplayTurnover/>  */} {/*done*/}
       {/* <CreateTurnover/>  */} {/*Not working*/}
       {/* <CreateCustomerGroup/> */} {/*done*/}

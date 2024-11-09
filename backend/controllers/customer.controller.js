@@ -6,7 +6,7 @@ const createCustomer = async (req, res) => {
     try {
       const {
         customerName, customerCode, billingName, companyName, email, mobileNo,
-        whatsappNo, sameAsMobileNo, PAN, address, contactPerson
+        whatsappNo, sameAsMobileNo, PAN ,AadharNo , address, contactPersonName, contactPersonPhone
       } = req.body;
   
       const newCustomer = new Customer({
@@ -19,8 +19,10 @@ const createCustomer = async (req, res) => {
         whatsappNo: sameAsMobileNo ? mobileNo : whatsappNo, 
         sameAsMobileNo,
         PAN,
+        AadharNo,
         address,
-        contactPerson,
+        contactPersonName,
+        contactPersonPhone,
       });
   
       await newCustomer.save();
@@ -82,6 +84,25 @@ const deleteCustomer = async (req, res) => {
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
+};
+
+const getUniqueFirmNames = async (req, res) => {
+  try {
+    // Fetch distinct company names from the Customer model
+    const firmNames = await Customer.distinct("companyName");
+
+    // Return the result as a response
+    res.status(200).json({
+      success: true,
+      firmNames,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve unique firm names",
+    });
+  }
 };
 
 // Create a new group with customers (if provided)
@@ -365,4 +386,4 @@ const getWorksByEmployee = async (req, res) => {
 
 
 
-export {createCustomer ,getCustomer , getAllCustomers , updateCustomer , deleteCustomer , createGroup , addCustomerToGroup , removeCustomerFromGroup , getAllGroups , getSingleGroup , deleteGroup ,updateGroupName}
+export {createCustomer ,getCustomer , getAllCustomers , updateCustomer , deleteCustomer , createGroup , addCustomerToGroup , removeCustomerFromGroup , getAllGroups , getSingleGroup , deleteGroup ,updateGroupName , getUniqueFirmNames}
