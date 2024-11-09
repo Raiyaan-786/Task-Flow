@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import API from '../../api/api'; // Adjust the import path according to your project structure
+import API from '../../api/api';
 
 const DisplayCustomers = () => {
-  const [customers, setCustomers] = useState([]); // State to hold the customer data
-  const [loading, setLoading] = useState(true); // State to track loading status
-  const [error, setError] = useState(''); // State to track error messages
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [editingCustomer, setEditingCustomer] = useState(null); // State to hold customer being edited
 
   useEffect(() => {
     const fetchCustomers = async () => {
-      const token = localStorage.getItem('token'); // Get token from localStorage
+      const token = localStorage.getItem('token');
 
       if (!token) {
         setError('No authentication token found. Please log in.');
@@ -18,37 +19,42 @@ const DisplayCustomers = () => {
 
       try {
         const response = await API.get('/getallcustomers', {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include token in request headers
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
-
-        // Check if customers data is defined and is an array
-        const customersData = response.data.customers || []; // Fallback to empty array
-        setCustomers(customersData); // Set the customers state
-        setLoading(false); // Set loading to false
+        setCustomers(response.data.customers || []);
       } catch (err) {
-        setError(err.response?.data?.error || 'Failed to fetch customers'); // Handle error
+        setError(err.response?.data?.error || 'Failed to fetch customers');
         console.log(err);
-        setLoading(false); // Set loading to false
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchCustomers(); // Fetch customers on component mount
+    fetchCustomers();
   }, []);
 
-  if (loading) {
-    return <p>Loading customers...</p>; // Show loading message
-  }
+  // Function to handle updating customer
+  const handleUpdate = async (customerId) => {
+    try {
+      const response = await API.put(`/customer/${customerId}`, editingCustomer, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
+      alert(response.data.message);
+      setCustomers((prev) => prev.map((cust) => (cust._id === customerId ? response.data.customer : cust)));
+      setEditingCustomer(null); // Reset after update
+    } catch (error) {
+      console.error('Error updating customer:', error);
+      alert('Failed to update customer');
+    }
+  };
 
-  if (error) {
-    return <p>Error: {error}</p>; // Show error message
-  }
+  if (loading) return <p>Loading customers...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div>
       <h1>Customer List</h1>
-      {customers.length > 0 ? ( // Check if customers are available
+      {customers.length > 0 ? (
         <table border="1" cellPadding="10" cellSpacing="0">
           <thead>
             <tr>
@@ -62,12 +68,23 @@ const DisplayCustomers = () => {
               <th>PAN</th>
               <th>Address</th>
               <th>Contact Person</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {customers.map((customer) => (
               <tr key={customer._id}>
-                <td>{customer.customerName}</td>
+                <td>
+                  {editingCustomer?._id === customer._id ? (
+                    <input
+                      value={editingCustomer.customerName}
+                      onChange={(e) => setEditingCustomer({ ...editingCustomer, customerName: e.target.value })}
+                    />
+                  ) : (
+                    customer.customerName
+                  )}
+                </td>
+                {/* Repeat for other fields */}
                 <td>{customer.customerCode}</td>
                 <td>{customer.billingName}</td>
                 <td>{customer.companyName || '-'}</td>
@@ -77,12 +94,22 @@ const DisplayCustomers = () => {
                 <td>{customer.PAN}</td>
                 <td>{customer.address}</td>
                 <td>{customer.contactPerson || '-'}</td>
+                <td>
+                  {editingCustomer?._id === customer._id ? (
+                    <>
+                      <button onClick={() => handleUpdate(customer._id)}>Save</button>
+                      <button onClick={() => setEditingCustomer(null)}>Cancel</button>
+                    </>
+                  ) : (
+                    <button onClick={() => setEditingCustomer(customer)}>Edit</button>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       ) : (
-        <p>No customers found.</p> // Message if no customers are available
+        <p>No customers found.</p>
       )}
     </div>
   );
