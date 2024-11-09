@@ -27,7 +27,7 @@ const Backend = () => {
       {/* <DisplayConsultants/> */}
       {/* <CreateWork/>  */}
       {/* <DisplayWork/>   */}
-      {/* <EmployeeDashboard/> */} {/*done*/}
+      <EmployeeDashboard/> 
       {/* <WorkDashboard/> {/*done*/}
       {/* <CreateCustomer/>  */}
       {/* <DisplayCustomers/>  */}
@@ -35,7 +35,7 @@ const Backend = () => {
       {/* <CreateTurnover/>  */} {/*Not working*/}
       {/* <CreateCustomerGroup/> */} {/*done*/}
       {/* <UpdateCustomerGroup/> */}  {/*done*/}
-      <DisplayIndividualWork/>
+      {/* <DisplayIndividualWork/> */}
       {/* <CustomerSummary/> */}
       {/* <CustomerGroupSummary/> */}
     </Box>
