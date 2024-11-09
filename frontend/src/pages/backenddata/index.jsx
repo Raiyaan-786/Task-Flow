@@ -35,7 +35,7 @@ const Backend = () => {
       {/* <CreateTurnover/>  */} {/*Not working*/}
       {/* <CreateCustomerGroup/> */} {/*done*/}
       {/* <UpdateCustomerGroup/> */}  {/*done*/}
-      {/* <DisplayIndividualWork/> */}
+      <DisplayIndividualWork/>
       {/* <CustomerSummary/> */}
       {/* <CustomerGroupSummary/> */}
     </Box>
