@@ -20,9 +20,8 @@ const CreateCustomer = () => {
   
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [firmNames, setFirmNames] = useState([]); // To store the unique firm names
+  const [firmNames, setFirmNames] = useState([]); 
 
-  // Fetch unique firm names on component mount
   useEffect(() => {
     const fetchFirmNames = async () => {
       const token = localStorage.getItem('token');
@@ -39,6 +38,24 @@ const CreateCustomer = () => {
     };
 
     fetchFirmNames();
+  }, []);
+
+  useEffect(() => {
+    const fetchPanNumbers = async () => {
+      const token = localStorage.getItem('token');
+      try {
+        const response = await API.get('/customersPan', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log(response.data.pans);
+      } catch (err) {
+        setError(err.response?.data?.message || 'Failed to fetch Pan Numbers');
+      }
+    };
+
+    fetchPanNumbers();
   }, []);
 
   const createCustomer = async (e) => {

@@ -14,7 +14,6 @@ const CustomerGroupSummary = () => {
       setLoading(false);
       return;
     }
-
     try {
       const response = await API.get('/customerdashboardbygroup', {
         headers: { Authorization: `Bearer ${token}` },

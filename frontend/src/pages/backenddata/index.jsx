@@ -26,10 +26,10 @@ const Backend = () => {
       {/* <CreateConsultant/> */} 
       {/* <DisplayConsultants/> */}
       {/* <CreateWork/>  */}
-      <DisplayWork/>  
+      {/* <DisplayWork/>   */}
       {/* <EmployeeDashboard/>  */}
       {/* <WorkDashboard/> {/*done*/}
-      {/* <CreateCustomer/>  */}
+      <CreateCustomer/> 
       {/* <DisplayCustomers/>  */}
       {/* <DisplayTurnover/>  */} {/*done*/}
       {/* <CreateTurnover/>  */} {/*Not working*/}

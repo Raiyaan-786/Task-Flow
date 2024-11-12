@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import API from '../../api/api'; // Adjust the import path according to your project structure
+import API from '../../api/api'; 
 import './EmployeeDashboard.css';
 
 const EmployeeDashboard = () => {
@@ -10,20 +10,17 @@ const EmployeeDashboard = () => {
   const [selectedWorks, setSelectedWorks] = useState([]); 
   const [modalOpen, setModalOpen] = useState(false); 
   const [selectedStatus, setSelectedStatus] = useState('');
-  const [selectedWorkDetails, setSelectedWorkDetails] = useState(null); // To store selected work details
+  const [selectedWorkDetails, setSelectedWorkDetails] = useState(null); 
 
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem('token');
-
       if (!token) {
         setError('No authentication token found. Please log in.');
         setLoading(false);
         return;
       }
-
       try {
-        // Fetch work summary data
         const workResponse = await API.get('/employeedashboard');
         setWorkSummary(workResponse.data);
         
@@ -41,15 +38,12 @@ const EmployeeDashboard = () => {
 
     fetchData();
   }, []);
-
   const handleWork = async (employeeId, status) => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
         throw new Error('No authentication token found. Please log in.');
       }
-
-      // Fetch employee works based on status
       const response = await API.get(`/employee-works/${employeeId}?status=${status}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -57,8 +51,8 @@ const EmployeeDashboard = () => {
       });
       setSelectedWorks(response.data.works);
       console.log(response.data.works)
-      setSelectedStatus(status); // Set the status for the modal
-      setModalOpen(true); // Open the modal
+      setSelectedStatus(status); 
+      setModalOpen(true); 
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to fetch works');
       console.error('Error fetching works:', err);
