@@ -45,4 +45,15 @@
     padding: 5px 10px;
     border-radius: 5px;
   }
+  .work-details {
+    margin-top: 20px;
+  }
+  
+  .work-details p {
+    margin: 5px 0;
+  }
+  
+  .work-details strong {
+    font-weight: bold;
+  }
   

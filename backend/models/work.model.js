@@ -80,6 +80,22 @@ const workSchema = new mongoose.Schema(
       default: "Assigned",
       required: true,
     },
+    paymentStatus: {
+      type: String,
+      enum: [
+        "Pending",
+        "Received",
+        "Partly Received",
+        "Invoice Generated",
+        "Advance Payment"
+      ],
+      default: "Pending",
+      required: true,
+    },
+    balancePayment: {
+      type: Number,
+      default: 0,
+    },
     reminder: {
       type: Date,
       default: null,

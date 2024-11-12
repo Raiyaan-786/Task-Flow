@@ -412,11 +412,13 @@ export const getCustomerGroupSummary = async (req, res) => {
 };
 
 export const getEmployeeWorks = async (req, res) => {
-  const { employeeId } = req.params; 
-  const { status } = req.query; 
+  const { employeeId } = req.params;
+  const { status } = req.query;
+  
   if (!employeeId || !status) {
     return res.status(400).json({ error: 'Employee ID and status are required.' });
   }
+
   const validStatuses = [
     "Assigned",
     "Picked Up",
@@ -426,22 +428,33 @@ export const getEmployeeWorks = async (req, res) => {
     "EVC Pending",
     "Cancel",
     "Completed",
-    "Mute"
+    "Mute",
+    "Total Works" 
   ];
+
   if (!validStatuses.includes(status)) {
     return res.status(400).json({ error: 'Invalid status value.' });
   }
+
   try {
     const employee = await User.findById(employeeId);
     if (!employee) {
       return res.status(404).json({ error: 'Employee not found.' });
     }
-    const works = await Work.find({ assignedEmployee: employeeId, currentStatus: status });
+
+    let works;
+    if (status === 'Total Works') {
+      works = await Work.find({ assignedEmployee: employeeId });
+    } else {
+      works = await Work.find({ assignedEmployee: employeeId, currentStatus: status });
+    }
+
     res.json({ works });
   } catch (err) {
     console.error("Error fetching employee works:", err);
     res.status(500).json({ error: 'Server error. Failed to fetch works.' });
   }
 };
+
 
 

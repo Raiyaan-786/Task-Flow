@@ -15,7 +15,6 @@ const DisplayWork = () => {
         setLoading(false);
         return;
       }
-
       try {
         const response = await API.get('/getallcustomers', {
           headers: {
@@ -42,7 +41,6 @@ const DisplayWork = () => {
         setLoading(false);
         return;
       }
-
       try {
         const response = await API.get('/getallwork', {
           headers: {

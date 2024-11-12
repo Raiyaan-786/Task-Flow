@@ -7,6 +7,10 @@ const EmployeeDashboard = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [selectedWorks, setSelectedWorks] = useState([]); 
+  const [modalOpen, setModalOpen] = useState(false); 
+  const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedWorkDetails, setSelectedWorkDetails] = useState(null); // To store selected work details
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,8 +26,7 @@ const EmployeeDashboard = () => {
         // Fetch work summary data
         const workResponse = await API.get('/employeedashboard');
         setWorkSummary(workResponse.data);
-
-        // Fetch users data
+        
         const userResponse = await API.get('/auth/allusers', {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -38,6 +41,29 @@ const EmployeeDashboard = () => {
 
     fetchData();
   }, []);
+
+  const handleWork = async (employeeId, status) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No authentication token found. Please log in.');
+      }
+
+      // Fetch employee works based on status
+      const response = await API.get(`/employee-works/${employeeId}?status=${status}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setSelectedWorks(response.data.works);
+      console.log(response.data.works)
+      setSelectedStatus(status); // Set the status for the modal
+      setModalOpen(true); // Open the modal
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to fetch works');
+      console.error('Error fetching works:', err);
+    }
+  };
 
   if (loading) return <p>Loading data...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -76,15 +102,15 @@ const EmployeeDashboard = () => {
                     {user?.role}
                   </span>
                 </td>
-                <td>{work.workCounts.total}</td>
-                <td>{work.workCounts.done}</td>
-                <td>{work.workCounts.assigned}</td>
-                <td>{work.workCounts.pickedUp}</td>
-                <td>{work.workCounts.customerVerification}</td>
-                <td>{work.workCounts.readyForChecking}</td>
-                <td>{work.workCounts.holdWork}</td>
-                <td>{work.workCounts.evcPending}</td>
-                <td>{work.workCounts.cancel}</td>
+                <td onClick={() => handleWork(user._id, 'Total Works')}>{work.workCounts.total}</td>
+                <td onClick={() => handleWork(user._id, 'Completed')}>{work.workCounts.done}</td>
+                <td onClick={() => handleWork(user._id, 'Assigned')}>{work.workCounts.assigned}</td>
+                <td onClick={() => handleWork(user._id, 'Picked Up')}>{work.workCounts.pickedUp}</td>
+                <td onClick={() => handleWork(user._id, 'Customer Verification')}>{work.workCounts.customerVerification}</td>
+                <td onClick={() => handleWork(work._id, 'Ready for Checking')}>{work.workCounts.readyForChecking}</td>
+                <td onClick={() => handleWork(work._id, 'Hold Work')}>{work.workCounts.holdWork}</td>
+                <td onClick={() => handleWork(work._id, 'EVC Pending')}>{work.workCounts.evcPending}</td>
+                <td onClick={() => handleWork(work._id, 'Cancel')}>{work.workCounts.cancel}</td>
               </tr>
             );
           })}

@@ -20,8 +20,10 @@ const addWork = async (req, res) => {
       quantity,
       discount,
       currentStatus = "Assigned",
-      reminder = null, // Default to null if not provided
-      remark = "", // Default to an empty string if not provided
+      reminder = null, 
+      remark = "", 
+      paymentStatus = "Pending",
+      balancePayment,
     } = req.body;
 
     const employeeExists = await User.findById(assignedEmployee);
@@ -53,6 +55,8 @@ const addWork = async (req, res) => {
       currentStatus,
       reminder,
       remark,
+      paymentStatus,
+      balancePayment,
     });
     await newWork.save();
     res
