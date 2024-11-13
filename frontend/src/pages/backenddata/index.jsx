@@ -21,8 +21,8 @@ import CustomerGroupSummary from './CustomerDashboardbyGroup'
 const Backend = () => {
   return (
     <Box height={'75vh'} overflow={'auto'}>
-      {/* <CreateUser/> */} {/*done*/}
-      {/* <DisplayUsers/>  */}
+      {/* <CreateUser/>  */}
+      <DisplayUsers/> 
       {/* <CreateConsultant/> */} 
       {/* <DisplayConsultants/> */}
       {/* <CreateWork/>  */}
@@ -30,7 +30,7 @@ const Backend = () => {
       {/* <EmployeeDashboard/>  */}
       {/* <WorkDashboard/> {/*done*/}
       {/* <CreateCustomer/>  */}
-      <DisplayCustomers/> 
+      {/* <DisplayCustomers/>  */}
       {/* <DisplayTurnover/>  */} {/*done*/}
       {/* <CreateTurnover/>  */} {/*Not working*/}
       {/* <CreateCustomerGroup/> */} {/*done*/}

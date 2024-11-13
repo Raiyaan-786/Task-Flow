@@ -11,6 +11,12 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    department: {
+      type: String,
+    },
+    postname: {
+      type: String,
+    },
     password: {
       type: String,
       required: true,
