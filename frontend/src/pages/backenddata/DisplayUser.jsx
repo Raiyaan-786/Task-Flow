@@ -24,6 +24,11 @@ const DisplayUsers = () => {
             Authorization: `Bearer ${token}`,
           },
         });
+        // const response = await API.get('/auth/muteusers', {
+        //   headers: {
+        //     Authorization: `Bearer ${token}`,
+        //   },
+        // });
         setUsers(response.data.users);
         console.log(response.data.users)
         setLoading(false);
@@ -37,7 +42,6 @@ const DisplayUsers = () => {
   }, []);
   const handleDelete = async (userId) => {
     const token = localStorage.getItem('token');
-
     try {
       await API.delete(`/auth/users/${userId}`, {
         headers: {

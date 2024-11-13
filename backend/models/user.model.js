@@ -42,7 +42,7 @@ const userSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Active", "Block","Inactive"],
+      enum: ["Active", "Block","Inactive" ,"Mute"],
     },
     image: {
       type: Buffer,  // Store image as binary data (Buffer)

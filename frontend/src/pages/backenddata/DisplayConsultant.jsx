@@ -18,16 +18,16 @@ const DisplayConsultants = () => {
       }
 
       try {
-        // const response = await API.get('/getallconsultants', {
-        //   headers: {
-        //     Authorization: `Bearer ${token}`, 
-        //   },
-        // });
-        const response = await API.get('/getmuteconsultants', {
+        const response = await API.get('/getallconsultants', {
           headers: {
             Authorization: `Bearer ${token}`, 
           },
         });
+        // const response = await API.get('/getmuteconsultants', {
+        //   headers: {
+        //     Authorization: `Bearer ${token}`, 
+        //   },
+        // });
         const consultantsData = response.data.consultants || []; 
         setConsultants(consultantsData); 
         console.log(consultantsData);

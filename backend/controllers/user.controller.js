@@ -101,7 +101,6 @@ const getUser = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-// Get all Users
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find({}, 'name email department postname role mobile address username image password status');
@@ -110,35 +109,52 @@ const getAllUsers = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
-// Update User Role
+const getMuteUsers = async (req, res) => {
+  try {
+    const users = await User.find({ status: "Mute"}, 'name email department postname role mobile address username image password status');
+    res.status(200).json({ users });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 const updateUserRole = async (req, res) => {
   try {
     const { id } = req.params;
     const { role } = req.body;
-
-    // Ensure the role is valid
     const validRoles = ['Admin', 'Manager', 'Employee' , 'Inactive'];
     if (!validRoles.includes(role)) {
       return res.status(400).json({ error: 'Invalid role specified' });
     }
-
-    // Find the user by ID
     const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-
-    // Prevent Admin from downgrading their own role
     if (user._id.toString() === req.user.id) {
       return res.status(403).json({ error: 'You cannot change your own role' });
     }
-
-    // Update the user's role
     user.role = role;
     await user.save();
-
     res.status(200).json({ message: 'User role updated successfully', user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+    if (updates.role && id === req.user.id) {
+      return res.status(403).json({ error: 'You cannot change your own role' });
+    }
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    Object.keys(updates).forEach((key) => {
+      user[key] = updates[key];
+    });
+    await user.save();
+    res.status(200).json({ message: 'User updated successfully', user });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -147,28 +163,18 @@ const updateUserRole = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-
-    // Find the user by ID
     const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-
-    // Prevent deletion of admin user (optional, based on your requirements)
     if (user.role === 'Admin') {
       return res.status(403).json({ error: 'You cannot delete an admin user' });
     }
-
-    // Delete the user
     await User.findByIdAndDelete(id);
-
     res.status(200).json({ message: 'User deleted successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-
-
-
-export { registerUser, loginUser, createUser,getUser, getAllUsers, updateUserRole , deleteUser };
+export { registerUser, loginUser, createUser,getUser, getAllUsers ,getMuteUsers, updateUserRole , deleteUser , updateUser };
