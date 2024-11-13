@@ -34,6 +34,14 @@ const consultantSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    status: {
+      type: String,
+      enum: [
+        "Active",
+        "Mute"
+      ],
+      default: "Active",
+    },
     accountHolderName: {
       type: String,
       required: true,

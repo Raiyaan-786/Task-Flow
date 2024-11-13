@@ -64,6 +64,15 @@ const getAllConsultants = async (req, res) => {
   }
 };
 
+const getMuteConsultant = async (req, res) => {
+  try {
+    const consultants = await Consultant.find({ status: "Mute" });
+    res.status(200).json({ consultants });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 const updateConsultant = async (req, res) => {
   try {
     const { id } = req.params;
@@ -108,4 +117,5 @@ export {
   getAllConsultants,
   updateConsultant,
   deleteConsultant,
+  getMuteConsultant,
 };

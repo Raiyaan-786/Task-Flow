@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import API from '../../api/api'; // Adjust the import path according to your project structure
-import './DiplayConsultant.css'; // Import the CSS file
+import API from '../../api/api'; 
+import './DiplayConsultant.css'; 
 
 const DisplayConsultants = () => {
-  const [consultants, setConsultants] = useState([]); // State to hold the consultant data
-  const [loading, setLoading] = useState(true); // State to track loading status
-  const [error, setError] = useState(''); // State to track error messages
+  const [consultants, setConsultants] = useState([]); 
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchConsultants = async () => {
@@ -18,63 +18,62 @@ const DisplayConsultants = () => {
       }
 
       try {
-        const response = await API.get('/getallconsultants', {
+        // const response = await API.get('/getallconsultants', {
+        //   headers: {
+        //     Authorization: `Bearer ${token}`, 
+        //   },
+        // });
+        const response = await API.get('/getmuteconsultants', {
           headers: {
-            Authorization: `Bearer ${token}`, // Include token in request headers
+            Authorization: `Bearer ${token}`, 
           },
         });
-
-        const consultantsData = response.data.consultants || []; // Fallback to empty array
-        setConsultants(consultantsData); // Set the consultants state
-        setLoading(false); // Set loading to false
+        const consultantsData = response.data.consultants || []; 
+        setConsultants(consultantsData); 
+        console.log(consultantsData);
+        setLoading(false); 
       } catch (err) {
-        setError(err.response?.data?.error || 'Failed to fetch consultants'); // Handle error
+        setError(err.response?.data?.error || 'Failed to fetch consultants'); 
         console.log(err);
-        setLoading(false); // Set loading to false
+        setLoading(false); 
       }
     };
-
-    fetchConsultants(); // Fetch consultants on component mount
+    fetchConsultants(); 
   }, []);
 
   const handleDelete = async (id) => {
-    const token = localStorage.getItem('token'); // Get token from localStorage
+    const token = localStorage.getItem('token'); 
 
     if (!window.confirm('Are you sure you want to delete this consultant?')) {
-      return; // Exit if the user cancels the deletion
+      return; 
     }
-
     try {
       await API.delete(`/consultant/${id}`, {
         headers: {
-          Authorization: `Bearer ${token}`, // Include token in request headers
+          Authorization: `Bearer ${token}`, 
         },
       });
-
-      // Remove deleted consultant from the state
       setConsultants(consultants.filter(consultant => consultant._id !== id));
-      alert('Consultant deleted successfully!'); // Show success message
+      alert('Consultant deleted successfully!');
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to delete consultant'); // Handle error
+      setError(err.response?.data?.error || 'Failed to delete consultant'); 
     }
   };
 
   const handleUpdate = (consultant) => {
-    console.log('Update consultant:', consultant); // Replace this with your update logic
+    console.log('Update consultant:', consultant); 
   };
-
   if (loading) {
-    return <p className="loading">Loading consultants...</p>; // Show loading message
+    return <p className="loading">Loading consultants...</p>; 
   }
-
   if (error) {
-    return <p className="error">Error: {error}</p>; // Show error message
+    return <p className="error">Error: {error}</p>; 
   }
 
   return (
     <div className="container">
       <h1>Consultant List</h1>
-      {consultants.length > 0 ? ( // Check if consultants are available
+      {consultants.length > 0 ? ( 
         <table>
           <thead>
             <tr>
