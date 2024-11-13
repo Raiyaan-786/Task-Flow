@@ -35,6 +35,18 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    salary: {
+      type: Number,
+      default: 0,
+    },
+    dateofjoining: {
+      type: Date,
+      default: null,
+    },
+    dateofleaving: {
+      type: Date,
+      default: null,
+    },
     role: {
       type: String,
       enum: ["Admin", "Manager", "Employee", "Inactive"],

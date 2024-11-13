@@ -57,7 +57,7 @@ const loginUser = async (req, res) => {
 };
 const createUser = async (req, res) => {
   try {
-    const { name, username , department ,postname, email, password, mobile, address, role } = req.body;
+    const { name, username , department ,postname, email, password ,salary ,dateofjoining,dateofleaving, mobile, address, role } = req.body;
     const validRoles = ['Admin', 'Manager', 'Employee'];
     if (!validRoles.includes(role)) {
       return res.status(400).json({ error: 'Invalid role specified' });
@@ -73,6 +73,9 @@ const createUser = async (req, res) => {
       department,
       postname,
       email,
+      salary,
+      dateofjoining,
+      dateofleaving,
       password: hashedPassword,
       mobile,
       address,
@@ -90,7 +93,7 @@ const createUser = async (req, res) => {
 const getUser = async (req, res) => {
   try {
     const { id } = req.params; 
-    const user = await User.findById(id, 'name email department postname role mobile address username image password status');
+    const user = await User.findById(id, 'name email department salary dateofjoining dateofleaving  postname role mobile address username image password status');
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
@@ -103,7 +106,7 @@ const getUser = async (req, res) => {
 };
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({}, 'name email department postname role mobile address username image password status');
+    const users = await User.find({}, 'name email department salary dateofjoining dateofleaving postname role mobile address username image password status');
     res.status(200).json({ users });
   } catch (err) {
     res.status(500).json({ error: err.message });
