@@ -5,13 +5,14 @@ import { Work } from "../models/work.model.js";
 const createCustomer = async (req, res) => {
     try {
       const {
-        customerName, customerCode, billingName, companyName, email, mobileNo,
+        customerName, customerCode , password, billingName, companyName, email, mobileNo,
         whatsappNo, sameAsMobileNo, PAN ,AadharNo , address, contactPersonName, contactPersonPhone
       } = req.body;
   
       const newCustomer = new Customer({
         customerName,
         customerCode,
+        password,
         billingName,
         companyName,
         email,
@@ -23,6 +24,7 @@ const createCustomer = async (req, res) => {
         address,
         contactPersonName,
         contactPersonPhone,
+        
       });
   
       await newCustomer.save();

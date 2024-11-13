@@ -22,6 +22,7 @@ const DisplayCustomers = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         setCustomers(response.data.customers || []);
+        console.log(response.data.customers)
       } catch (err) {
         setError(err.response?.data?.error || 'Failed to fetch customers');
         console.log(err);
