@@ -47,8 +47,7 @@ const consultantSchema = new mongoose.Schema(
       required: true,
     },
     signature: {
-      type: Buffer, 
-      required: true,
+      type: String, 
     },
   },
   { timestamps: true }
