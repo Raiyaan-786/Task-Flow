@@ -1,84 +1,130 @@
-import React, { useState } from "react";
-import {
-  Box,
-  Button,
-  TextField,
-  Checkbox,
-  FormControlLabel,
-  Grid2,
-} from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Button, TextField, Checkbox, FormControlLabel, Grid2, Typography, Autocomplete, Modal, } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
-import API from '../../api/api';
+import API from "../../api/api";
+import { useTheme } from "@emotion/react";
+import { tokens } from "../../theme";
+import { CheckCircle, Cancel } from '@mui/icons-material';
 
 const AddCustomer = () => {
-  const [customerName, setCustomerName] = useState("");
-  const [customerCode, setCustomerCode] = useState("");
-  const [billingName, setBillingName] = useState("");
-  const [companyFirmName, setCompanyFirmName] = useState("");
-  const [email, setEmail] = useState("");
-  const [whatsappNo, setWhatsappNo] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [pan, setPan] = useState("");
-  const [address, setAddress] = useState("");
-  const [contactPerson, setContactPerson] = useState("");
-  const [isWhatsappSame, setIsWhatsappSame] = useState(false);
-
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+  const [open, setOpen] = React.useState(false); //for modal opening and closing
+  const [firmNames, setFirmNames] = useState([]);
+  const [isFieldsDisabled, setFieldsDisabled] = useState(true);
   const [error, setError] = useState("");
+  const [panError, setPanError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [panChecked, setPanChecked] = useState(false);
 
-  const createCustomer = async () => {
+  useEffect(() => {
+    const fetchFirmNames = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await API.get("/companyNames", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setFirmNames(response.data.firmNames || []);
+      } catch (err) {
+        setError(err.response?.data?.message || "Failed to fetch firm names");
+      }
+    };
+
+    fetchFirmNames();
+  }, []);
+
+  const handleCheckPAN = async (pan, setFieldValue) => {
+    if (!pan) {
+      setError("Please enter a PAN.");
+      setFieldsDisabled(true);
+      setPanChecked(false);
+
+      return;
+    }
+
     const token = localStorage.getItem("token");
+    setLoading(true);
     try {
-      const response = await API.post("/createcustomer", {
-        customerName: customerName,
-        customerCode: customerCode,
-        billingName: billingName,
-        companyName: companyFirmName,
-        email: email,
-        mobileNo: mobile,
-        whatsappNo: whatsappNo,
-        sameAsMobileNo: isWhatsappSame,
-        PAN: pan,
-        address: address,
-        contactPerson: contactPerson,
-      }, {
+      const response = await API.get("/customersPan", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        params: { pan },
       });
-      setSuccess(response.data.message);
-      setError("");
-      console.log('Customer Created')
-      alert('Customer Created')
-      resetForm();
+      if (response.data.pans.includes(pan)) {
+        setPanError("PAN already exists. Please enter a new PAN.");
+        setFieldsDisabled(true);
+        setPanChecked(false);
+      } else {
+        setPanError("");
+        setFieldsDisabled(false);
+        setPanChecked(true);
+        setFieldValue("pan", pan);
+      }
     } catch (err) {
-      console.log(err)
-      setError(err.response?.data?.error || "Failed to create customer");
-      setSuccess("");
+      setError(err.response?.data?.message || "Error checking PAN");
+      setFieldsDisabled(true);
+      setPanChecked(false);
+    } finally {
+      setLoading(false);
     }
   };
-  const handleFormSubmit = (values) => {
-    createCustomer();
-    // console.log(values);
+
+  const handleFormSubmit = async (values, { resetForm }) => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await API.post("/createcustomer", values, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setSuccess(response.data.message || "Customer created successfully!");
+      setError("");
+      resetForm();
+      setFieldsDisabled(true);
+      setPanChecked(false);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to create customer");
+      setSuccess("");
+    }
+    setOpen(true);
   };
 
   return (
-    <Box p={2} m="20px" height={"67vh"} overflow={"auto"}>
+    <Box p={2} m="20px" height="67vh" overflow="auto">
       <Formik
         initialValues={{
-          customerName,
-          customerCode,
-          billingName,
-          companyFirmName,
-          email,
-          whatsappNo,
-          mobile,
-          pan,
-          address,
-          contactPerson,
+          pan: "",
+          customerName: "",
+          customerCode: "",
+          billingName: "",
+          companyFirmName: "",
+          email: "",
+          mobile: "",
+          whatsappNo: "",
+          isWhatsappSame: false,
+          address: "",
+          contactPersonName: "",
+          contactPersonPhone: "",
+          aadharNo: "",
         }}
-        validationSchema={checkoutSchema}
+        validationSchema={yup.object().shape({
+          pan: yup
+            .string()
+            .matches(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, "Invalid PAN format")
+            .required("PAN is required"),
+          customerName: yup.string().required("Customer Name is required"),
+          customerCode: yup.string(),
+          billingName: yup.string(),
+          companyFirmName: yup.string(),
+          email: yup.string().email("Invalid email"),
+          mobile: yup.string(),
+          whatsappNo: yup.string(),
+          address: yup.string(),
+          contactPersonName: yup.string(),
+          contactPersonPhone: yup.string(),
+          aadharNo: yup.string()
+        })}
         onSubmit={handleFormSubmit}
       >
         {({
@@ -89,266 +135,348 @@ const AddCustomer = () => {
           handleChange,
           handleSubmit,
           setFieldValue,
+          resetForm
         }) => (
           <form onSubmit={handleSubmit}>
-            <Box pt={1}>
-              <Grid2 container spacing={2}>
-                {/* Customer Name */}
-                <Grid2 size={4}>
-                  <label>Customer Name</label>
+            <Box pb={2}>
+              <Typography variant="h5" color="error">{panError}</Typography>
+              <Grid2 container spacing={2} gap={2} padding={"10px 20px"}>
+                {/* PAN */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>PAN NUMBER</label>
                 </Grid2>
-                <Grid2 size={8}>
+                <Grid2 size={6}>
                   <TextField
+                    placeholder="ENTER PAN NUMBER"
+                    size="small"
+                    fullWidth
+                    variant="outlined"
+                    onBlur={(e) => handleCheckPAN(e.target.value, setFieldValue)}
+                    onChange={(e) => {
+                      const uppercaseValue = e.target.value.toUpperCase();
+                      if (uppercaseValue === "") resetForm();
+                      else
+                        setFieldValue('pan', uppercaseValue); // Update the Formik value explicitly
+                    }}
+                    value={values.pan}
+                    name="pan"
+                    error={touched.pan && !!errors.pan}
+                    helperText={touched.pan && errors.pan}
+                    slotProps={{
+                      htmlInput: {
+                        style: {
+                          textTransform: 'uppercase', // Capitalize all letters
+                        },
+                        maxLength: 10, // Setting the maximum number of characters to 10
+                      },
+                    }}
+                  />
+                </Grid2>
+
+                {/* Customer Name */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>CUSTOMER NAME</label>
+                </Grid2>
+                <Grid2 size={6}>
+                  <TextField
+                    placeholder="ENTER CUSTOMER NAME"
                     size="small"
                     fullWidth
                     variant="outlined"
                     onBlur={handleBlur}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setCustomerName(e.target.value);
-                    }}
+                    onChange={handleChange}
                     value={values.customerName}
                     name="customerName"
-                    error={!!touched.customerName && !!errors.customerName}
+                    disabled={!panChecked}
+                    error={touched.customerName && !!errors.customerName}
                     helperText={touched.customerName && errors.customerName}
                   />
                 </Grid2>
 
                 {/* Customer Code */}
-                <Grid2 size={4}>
-                  <label>Customer Code</label>
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>CUSTOMER CODE</label>
                 </Grid2>
-                <Grid2 size={8}>
+                <Grid2 size={6}>
                   <TextField
+                    placeholder="ENTER CUSTOMER CODE"
                     size="small"
                     fullWidth
                     variant="outlined"
                     onBlur={handleBlur}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setCustomerCode(e.target.value);
-                    }}
+                    onChange={handleChange}
                     value={values.customerCode}
                     name="customerCode"
-                    error={!!touched.customerCode && !!errors.customerCode}
-                    helperText={touched.customerCode && errors.customerCode}
+                    disabled={!panChecked}
                   />
                 </Grid2>
-
-                {/* Billing Name */}
-                <Grid2 size={4}>
-                  <label>Billing Name</label>
+                {/* Aadhar Number */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>AADHAAR NUMBER</label>
                 </Grid2>
-                <Grid2 size={8}>
+                <Grid2 size={6}>
                   <TextField
+                    placeholder="ENTER AADHAAR NUMBER"
                     size="small"
                     fullWidth
                     variant="outlined"
                     onBlur={handleBlur}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setBillingName(e.target.value);
-                    }}
-                    value={values.billingName}
-                    name="billingName"
-                    error={!!touched.billingName && !!errors.billingName}
-                    helperText={touched.billingName && errors.billingName}
-                  />
-                </Grid2>
-
-                {/* Company/Firm Name */}
-                <Grid2 size={4}>
-                  <label>Company/Firm Name</label>
-                </Grid2>
-                <Grid2 size={8}>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="outlined"
-                    onBlur={handleBlur}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setCompanyFirmName(e.target.value);
-                    }}
-                    value={values.companyFirmName}
-                    name="companyFirmName"
-                    error={
-                      !!touched.companyFirmName && !!errors.companyFirmName
+                    onChange={handleChange}
+                    value={values.aadharNo}
+                    name="aadharNo"
+                    disabled={!panChecked}
+                    error={touched.aadharNo && !!errors.aadharNo}
+                    helperText={touched.aadharNo && errors.aadharNo}
+                    type="number"
+                    sx={{
+                      '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                        display: 'none'
+                      },
+                      '& input[type=number]': {
+                        MozAppearance: 'textfield'
+                      },
                     }
-                    helperText={
-                      touched.companyFirmName && errors.companyFirmName
                     }
                   />
                 </Grid2>
 
                 {/* Email */}
-                <Grid2 size={4}>
-                  <label>Email</label>
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>EMAIL</label>
                 </Grid2>
-                <Grid2 size={8}>
+                <Grid2 size={6}>
                   <TextField
+                    placeholder='ENTER EMAIL ID'
                     size="small"
                     fullWidth
                     variant="outlined"
                     onBlur={handleBlur}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setEmail(e.target.value);
-                    }}
+                    onChange={handleChange}
                     value={values.email}
                     name="email"
-                    error={!!touched.email && !!errors.email}
+                    disabled={!panChecked}
+                    error={touched.email && !!errors.email}
                     helperText={touched.email && errors.email}
                   />
                 </Grid2>
 
-                {/* Mobile No */}
-                <Grid2 size={4}>
-                  <label>Mobile No</label>
+                {/* Mobile */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>MOBILE</label>
                 </Grid2>
-                <Grid2 size={8}>
+                <Grid2 size={6}>
                   <TextField
+                    placeholder='ENTER MOBILE NUMBER'
                     size="small"
                     fullWidth
                     variant="outlined"
                     onBlur={handleBlur}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setMobile(e.target.value);
-                      // Copy mobile number to WhatsApp number if checkbox is checked
-                      if (isWhatsappSame) {
-                        setFieldValue("whatsappNo", e.target.value);
-                      }
-                    }}
+                    onChange={handleChange}
                     value={values.mobile}
                     name="mobile"
-                    inputProps={{
-                      inputMode: "numeric",
-                      pattern: "[0-9]*",
-                    }}
-                    error={!!touched.mobile && !!errors.mobile}
+                    disabled={!panChecked}
+                    error={touched.mobile && !!errors.mobile}
                     helperText={touched.mobile && errors.mobile}
+                    type="number"
+                    sx={{
+                      '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                        display: 'none'
+                      },
+                      '& input[type=number]': {
+                        MozAppearance: 'textfield'
+                      },
+                    }
+                    }
                   />
                 </Grid2>
 
-                {/* Checkbox for Same WhatsApp and Mobile */}
-                <Grid2 size={12}>
+                {/* WhatsApp Number */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>WHATSAPP NO.</label>
+                </Grid2>
+                <Grid2 size={6}>
+                  <TextField
+                    placeholder="ENTER WHATSAPP NUMBER"
+                    size="small"
+                    fullWidth
+                    variant="outlined"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.isWhatsappSame ? values.mobile : values.whatsappNo}
+                    name="whatsappNo"
+                    disabled={!panChecked || values.isWhatsappSame}
+                    error={touched.whatsappNo && !!errors.whatsappNo}
+                    helperText={touched.whatsappNo && errors.whatsappNo}
+                    type="number"
+                    sx={{
+                      '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                        display: 'none'
+                      },
+                      '& input[type=number]': {
+                        MozAppearance: 'textfield'
+                      },
+                    }
+                    }
+                  />
                   <FormControlLabel
                     control={
                       <Checkbox
-                        checked={isWhatsappSame}
-                        onChange={(event) => {
-                          setIsWhatsappSame(event.target.checked);
-                          if (event.target.checked) {
-                            // Copy mobile number to WhatsApp number when checked
-                            setFieldValue("whatsappNo", values.mobile);
-                          } else {
-                            // Clear WhatsApp number when unchecked
-                            setFieldValue("whatsappNo", "");
-                          }
-                        }}
-                        name="isWhatsappSame"
+                        disabled={!panChecked}
+                        checked={values.isWhatsappSame}
+                        onChange={(e) =>
+                          setFieldValue("isWhatsappSame", e.target.checked)
+                        }
                       />
                     }
-                    label="WhatsApp No same as Mobile No"
-                  />
-                </Grid2>
-                {/* WhatsApp No */}
-                <Grid2 size={4}>
-                  <label>WhatsApp No</label>
-                </Grid2>
-                <Grid2 size={8}>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="outlined"
-                    onBlur={handleBlur}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setWhatsappNo(e.target.value);
-                    }}
-                    value={values.whatsappNo}
-                    name="whatsappNo"
-                    inputProps={{
-                      inputMode: "numeric",
-                      pattern: "[0-9]*",
-                    }}
-                    error={!!touched.whatsappNo && !!errors.whatsappNo}
-                    helperText={touched.whatsappNo && errors.whatsappNo}
-                    disabled={isWhatsappSame} // Disable if checkbox is checked
-                  />
-                </Grid2>
-                {/* PAN */}
-                <Grid2 size={4}>
-                  <label>PAN</label>
-                </Grid2>
-                <Grid2 size={8}>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="outlined"
-                    onBlur={handleBlur}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setPan(e.target.value);
-                    }}
-                    value={values.pan}
-                    name="pan"
-                    error={!!touched.pan && !!errors.pan}
-                    helperText={touched.pan && errors.pan}
+                    label="Same as Mobile"
                   />
                 </Grid2>
 
                 {/* Address */}
-                <Grid2 size={4}>
-                  <label>Address</label>
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>ADDRESS</label>
                 </Grid2>
-                <Grid2 size={8}>
+                <Grid2 size={6}>
                   <TextField
+                    multiline
+                    minRows={3}
+                    maxRows={3}
                     size="small"
                     fullWidth
                     variant="outlined"
                     onBlur={handleBlur}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setAddress(e.target.value);
-                    }}
+                    onChange={handleChange}
                     value={values.address}
                     name="address"
-                    error={!!touched.address && !!errors.address}
-                    helperText={touched.address && errors.address}
+                    disabled={!panChecked}
                   />
                 </Grid2>
 
-                {/* Contact Person */}
-                <Grid2 size={4}>
-                  <label>Contact Person</label>
+                {/* Billing Name */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>BILLING NAME</label>
                 </Grid2>
-                <Grid2 size={8}>
+                <Grid2 size={6}>
                   <TextField
+                    placeholder="ENTER BILLING NAME"
                     size="small"
                     fullWidth
                     variant="outlined"
                     onBlur={handleBlur}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setContactPerson(e.target.value);
-                    }}
-                    value={values.contactPerson}
-                    name="contactPerson"
-                    error={!!touched.contactPerson && !!errors.contactPerson}
-                    helperText={touched.contactPerson && errors.contactPerson}
+                    onChange={handleChange}
+                    value={values.billingName}
+                    name="billingName"
+                    disabled={!panChecked}
+                  />
+                </Grid2>
+                {/* Company Firm Name */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>COMPANY/FIRM NAME</label>
+                </Grid2>
+                <Grid2 size={6}>
+                  <Autocomplete
+                    disablePortal
+                    options={firmNames}
+                    size="small"
+                    disabled={!panChecked}
+                    freeSolo // Allow typing any value (free-text entry)
+                    value={values.companyFirmName}
+                    onChange={(event, newValue) => setFieldValue('companyFirmName', newValue)}
+                    renderInput={(params) => <TextField {...params} placeholder="ENTER COMPANY/FIRM NAME" />}
+                  />
+                </Grid2>
+
+                {/* Contact Person Name */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>CONTACT PERSON NAME</label>
+                </Grid2>
+                <Grid2 size={6}>
+                  <TextField
+                    placeholder="ENTER CONTACT PERSON NAME"
+                    size="small"
+                    fullWidth
+                    variant="outlined"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.contactPersonName}
+                    name="contactPersonName"
+                    disabled={!panChecked}
+                  />
+                </Grid2>
+                {/* Contact Person Phone */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>CONTACT PERSON PHONE</label>
+                </Grid2>
+                <Grid2 size={6}>
+                  <TextField
+                    placeholder="ENTER CONTACT PERSON PHONE"
+                    size="small"
+                    fullWidth
+                    variant="outlined"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.contactPersonPhone}
+                    name="contactPersonPhone"
+                    disabled={!panChecked}
+                    type="number"
+                    sx={{
+                      '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                        display: 'none'
+                      },
+                      '& input[type=number]': {
+                        MozAppearance: 'textfield'
+                      },
+                    }
+                    }
+                    error={touched.contactPersonPhone && !!errors.contactPersonPhone}
+                    helperText={touched.contactPersonPhone && errors.contactPersonPhone}
                   />
                 </Grid2>
 
                 {/* Submit Button */}
-                <Grid2>
-                  <Box display="flex" justifyContent="end" mt="20px">
-                    <Button type="submit" variant="contained">
-                      Submit
-                    </Button>
-                  </Box>
+                <Grid2 size={2} mt={2}>
+                  <Button
+                    variant="contained"
+                    sx={{bgcolor:colors.teal[300]}}
+                    fullWidth
+                    type="submit"
+                    disabled={isFieldsDisabled || loading}
+                  >
+                    {loading ? "Submitting..." : "Submit"}
+                  </Button>
                 </Grid2>
+                <Modal
+                  disableAutoFocus
+                  open={open}
+                  onClose={() => { setOpen(false) }}
+                  aria-labelledby="modal-modal-title"
+                  aria-describedby="modal-modal-description"
+                  sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                >
+                  <Box sx={{
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                    height: '220px', width: '350px', bgcolor: 'white', borderRadius: '15px', padding: '25px'
+                  }}>
+                    {error ? (
+                      <>
+                        <Cancel color="error" sx={{ height: '80px', width: '80px' }} />
+                        <Typography variant="h2" fontWeight={500} color="error">Error!</Typography>
+                        <Typography variant="h5" mb={1} color={colors.grey[500]}>{error}</Typography>
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle color="success" sx={{ height: '100px', width: '100px' }} />
+                        <Typography variant="h1" color="initial">Success</Typography>
+                        <Typography variant="h5" color="initial">{success}</Typography>
+                      </>
+                    )}
+
+                    <Button color={error ? "error" : "success"} variant="contained" fullWidth onClick={() => setOpen(false)}>
+                      OK
+                    </Button>
+
+                  </Box>
+                </Modal>
               </Grid2>
             </Box>
           </form>
@@ -357,25 +485,5 @@ const AddCustomer = () => {
     </Box>
   );
 };
-
-// Yup validation schema
-const checkoutSchema = yup.object().shape({
-  customerName: yup.string().required("Customer Name is required"),
-  customerCode: yup.string().required("Customer Code is required"),
-  billingName: yup.string().required("Billing Name is required"),
-  companyFirmName: yup.string().required("Company/Firm Name is required"),
-  email: yup.string().email("Invalid email").required("Email is required"),
-  whatsappNo: yup
-    .string()
-    .matches(/^[0-9]*$/, "WhatsApp No must be a number")
-    .required("WhatsApp No is required"),
-  mobile: yup
-    .string()
-    .matches(/^[0-9]*$/, "Mobile No must be a number")
-    .required("Mobile No is required"),
-  pan: yup.string().required("PAN is required"),
-  address: yup.string().required("Address is required"),
-  contactPerson: yup.string().required("Contact Person is required"),
-});
 
 export default AddCustomer;
