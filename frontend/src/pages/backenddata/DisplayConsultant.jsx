@@ -23,18 +23,11 @@ const DisplayConsultants = () => {
             Authorization: `Bearer ${token}`, 
           },
         });
-        // const response = await API.get('/getmuteconsultants', {
-        //   headers: {
-        //     Authorization: `Bearer ${token}`, 
-        //   },
-        // });
         const consultantsData = response.data.consultants || []; 
         setConsultants(consultantsData); 
-        console.log(consultantsData);
         setLoading(false); 
       } catch (err) {
         setError(err.response?.data?.error || 'Failed to fetch consultants'); 
-        console.log(err);
         setLoading(false); 
       }
     };
@@ -63,6 +56,20 @@ const DisplayConsultants = () => {
   const handleUpdate = (consultant) => {
     console.log('Update consultant:', consultant); 
   };
+
+  const displaySignature = (signatureBase64) => {
+    if (signatureBase64) {
+      return (
+        <img
+          src={`data:image/png;base64,${signatureBase64}`}
+          alt="Consultant Signature"
+          style={{ width: '50px', height: 'auto', borderRadius: '5px' }} 
+        />
+      );
+    }
+    return <span>No signature available</span>;
+  };
+
   if (loading) {
     return <p className="loading">Loading consultants...</p>; 
   }
@@ -86,7 +93,7 @@ const DisplayConsultants = () => {
               <th>Bank IFSC Code</th>
               <th>Account Holder Name</th>
               <th>Signature</th>
-              <th>Actions</th> {/* Ensure Actions column is here */}
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -100,27 +107,17 @@ const DisplayConsultants = () => {
                 <td>{consultant.bankAccountNumber}</td>
                 <td>{consultant.bankIFSCCode}</td>
                 <td>{consultant.accountHolderName}</td>
-                <td>
-                  {consultant.signature ? (
-                    <img
-                      src={consultant.signature}
-                      alt="Signature"
-                      style={{ width: '50px', height: 'auto', borderRadius: '5px' }} // Small picture style
-                    />
-                  ) : (
-                    <span>No signature available</span>
-                  )}
-                </td>
+                <td>{displaySignature(consultant.signature)}</td> 
                 <td className="actions">
-                  <button onClick={() => handleUpdate(consultant)}>Update</button> {/* Update button */}
-                  <button onClick={() => handleDelete(consultant._id)}>Delete</button> {/* Delete button */}
+                  <button onClick={() => handleUpdate(consultant)}>Update</button>
+                  <button onClick={() => handleDelete(consultant._id)}>Delete</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       ) : (
-        <p>No consultants found.</p> // Message if no consultants are available
+        <p>No consultants found.</p>
       )}
     </div>
   );

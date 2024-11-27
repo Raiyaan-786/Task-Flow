@@ -1,44 +1,82 @@
 import { Consultant } from "../models/consultant.model.js";
 
+
 const createConsultant = async (req, res) => {
   try {
-    const {
-      consultantName,
-      email,
-      mobile,
-      address,
-      username,
-      bankAccountNumber,
-      bankIFSCCode,
-      accountHolderName,
-    } = req.body;
+      const {
+          consultantName,
+          email,
+          mobile,
+          address,
+          username,
+          bankAccountNumber,
+          bankIFSCCode,
+          accountHolderName,
+      } = req.body;
+      let signature;
+      if (req.file) {
+          signature = req.file.buffer.toString('base64'); 
+      } else {
+          return res.status(400).json({ error: 'Signature file is required.' });
+      }
+      const newConsultant = new Consultant({
+          consultantName,
+          email,
+          mobile,
+          address,
+          username,
+          bankAccountNumber,
+          bankIFSCCode,
+          accountHolderName,
+          signature,
+      });
 
-    let signature;
-
-    if (req.file) {
-      signature = req.file.buffer; 
-    } else {
-      return res.status(400).json({ error: 'Signature file is required.' });
-    }
-
-    const newConsultant = new Consultant({
-      consultantName,
-      email,
-      mobile,
-      address,
-      username,
-      bankAccountNumber,
-      bankIFSCCode,
-      accountHolderName,
-      signature,
-    });
-
-    await newConsultant.save();
-    res.status(201).json({ message: "Consultant created successfully", consultant: newConsultant });
+      await newConsultant.save();
+      res.status(201).json({ message: 'Consultant created successfully', consultant: newConsultant });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+      res.status(400).json({ error: err.message });
   }
 };
+
+// const createConsultant = async (req, res) => {
+//   try {
+//     const {
+//       consultantName,
+//       email,
+//       mobile,
+//       address,
+//       username,
+//       bankAccountNumber,
+//       bankIFSCCode,
+//       accountHolderName,
+//     } = req.body;
+
+//     let signature;
+
+//     if (req.file) {
+//       signature = req.file.buffer; 
+//     } else {
+//       return res.status(400).json({ error: 'Signature file is required.' });
+//     }
+
+//     const newConsultant = new Consultant({
+//       consultantName,
+//       email,
+//       mobile,
+//       address,
+//       username,
+//       bankAccountNumber,
+//       bankIFSCCode,
+//       accountHolderName,
+//       signature,
+//     });
+
+//     await newConsultant.save();
+//     res.status(201).json({ message: "Consultant created successfully", consultant: newConsultant });
+//   } catch (err) {
+//     res.status(400).json({ error: err.message });
+//   }
+// };
 
 const getConsultant = async (req, res) => {
   try {
