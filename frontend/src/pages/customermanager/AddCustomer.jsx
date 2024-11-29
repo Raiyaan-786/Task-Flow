@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, TextField, Checkbox, FormControlLabel, Grid2, Typography, Autocomplete, Modal, } from "@mui/material";
+import { Box, Button, TextField, Checkbox, FormControlLabel, Grid2, Typography, Autocomplete, Modal, Alert, } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import API from "../../api/api";
@@ -35,8 +35,8 @@ const AddCustomer = () => {
     fetchFirmNames();
   }, []);
 
-  const handleCheckPAN = async (pan, setFieldValue) => {
-    if (!pan) {
+  const handleCheckPAN = async (PAN, setFieldValue) => {
+    if (!PAN) {
       setError("Please enter a PAN.");
       setFieldsDisabled(true);
       setPanChecked(false);
@@ -51,9 +51,9 @@ const AddCustomer = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        params: { pan },
+        params: { PAN },
       });
-      if (response.data.pans.includes(pan)) {
+      if (response.data.pans.includes(PAN)) {
         setPanError("PAN already exists. Please enter a new PAN.");
         setFieldsDisabled(true);
         setPanChecked(false);
@@ -61,7 +61,7 @@ const AddCustomer = () => {
         setPanError("");
         setFieldsDisabled(false);
         setPanChecked(true);
-        setFieldValue("pan", pan);
+        setFieldValue("PAN", PAN);
       }
     } catch (err) {
       setError(err.response?.data?.message || "Error checking PAN");
@@ -73,6 +73,7 @@ const AddCustomer = () => {
   };
 
   const handleFormSubmit = async (values, { resetForm }) => {
+    console.log(values)
     const token = localStorage.getItem("token");
     try {
       const response = await API.post("/createcustomer", values, {
@@ -85,6 +86,7 @@ const AddCustomer = () => {
       setPanChecked(false);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to create customer");
+
       setSuccess("");
     }
     setOpen(true);
@@ -94,38 +96,45 @@ const AddCustomer = () => {
     <Box p={2} m="20px" height="67vh" overflow="auto">
       <Formik
         initialValues={{
-          pan: "",
           customerName: "",
           customerCode: "",
           billingName: "",
-          companyFirmName: "",
+          companyName: "",//
           email: "",
-          mobile: "",
+          mobileNo: "",
           whatsappNo: "",
-          isWhatsappSame: false,
+          sameAsMobileNo: false,//
+          PAN: "", //
           address: "",
           contactPersonName: "",
           contactPersonPhone: "",
-          aadharNo: "",
+          AadharNo: "", //
+          password: ""
         }}
         validationSchema={yup.object().shape({
-          pan: yup
+          PAN: yup
             .string()
             .matches(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, "Invalid PAN format")
             .required("PAN is required"),
           customerName: yup.string().required("Customer Name is required"),
           customerCode: yup.string(),
           billingName: yup.string(),
-          companyFirmName: yup.string(),
-          email: yup.string().email("Invalid email"),
-          mobile: yup.string(),
+          companyName: yup.string(),
+          email: yup.string().email("Invalid email").required("Email ID is required"),
+          mobileNo: yup.string(),
           whatsappNo: yup.string(),
           address: yup.string(),
           contactPersonName: yup.string(),
           contactPersonPhone: yup.string(),
-          aadharNo: yup.string()
+          AadharNo: yup.string()
         })}
-        onSubmit={handleFormSubmit}
+        onSubmit={(values, { resetForm }) => {
+          const modifiedValues = {
+            ...values,
+            password: values.email, // Automatically set password to email
+          };
+          handleFormSubmit(modifiedValues, { resetForm });
+        }}
       >
         {({
           values,
@@ -139,7 +148,7 @@ const AddCustomer = () => {
         }) => (
           <form onSubmit={handleSubmit}>
             <Box pb={2}>
-              <Typography variant="h5" color="error">{panError}</Typography>
+              {panError ? <Alert severity="error">{panError}</Alert> : undefined}
               <Grid2 container spacing={2} gap={2} padding={"10px 20px"}>
                 {/* PAN */}
                 <Grid2 size={6} display={'flex'} alignItems={'center'}>
@@ -156,12 +165,12 @@ const AddCustomer = () => {
                       const uppercaseValue = e.target.value.toUpperCase();
                       if (uppercaseValue === "") resetForm();
                       else
-                        setFieldValue('pan', uppercaseValue); // Update the Formik value explicitly
+                        setFieldValue('PAN', uppercaseValue); // Update the Formik value explicitly
                     }}
-                    value={values.pan}
-                    name="pan"
-                    error={touched.pan && !!errors.pan}
-                    helperText={touched.pan && errors.pan}
+                    value={values.PAN}
+                    name="PAN"
+                    error={touched.PAN && !!errors.PAN}
+                    helperText={touched.PAN && errors.PAN}
                     slotProps={{
                       htmlInput: {
                         style: {
@@ -222,11 +231,11 @@ const AddCustomer = () => {
                     variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    value={values.aadharNo}
-                    name="aadharNo"
+                    value={values.AadharNo}
+                    name="AadharNo"
                     disabled={!panChecked}
-                    error={touched.aadharNo && !!errors.aadharNo}
-                    helperText={touched.aadharNo && errors.aadharNo}
+                    error={touched.AadharNo && !!errors.AadharNo}
+                    helperText={touched.AadharNo && errors.AadharNo}
                     type="number"
                     sx={{
                       '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
@@ -272,11 +281,11 @@ const AddCustomer = () => {
                     variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    value={values.mobile}
-                    name="mobile"
+                    value={values.mobileNo}
+                    name="mobileNo"
                     disabled={!panChecked}
-                    error={touched.mobile && !!errors.mobile}
-                    helperText={touched.mobile && errors.mobile}
+                    error={touched.mobileNo && !!errors.mobileNo}
+                    helperText={touched.mobileNo && errors.mobileNo}
                     type="number"
                     sx={{
                       '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
@@ -302,9 +311,9 @@ const AddCustomer = () => {
                     variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    value={values.isWhatsappSame ? values.mobile : values.whatsappNo}
+                    value={values.sameAsMobileNo ? values.mobileNo : values.whatsappNo}
                     name="whatsappNo"
-                    disabled={!panChecked || values.isWhatsappSame}
+                    disabled={!panChecked || values.sameAsMobileNo}
                     error={touched.whatsappNo && !!errors.whatsappNo}
                     helperText={touched.whatsappNo && errors.whatsappNo}
                     type="number"
@@ -322,9 +331,9 @@ const AddCustomer = () => {
                     control={
                       <Checkbox
                         disabled={!panChecked}
-                        checked={values.isWhatsappSame}
+                        checked={values.sameAsMobileNo}
                         onChange={(e) =>
-                          setFieldValue("isWhatsappSame", e.target.checked)
+                          setFieldValue("sameAsMobileNo", e.target.checked)
                         }
                       />
                     }
@@ -380,8 +389,8 @@ const AddCustomer = () => {
                     size="small"
                     disabled={!panChecked}
                     freeSolo // Allow typing any value (free-text entry)
-                    value={values.companyFirmName}
-                    onChange={(event, newValue) => setFieldValue('companyFirmName', newValue)}
+                    value={values.companyName}
+                    onChange={(event, newValue) => setFieldValue('companyName', newValue)}
                     renderInput={(params) => <TextField {...params} placeholder="ENTER COMPANY/FIRM NAME" />}
                   />
                 </Grid2>
@@ -437,7 +446,7 @@ const AddCustomer = () => {
                 <Grid2 size={2} mt={2}>
                   <Button
                     variant="contained"
-                    sx={{bgcolor:colors.teal[300]}}
+                    sx={{ bgcolor: colors.teal[300] }}
                     fullWidth
                     type="submit"
                     disabled={isFieldsDisabled || loading}
@@ -455,7 +464,7 @@ const AddCustomer = () => {
                 >
                   <Box sx={{
                     display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                    height: '220px', width: '350px', bgcolor: 'white', borderRadius: '15px', padding: '25px'
+                    height: '220px', width: '300px', bgcolor: 'white', borderRadius: '15px', padding: '25px'
                   }}>
                     {error ? (
                       <>
@@ -465,13 +474,13 @@ const AddCustomer = () => {
                       </>
                     ) : (
                       <>
-                        <CheckCircle color="success" sx={{ height: '100px', width: '100px' }} />
-                        <Typography variant="h1" color="initial">Success</Typography>
-                        <Typography variant="h5" color="initial">{success}</Typography>
+                        <CheckCircle color="success" sx={{ height: '80px', width: '80px' }} />
+                        <Typography variant="h2" fontWeight={500} color="initial">Success</Typography>
+                        <Typography variant="h5" mb={1} color={colors.grey[500]}>{success}</Typography>
                       </>
                     )}
 
-                    <Button color={error ? "error" : "success"} variant="contained" fullWidth onClick={() => setOpen(false)}>
+                    <Button sx={{ borderRadius: 5 }} color={error ? "error" : "success"} variant="contained" fullWidth onClick={() => setOpen(false)}>
                       OK
                     </Button>
 
