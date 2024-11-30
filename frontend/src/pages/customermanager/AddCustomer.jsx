@@ -73,7 +73,7 @@ const AddCustomer = () => {
   };
 
   const handleFormSubmit = async (values, { resetForm }) => {
-    console.log(values)
+    // console.log(values)
     const token = localStorage.getItem("token");
     try {
       const response = await API.post("/createcustomer", values, {
@@ -159,7 +159,7 @@ const AddCustomer = () => {
                     placeholder="ENTER PAN NUMBER"
                     size="small"
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     onBlur={(e) => handleCheckPAN(e.target.value, setFieldValue)}
                     onChange={(e) => {
                       const uppercaseValue = e.target.value.toUpperCase();
@@ -191,7 +191,7 @@ const AddCustomer = () => {
                     placeholder="ENTER CUSTOMER NAME"
                     size="small"
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.customerName}
@@ -211,7 +211,7 @@ const AddCustomer = () => {
                     placeholder="ENTER CUSTOMER CODE"
                     size="small"
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.customerCode}
@@ -228,7 +228,7 @@ const AddCustomer = () => {
                     placeholder="ENTER AADHAAR NUMBER"
                     size="small"
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.AadharNo}
@@ -258,7 +258,7 @@ const AddCustomer = () => {
                     placeholder='ENTER EMAIL ID'
                     size="small"
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.email}
@@ -278,7 +278,7 @@ const AddCustomer = () => {
                     placeholder='ENTER MOBILE NUMBER'
                     size="small"
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.mobileNo}
@@ -308,7 +308,7 @@ const AddCustomer = () => {
                     placeholder="ENTER WHATSAPP NUMBER"
                     size="small"
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.sameAsMobileNo ? values.mobileNo : values.whatsappNo}
@@ -342,7 +342,7 @@ const AddCustomer = () => {
                 </Grid2>
 
                 {/* Address */}
-                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                <Grid2 size={6} >
                   <label>ADDRESS</label>
                 </Grid2>
                 <Grid2 size={6}>
@@ -352,7 +352,7 @@ const AddCustomer = () => {
                     maxRows={3}
                     size="small"
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.address}
@@ -370,7 +370,7 @@ const AddCustomer = () => {
                     placeholder="ENTER BILLING NAME"
                     size="small"
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.billingName}
@@ -384,6 +384,7 @@ const AddCustomer = () => {
                 </Grid2>
                 <Grid2 size={6}>
                   <Autocomplete
+                    
                     disablePortal
                     options={firmNames}
                     size="small"
@@ -391,7 +392,7 @@ const AddCustomer = () => {
                     freeSolo // Allow typing any value (free-text entry)
                     value={values.companyName}
                     onChange={(event, newValue) => setFieldValue('companyName', newValue)}
-                    renderInput={(params) => <TextField {...params} placeholder="ENTER COMPANY/FIRM NAME" />}
+                    renderInput={(params) => <TextField variant="filled" {...params} placeholder="ENTER COMPANY/FIRM NAME" />}
                   />
                 </Grid2>
 
@@ -404,7 +405,7 @@ const AddCustomer = () => {
                     placeholder="ENTER CONTACT PERSON NAME"
                     size="small"
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.contactPersonName}
@@ -421,7 +422,7 @@ const AddCustomer = () => {
                     placeholder="ENTER CONTACT PERSON PHONE"
                     size="small"
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.contactPersonPhone}

@@ -1,73 +1,69 @@
 import React, { useState } from 'react';
-import { Box, Button, TextField, FormControl, Grid2, MenuItem, Select, InputLabel } from "@mui/material";
+import { Box, Button, TextField, FormControl, Typography, Grid2, MenuItem, Select, InputLabel, Modal } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import API from '../../api/api';
+import { useTheme } from "@emotion/react";
+import { tokens } from "../../theme";
+import { CheckCircle, Cancel } from '@mui/icons-material';
 
 const AddEmployee = () => {
-    // Individual state for each field
-    const [employeeName, setEmployeeName] = useState('' );
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [email, setEmail] = useState('');
-    const [mobile, setMobile] = useState('');
-    const [address, setAddress] = useState('');
-    const [assignRole, setAssignRole] = useState('');
-
+    const theme = useTheme();
+    const colors = tokens(theme.palette.mode);
+    const [open, setOpen] = useState(false);
     const [success, setSuccess] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     // Create user function (formerly createUser)
-    const createUser = async () => {
+    const handleFormSubmit = async (values, { resetForm }) => {
+        setLoading(true);
         const token = localStorage.getItem('token');
         try {
-        const response = await API.post('/auth/users',{
-            name: employeeName,
-            username: username,
-            email: email,
-            password: password,
-            mobile: mobile,
-            address: address,
-            role: assignRole,
-        }, {
-            headers: {
-            Authorization: `Bearer ${token}`,
-            },
-        });
-        setSuccess(response.data.message);
-        setError('');
-        console.log("User created");
-        alert('Employee Created');
-        resetForm();
+            const response = await API.post('/auth/users', values, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setSuccess(response.data.message || "Customer created successfully!");
+            setError('');
+            resetForm();
         } catch (err) {
-        console.log(err);
-        setError(err.response?.data?.error || 'Failed to create user');
-        setSuccess('');
+            setError(err.response?.data?.error || 'Failed to create user');
+            setSuccess('');
         }
+        setLoading(false);
+        setOpen(true);
     };
-    console.log(success);
-    console.log(error);
-    // Form submission handler
-    
-    const handleFormSubmit = (values) => {
-        createUser();
-        console.log(values);
-    };
-
     return (
-        <Box p={2} m="20px" height={'67vh'} overflow={'auto'}>
+        <Box p={2} m="20px" height="67vh" overflow="auto">
             <Formik
                 initialValues={{
-                    employeeName,
-                    username,
-                    password,
-                    email,
-                    mobile,
-                    address,
-                    assignRole,
+                    empname: '',
+                    username: '',
+                    password: '',
+                    email: '',
+                    mobile: '',
+                    address: '',
+                    role: '',
                 }}
-                validationSchema={validationSchema}
-                onSubmit={handleFormSubmit}
+                validationSchema={yup.object().shape({
+                    empname: yup.string().required("Employee Name is required"),
+                    username: yup.string().required("Username is required"),
+                    email: yup.string().email("Invalid email").required("Email is required"),
+                    password: yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+                    mobile: yup.string().required("Mobile No is required"),
+                    address: yup.string().required("Address is required"),
+                    role: yup.string().required("Assign Role is required"),
+                })}
+                onSubmit={(values, { resetForm }) => {
+                    const payload = {
+                        ...values,
+                        name: values.empname, // Map 'empname' to 'name'
+                    };
+                    delete payload.empname; // Remove 'empname'
+                    handleFormSubmit(payload, { resetForm });
+                }}
             >
                 {({
                     values,
@@ -77,134 +73,130 @@ const AddEmployee = () => {
                     handleChange,
                     handleSubmit,
                     setFieldValue,
+                    resetForm
                 }) => (
-                    <form onSubmit={handleSubmit}>
-                        <Box pt={1}>
-                            <Grid2 container spacing={2}>
+                    <form onSubmit={handleSubmit} >
+                        <Box pb={2}>
+                            <Grid2 container spacing={2} gap={2} padding={"10px 20px"}>
                                 {/* Employee Name */}
-                                <Grid2 size={4}>
-                                    <label>Employee Name</label>
+                                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                                    <label>EMPLOYEE NAME</label>
                                 </Grid2>
-                                <Grid2 size={8}>
+                                <Grid2 size={6}>
                                     <TextField
+                                        placeholder='ENTER EMPLOYEE NAME'
                                         size="small"
                                         fullWidth
-                                        variant="outlined"
+                                        variant="filled"
                                         onBlur={handleBlur}
-                                        onChange={(e) => {
-                                            handleChange(e);
-                                            setEmployeeName(e.target.value);
-                                        }}
-                                        value={values.employeeName}
-                                        name="employeeName"
-                                        error={!!touched.employeeName && !!errors.employeeName}
-                                        helperText={touched.employeeName && errors.employeeName}
+                                        onChange={handleChange}
+                                        value={values.empname}
+                                        name="empname"
+                                        error={!!touched.empname && !!errors.empname}
+                                        helperText={touched.empname && errors.empname}
+                                        // autoComplete="name"
                                     />
                                 </Grid2>
-
                                 {/* Username */}
-                                <Grid2 size={4}>
-                                    <label>Username</label>
+                                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                                    <label>USERNAME</label>
                                 </Grid2>
-                                <Grid2 size={8}>
+                                <Grid2 size={6}>
                                     <TextField
+                                        placeholder='ENTER USERNAME'
                                         size="small"
                                         fullWidth
-                                        variant="outlined"
+                                        variant="filled"
                                         onBlur={handleBlur}
-                                        onChange={(e) => {
-                                            handleChange(e);
-                                            setUsername(e.target.value);
-                                        }}
+                                        onChange={handleChange}
                                         value={values.username}
                                         name="username"
                                         error={!!touched.username && !!errors.username}
                                         helperText={touched.username && errors.username}
+                                        autoComplete="new-username"
                                     />
                                 </Grid2>
-
                                 {/* Password */}
-                                <Grid2 size={4}>
-                                    <label>Password</label>
+                                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                                    <label>PASSWORD</label>
                                 </Grid2>
-                                <Grid2 size={8}>
+                                <Grid2 size={6}>
                                     <TextField
+                                        placeholder='ENTER PASSWORD'
                                         size="small"
                                         fullWidth
-                                        variant="outlined"
+                                        variant="filled"
                                         type="password"
                                         onBlur={handleBlur}
-                                        onChange={(e) => {
-                                            handleChange(e);
-                                            setPassword(e.target.value);
-                                        }}
+                                        onChange={handleChange}
                                         value={values.password}
                                         name="password"
                                         error={!!touched.password && !!errors.password}
                                         helperText={touched.password && errors.password}
+                                        autoComplete="new-password" // Prevents autofill
                                     />
                                 </Grid2>
-
                                 {/* Email */}
-                                <Grid2 size={4}>
-                                    <label>Email</label>
+                                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                                    <label>EMAIL</label>
                                 </Grid2>
-                                <Grid2 size={8}>
+                                <Grid2 size={6}>
                                     <TextField
+                                        placeholder='ENTER EMAIL ID'
                                         size="small"
                                         fullWidth
-                                        variant="outlined"
+                                        variant="filled"
                                         onBlur={handleBlur}
-                                        onChange={(e) => {
-                                            handleChange(e);
-                                            setEmail(e.target.value);
-                                        }}
+                                        onChange={handleChange}
                                         value={values.email}
                                         name="email"
                                         error={!!touched.email && !!errors.email}
                                         helperText={touched.email && errors.email}
                                     />
                                 </Grid2>
-
                                 {/* Mobile No */}
-                                <Grid2 size={4}>
-                                    <label>Mobile No</label>
+                                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                                    <label>MOBILE NUMBER</label>
                                 </Grid2>
-                                <Grid2 size={8}>
+                                <Grid2 size={6}>
                                     <TextField
+                                        placeholder='ENTER MOBILE NUMBER'
                                         size="small"
                                         fullWidth
-                                        variant="outlined"
+                                        variant="filled"
                                         onBlur={handleBlur}
-                                        onChange={(e) => {
-                                            handleChange(e);
-                                            setMobile(e.target.value);
-                                        }}
+                                        onChange={handleChange}
                                         value={values.mobile}
                                         name="mobile"
-                                        inputProps={{
-                                            inputMode: 'numeric',
-                                            pattern: '[0-9]*',
-                                        }}
+                                        type="number"
+                                        sx={{
+                                            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                                                display: 'none'
+                                            },
+                                            '& input[type=number]': {
+                                                MozAppearance: 'textfield'
+                                            },
+                                        }
+                                        }
                                         error={!!touched.mobile && !!errors.mobile}
                                         helperText={touched.mobile && errors.mobile}
                                     />
                                 </Grid2>
 
                                 {/* Address */}
-                                <Grid2 size={4}>
-                                    <label>Address</label>
+                                <Grid2 size={6}>
+                                    <label>ADDRESS</label>
                                 </Grid2>
-                                <Grid2 size={8}>
+                                <Grid2 size={6}>
                                     <TextField
                                         size="small"
+                                        multiline
+                                        minRows={3}
+                                        maxRows={3}
                                         fullWidth
-                                        variant="outlined"
+                                        variant="filled"
                                         onBlur={handleBlur}
-                                        onChange={(e) => {
-                                            handleChange(e);
-                                            setAddress(e.target.value);
-                                        }}
+                                        onChange={handleChange}
                                         value={values.address}
                                         name="address"
                                         error={!!touched.address && !!errors.address}
@@ -213,41 +205,73 @@ const AddEmployee = () => {
                                 </Grid2>
 
                                 {/* Assign Role */}
-                                <Grid2 size={4}>
-                                    <label>Assign Role</label>
+                                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                                    <label>ASSIGN ROLE</label>
                                 </Grid2>
-                                <Grid2 size={8}>
-                                    <FormControl fullWidth size="small">
-                                        <InputLabel>Role</InputLabel>
+                                <Grid2 size={6}>
+                                    <FormControl fullWidth size="small" variant='filled'>
+                                        <InputLabel><em>ROLE</em></InputLabel>
                                         <Select
-                                            name="assignRole"
-                                            value={values.assignRole}
-                                            onChange={(e) => {
-                                                handleChange(e);
-                                                setAssignRole(e.target.value);
-                                            }}
-                                            label="Role"
-                                            error={!!touched.assignRole && !!errors.assignRole}
+                                            name="role"
+                                            value={values.role}
+                                            onChange={handleChange}
+                                            label="role"
+                                            error={!!touched.role && !!errors.role}
                                         >
-                                            <MenuItem value=""><em>None</em></MenuItem>
-                                            <MenuItem value="Admin">Admin</MenuItem>
-                                            <MenuItem value="Manager">Manager</MenuItem>
-                                            <MenuItem value="Employee">Employee</MenuItem>
+                                            <MenuItem value="Admin">ADMIN</MenuItem>
+                                            <MenuItem value="Manager">MANAGER</MenuItem>
+                                            <MenuItem value="Employee">EMPLOYEE</MenuItem>
                                         </Select>
                                     </FormControl>
-                                    {touched.assignRole && errors.assignRole && (
-                                        <Box color="error.main" fontSize="0.75rem">{errors.assignRole}</Box>
+                                    {touched.role && errors.role && (
+                                        <Box color="error.main" fontSize="0.75rem">{errors.role}</Box>
                                     )}
                                 </Grid2>
 
                                 {/* Submit Button */}
-                                <Grid2 size={12}>
-                                    <Box display="flex" justifyContent="end" mt="20px">
-                                        <Button type="submit" variant="contained">
-                                            Submit
-                                        </Button>
-                                    </Box>
+                                <Grid2 size={2} mt={2}>
+                                    <Button
+                                        variant="contained"
+                                        sx={{ bgcolor: colors.teal[300] }}
+                                        fullWidth
+                                        type="submit"
+                                        disabled={loading}
+                                    >
+                                        {loading ? "Submitting..." : "Submit"}
+                                    </Button>
                                 </Grid2>
+                                <Modal
+                                    disableAutoFocus
+                                    open={open}
+                                    onClose={() => { setOpen(false) }}
+                                    aria-labelledby="modal-modal-title"
+                                    aria-describedby="modal-modal-description"
+                                    sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                                >
+                                    <Box sx={{
+                                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                                        height: '220px', width: '300px', bgcolor: 'white', borderRadius: '15px', padding: '25px'
+                                    }}>
+                                        {error ? (
+                                            <>
+                                                <Cancel color="error" sx={{ height: '80px', width: '80px' }} />
+                                                <Typography variant="h2" fontWeight={500} color="error">Error!</Typography>
+                                                <Typography variant="h5" mb={1} color={colors.grey[500]}>{error}</Typography>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <CheckCircle color="success" sx={{ height: '80px', width: '80px' }} />
+                                                <Typography variant="h2" fontWeight={500} color="initial">Success</Typography>
+                                                <Typography variant="h5" mb={1} color={colors.grey[500]}>{success}</Typography>
+                                            </>
+                                        )}
+
+                                        <Button sx={{ borderRadius: 5 }} color={error ? "error" : "success"} variant="contained" fullWidth onClick={() => setOpen(false)}>
+                                            OK
+                                        </Button>
+
+                                    </Box>
+                                </Modal>
                             </Grid2>
                         </Box>
                     </form>
@@ -256,16 +280,5 @@ const AddEmployee = () => {
         </Box>
     );
 };
-
-// Yup validation schema
-const validationSchema = yup.object().shape({
-    employeeName: yup.string().required("Employee Name is required"),
-    username: yup.string().required("Username is required"),
-    password: yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
-    email: yup.string().email("Invalid email").required("Email is required"),
-    mobile: yup.string().matches(/^[0-9]*$/, "Mobile No must be a number").required("Mobile No is required"),
-    address: yup.string().required("Address is required"),
-    assignRole: yup.string().required("Assign Role is required"),
-});
 
 export default AddEmployee;
