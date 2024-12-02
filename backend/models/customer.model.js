@@ -8,11 +8,9 @@ const customerSchema = new mongoose.Schema(
     },
     customerCode: {
       type: String,
-      unique: true,
     },
     password: {
       type: String,
-      required: true,
     },
     billingName: {
       type: String,
@@ -23,10 +21,10 @@ const customerSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
+      unique: true,
     },
     mobileNo: {
       type: String,
-      required: true,
       unique: true,
     },
     whatsappNo: {
@@ -38,6 +36,7 @@ const customerSchema = new mongoose.Schema(
     },
     PAN: {
       type: String,
+      required: true,
       unique: true,
     },
     AadharNo: {

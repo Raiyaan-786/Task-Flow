@@ -55,12 +55,12 @@
   }
   
   button:hover {
-    background-color: #45a049; /* Darker green */
+    background-color: #45a049;
   }
   
   .actions {
     display: flex;
-    gap: 10px; /* Space between buttons */
+    gap: 10px; 
   }
   
   .error {
