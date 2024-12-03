@@ -24,12 +24,12 @@ const Backend = () => {
       {/* <CreateUser/>  */}
       {/* <DisplayUsers/>  */}
       {/* <CreateConsultant/>  */}
-      <DisplayConsultants/>
+      {/* <DisplayConsultants/> */}
       {/* <CreateWork/>  */}
       {/* <DisplayWork/>   */}
       {/* <EmployeeDashboard/>  */}
       {/* <WorkDashboard/> {/*done*/}
-      {/* <CreateCustomer/>  */}
+      <CreateCustomer/> 
       {/* <DisplayCustomers/>  */}
       {/* <DisplayTurnover/>  */} {/*done*/}
       {/* <CreateTurnover/>  */} {/*Not working*/}
