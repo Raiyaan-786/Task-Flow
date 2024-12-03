@@ -1,469 +1,51 @@
-// import React, { useEffect, useState } from 'react';
-// import API from '../../api/api';
-// import { Autocomplete, Box, Button, Modal, TextField, Typography } from "@mui/material";
-// import { Formik } from "formik";
-// import * as yup from "yup";
-// import useMediaQuery from "@mui/material/useMediaQuery";
-// import { mockDataManagers } from "../../data/mockData";
-
-// const AddWork = () => {
-//     const [customer, setCustomer] = useState('');
-//     const [billingName, setBillingName] = useState('');
-//     const [email, setEmail] = useState('');
-//     const [mobile, setMobile] = useState('');
-//     const [pan, setPan] = useState('');
-//     const [address, setAddress] = useState('');
-//     const [service, setService] = useState('');
-//     const [work, setWork] = useState('');
-//     const [employee, setEmployee] = useState('');
-//     const [month, setMonth] = useState('');
-//     const [quarter, setQuarter] = useState('');
-//     const [financialYear, setFinancialYear] = useState('');
-//     const [price, setPrice] = useState('');
-//     const [quantity, setQuantity] = useState('');
-//     const [discount, setDiscount] = useState('');
-//     const [open, setOpen] = useState(false);
-//     const isNonMobile = useMediaQuery("(min-width:600px)");
-
-//     const handleFormSubmit = (values) => {
-//         console.log(values);
-//     };
-
-//     return (
-//         <Box>
-//             <Box p={'10px  0px 0px 35px'}>
-//                 <Button variant='outlined'>Add Customer</Button>
-//                 <Button variant='outlined'>Upload Work</Button>
-//             </Box>
-//             <Box p={2} m="20px" height={'67vh'} overflow={"auto"}>
-//                 <Formik
-//                     onSubmit={handleFormSubmit}
-//                     initialValues={{
-//                         customer,
-//                         billingName,
-//                         email,
-//                         mobile,
-//                         pan,
-//                         address,
-//                         service,
-//                         work,
-//                         employee,
-//                         month,
-//                         quarter,
-//                         financialYear,
-//                         price,
-//                         quantity,
-//                         discount
-//                     }}
-//                     validationSchema={checkoutSchema}
-//                 >
-//                     {({
-//                         values,
-//                         errors,
-//                         touched,
-//                         handleBlur,
-//                         handleChange,
-//                         handleSubmit,
-//                         setFieldValue,
-//                     }) => (
-//                         <form onSubmit={handleSubmit}>
-//                             <Box
-//                                 pt={1}
-//                                 display="grid"
-//                                 gap="10px"
-//                                 gridTemplateColumns="repeat(6, minmax(0, 1fr))"
-//                                 sx={{
-//                                     "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
-//                                 }}
-//                             >
-//                                 <Autocomplete
-//                                     size='small'
-//                                     disablePortal
-//                                     options={mockDataManagers}
-//                                     fullWidth
-//                                     name="customer"
-//                                     getOptionLabel={(option) => option.label}
-//                                     onBlur={handleBlur}
-//                                     onChange={(e, value) => {
-//                                         setFieldValue("customer", value !== null ? value.label : "");
-//                                         setCustomer(value !== null ? value.label : "");
-//                                     }}
-//                                     renderInput={(params) => (
-//                                         <TextField
-//                                             variant="outlined"
-//                                             {...params}
-//                                             label="Select Customer"
-//                                             name="customer"
-//                                             error={!!touched.customer && !!errors.customer}
-//                                             helperText={touched.customer && errors.customer}
-//                                         />
-//                                     )}
-//                                     sx={{ gridColumn: "span 3" }}
-//                                 />
-//                                 <Autocomplete
-//                                     size='small'
-//                                     disablePortal
-//                                     options={mockDataManagers}
-//                                     fullWidth
-//                                     name="billingName"
-//                                     getOptionLabel={(option) => option.label}
-//                                     onBlur={handleBlur}
-//                                     onChange={(e, value) => {
-//                                         setFieldValue("billingName", value !== null ? value.label : "");
-//                                         setBillingName(value !== null ? value.label : "");
-//                                     }}
-//                                     renderInput={(params) => (
-//                                         <TextField
-//                                             variant="outlined"
-//                                             {...params}
-//                                             label="Billing Name"
-//                                             name="billingName"
-//                                             error={!!touched.billingName && !!errors.billingName}
-//                                             helperText={touched.billingName && errors.billingName}
-//                                         />
-//                                     )}
-//                                     sx={{ gridColumn: "span 3" }}
-//                                 />
-//                                 <TextField
-//                                     size='small'
-//                                     fullWidth
-//                                     variant="outlined"
-//                                     type="email"
-//                                     label="Email"
-//                                     onBlur={handleBlur}
-//                                     onChange={(e) => {
-//                                         handleChange(e);
-//                                         setEmail(e.target.value);
-//                                     }}
-//                                     value={values.email}
-//                                     name="email"
-//                                     error={!!touched.email && !!errors.email}
-//                                     helperText={touched.email && errors.email}
-//                                     sx={{ gridColumn: "span 2" }}
-//                                 /> 
-//                                 <TextField
-//                                     size='small'
-//                                     fullWidth
-//                                     variant="outlined"
-//                                     type="text"
-//                                     label="Mobile"
-//                                     onBlur={handleBlur}
-//                                     onChange={(e) => {
-//                                         handleChange(e);
-//                                         setMobile(e.target.value);
-//                                     }}
-//                                     value={values.mobile}
-//                                     name="mobile"
-//                                     error={!!touched.mobile && !!errors.mobile}
-//                                     helperText={touched.mobile && errors.mobile}
-//                                     sx={{ gridColumn: "span 2" }}
-//                                 />  
-//                                 <TextField
-//                                     size='small'
-//                                     fullWidth
-//                                     variant="outlined"
-//                                     type="text"
-//                                     label="PAN"
-//                                     onBlur={handleBlur}
-//                                     onChange={(e) => {
-//                                         handleChange(e);
-//                                         setPan(e.target.value);
-//                                     }}
-//                                     value={values.pan}
-//                                     name="pan"
-//                                     error={!!touched.pan && !!errors.pan}
-//                                     helperText={touched.pan && errors.pan}
-//                                     sx={{ gridColumn: "span 2" }}
-//                                 />  
-//                                 <TextField
-//                                     size='small'
-//                                     fullWidth
-//                                     variant="outlined"
-//                                     type="text"
-//                                     label="Address"
-//                                     onBlur={handleBlur}
-//                                     onChange={(e) => {
-//                                         handleChange(e);
-//                                         setAddress(e.target.value);
-//                                     }}
-//                                     value={values.address}
-//                                     name="address"
-//                                     error={!!touched.address && !!errors.address}
-//                                     helperText={touched.address && errors.address}
-//                                     sx={{ gridColumn: "span 6" }}
-//                                 />
-//                                 <Autocomplete
-//                                     size='small'
-//                                     disablePortal
-//                                     options={mockDataManagers}
-//                                     fullWidth
-//                                     name="service"
-//                                     getOptionLabel={(option) => option.label}
-//                                     onBlur={handleBlur}
-//                                     onChange={(e, value) => {
-//                                         setFieldValue("service", value !== null ? value.label : "");
-//                                         setService(value !== null ? value.label : "");
-//                                     }}
-//                                     renderInput={(params) => (
-//                                         <TextField
-//                                             variant="outlined"
-//                                             {...params}
-//                                             label="Select Service"
-//                                             name="service"
-//                                             error={!!touched.service && !!errors.service}
-//                                             helperText={touched.service && errors.service}
-//                                         />
-//                                     )}
-//                                     sx={{ gridColumn: "span 6" }}
-//                                 />
-//                                 <Autocomplete
-//                                     size='small'
-//                                     disablePortal
-//                                     options={mockDataManagers}
-//                                     fullWidth
-//                                     name="work"
-//                                     getOptionLabel={(option) => option.label}
-//                                     onBlur={handleBlur}
-//                                     onChange={(e,value) => {
-//                                         setFieldValue("work", value !== null ? value.label : "");
-//                                         setWork(value !== null ? value.label : "");
-//                                     }}
-//                                     renderInput={(params) => (
-//                                         <TextField
-//                                             variant="outlined"
-//                                             {...params}
-//                                             label="Select Work"
-//                                             name="work"
-//                                             error={!!touched.work && !!errors.work}
-//                                             helperText={touched.work && errors.work}
-//                                         />
-//                                     )}
-//                                     sx={{ gridColumn: "span 6" }}
-//                                 />
-//                                 <Autocomplete
-//                                     size='small'
-//                                     disablePortal
-//                                     options={mockDataManagers}
-//                                     fullWidth
-//                                     name="employee"
-//                                     getOptionLabel={(option) => option.label}
-//                                     onBlur={handleBlur}
-//                                     onChange={(e,value) => {
-//                                         setFieldValue("employee", value !== null ? value.label : "");
-//                                         setEmployee(value !== null ? value.label : "");
-//                                     }}
-//                                     renderInput={(params) => (
-//                                         <TextField
-//                                             variant="outlined"
-//                                             {...params}
-//                                             label="Assign Employee"
-//                                             name="employee"
-//                                             error={!!touched.employee && !!errors.employee}
-//                                             helperText={touched.employee && errors.employee}
-//                                         />
-//                                     )}
-//                                     sx={{ gridColumn: "span 6" }}
-//                                 />
-//                                 <Autocomplete
-//                                     size='small'
-//                                     disablePortal
-//                                     options={mockDataManagers}
-//                                     fullWidth
-//                                     name="month"
-//                                     getOptionLabel={(option) => option.label}
-//                                     onBlur={handleBlur}
-//                                     onChange={(e,value) => {
-//                                         setFieldValue("month", value !== null ? value.label : "");
-//                                         setMonth(value !== null ? value.label : "");
-//                                     }}
-//                                     renderInput={(params) => (
-//                                         <TextField
-//                                             variant="outlined"
-//                                             {...params}
-//                                             label="Month"
-//                                             name="month"
-//                                             error={!!touched.month && !!errors.month}
-//                                             helperText={touched.month && errors.month}
-//                                         />
-//                                     )}
-//                                     sx={{ gridColumn: "span 2" }}
-//                                 />
-//                                 <Autocomplete
-//                                     size='small'
-//                                     disablePortal
-//                                     options={mockDataManagers}
-//                                     fullWidth
-//                                     name="quarter"
-//                                     getOptionLabel={(option) => option.label}
-//                                     onBlur={handleBlur}
-//                                     onChange={(e,value) => {
-//                                         setFieldValue("quarter", value !== null ? value.label : "");
-//                                         setQuarter(value !== null ? value.label : "");
-//                                     }}
-//                                     renderInput={(params) => (
-//                                         <TextField
-//                                             variant="outlined"
-//                                             {...params}
-//                                             label="Quarter"
-//                                             name="quarter"
-//                                             error={!!touched.quarter && !!errors.quarter}
-//                                             helperText={touched.quarter && errors.quarter}
-//                                         />
-//                                     )}
-//                                     sx={{ gridColumn: "span 2" }}
-//                                 />
-//                                 <Autocomplete
-//                                     size='small'
-//                                     disablePortal
-//                                     options={mockDataManagers}
-//                                     fullWidth
-//                                     name="financialYear"
-//                                     getOptionLabel={(option) => option.label}
-//                                     onBlur={handleBlur}
-//                                     onChange={(e,value) => {
-//                                         setFieldValue("financialYear", value !== null ? value.label : "");
-//                                         setFinancialYear(value !== null ? value.label : "");
-//                                     }}
-//                                     renderInput={(params) => (
-//                                         <TextField
-//                                             variant="outlined"
-//                                             {...params}
-//                                             label="Financial Year"
-//                                             name="financialYear"
-//                                             error={!!touched.financialYear && !!errors.financialYear}
-//                                             helperText={touched.financialYear && errors.financialYear}
-//                                         />
-//                                     )}
-//                                     sx={{ gridColumn: "span 2" }}
-//                                 />
-//                                 <TextField
-//                                     size='small'
-//                                     fullWidth
-//                                     variant="outlined"
-//                                     type="text"
-//                                     label="Price"
-//                                     onBlur={handleBlur}
-//                                     onChange={(e) => {
-//                                         handleChange(e);
-//                                         setPrice(e.target.value);
-//                                     }}
-//                                     value={values.price}
-//                                     name="price"
-//                                     error={!!touched.price && !!errors.price}
-//                                     helperText={touched.price && errors.price}
-//                                     sx={{ gridColumn: "span 2" }}
-//                                 /> 
-//                                 <TextField
-//                                     size='small'
-//                                     fullWidth
-//                                     variant="outlined"
-//                                     type="text"
-//                                     label="Quantity"
-//                                     onBlur={handleBlur}
-//                                     onChange={(e) => {
-//                                         handleChange(e);
-//                                         setQuantity(e.target.value);
-//                                     }}
-//                                     value={values.quantity}
-//                                     name="quantity"
-//                                     error={!!touched.quantity && !!errors.quantity}
-//                                     helperText={touched.quantity && errors.quantity}
-//                                     sx={{ gridColumn: "span 2" }}
-//                                 /> 
-//                                 <TextField
-//                                     size='small'
-//                                     fullWidth
-//                                     variant="outlined"
-//                                     type="text"
-//                                     label="Discount"
-//                                     onBlur={handleBlur}
-//                                     onChange={(e) => {
-//                                         handleChange(e);
-//                                         setDiscount(e.target.value);
-//                                     }}
-//                                     value={values.discount}
-//                                     name="discount"
-//                                     error={!!touched.discount && !!errors.discount}
-//                                     helperText={touched.discount && errors.discount}
-//                                     sx={{ gridColumn: "span 2" }}
-//                                 /> 
-//                                 <Button onClick={() => setOpen(true)} sx={{ backgroundColor: "#cb3cff" }} variant="contained">
-//                                     Submit
-//                                 </Button>
-//                             </Box>
-//                             <Box display="flex" justifyContent="end" mt="20px">
-//                                 <Modal
-//                                     open={open}
-//                                     onClose={() => { setOpen(!open) }}
-//                                     aria-labelledby="modal-modal-title"
-//                                     aria-describedby="modal-modal-description"
-//                                     sx={{ display: "flex", alignItems: "center", justifyContent: 'center' }}
-//                                 >
-//                                     <Box display={'flex'} flexDirection={'column'} gap={3} sx={{ height: '150px', width: "250px", bgcolor: "white", borderRadius: '8px', p: 3 }} >
-//                                         <Typography id="modal-modal-title" variant="h4" component="h2" textAlign={'center'}>
-//                                             Create a New Task ?
-//                                         </Typography>
-//                                         <Box display={'flex'} alignItems={'center'} justifyContent={'center'} gap={4}>
-//                                             <Button variant="outlined" onClick={() => setOpen(false)}>Cancel</Button>
-//                                             <Button onClick={() => { handleSubmit(); setOpen(false); }} type="submit" variant="outlined">Create</Button>
-//                                         </Box>
-//                                     </Box>
-//                                 </Modal>
-//                             </Box>
-//                         </form>
-//                     )}
-//                 </Formik>
-//             </Box>
-//         </Box>
-//     );
-// };
-
-// const checkoutSchema = yup.object().shape({
-//     customer: yup.string().required("Customer is required"),
-//     billingName: yup.string().required("Billing Name is required"),
-//     email: yup.string().email("Invalid email").required("Email is required"),
-//     mobile: yup.string().required("Mobile is required"),
-//     pan: yup.string().required("PAN is required"),
-//     address: yup.string().required("Address is required"),
-//     service: yup.string().required("Service is required"),
-//     work: yup.string().required("Work is required"),
-//     employee: yup.string().required("Employee is required"),
-//     month: yup.string().required("Month is required"),
-//     quarter: yup.string().required("Quarter is required"),
-//     financialYear: yup.string().required("Financial Year is required"),
-//     price: yup.number().required("Price is required"),
-//     quantity: yup.number().required("Quantity is required"),
-//     discount: yup.number().optional(),
-// });
-
-// export default AddWork;
 import React, { useEffect, useState } from 'react';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
+import { Box, Button, TextField, Checkbox, FormControlLabel, Grid2, Typography, Autocomplete, Modal, Alert, } from "@mui/material";
+import { Formik } from 'formik';
+import * as yup from 'yup';
 import API from '../../api/api';
-import {
-  Button,
-  TextField,
-  MenuItem,
-  Typography,
-  Alert,
-  Box,
-  Grid
-} from '@mui/material';
+import { useTheme } from "@emotion/react";
+import { tokens } from "../../theme";
+import { CheckCircle, Cancel } from '@mui/icons-material';
 
 const AddWork = () => {
+  const [months, setMonths] = useState([
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ]);
+  const currentYear = new Date().getFullYear();
+  const [years, setYears] = useState([]);
+
+  // Generate a list of years for the last 10 years and the next 10 years
+  useEffect(() => {
+    const yearList = [];
+    for (let i = currentYear - 10; i <= currentYear + 10; i++) {
+      yearList.push(i.toString());
+    }
+    setYears(yearList);
+  }, []);
+
+  const [services] = useState([
+    "Consulting", "Audit", "Taxation" // 3 predefined services
+  ]);
+  const [workTypes] = useState([
+    "Internal Audit", "External Audit", "Tax Filing" // 3 predefined work types
+  ]);
+
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+  const [open, setOpen] = useState(false); //for modal opening and closing
   const [customers, setCustomers] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchCustomersAndEmployees = async () => {
       try {
-        const customerResponse = await API.get('/getallcustomers'); 
+        const customerResponse = await API.get('/getallcustomers');
         setCustomers(customerResponse.data.customers);
-
-        const employeeResponse = await API.get('/auth/allusers'); 
+        const employeeResponse = await API.get('/auth/allusers');
         setEmployees(employeeResponse.data.users);
       } catch (err) {
         setError('Failed to load customers or employees');
@@ -473,151 +55,483 @@ const AddWork = () => {
     fetchCustomersAndEmployees();
   }, []);
 
-  const formik = useFormik({
-    initialValues: {
-      customer: '',
-      billingName: '',
-      email: '',
-      mobile: '',
-      pan: '',
-      address: '',
-      service: '',
-      workType: '',
-      assignedEmployee: '',
-      month: '',
-      quarter: '',
-      financialYear: '',
-      price: '',
-      quantity: '',
-      discount: '',
-    },
-    validationSchema: Yup.object({
-      customer: Yup.string().required('Customer is required'),
-      billingName: Yup.string().required('Billing Name is required'),
-      email: Yup.string().email('Invalid email format').required('Email is required'),
-      mobile: Yup.string().required('Mobile number is required'),
-      pan: Yup.string().required('PAN is required'),
-      address: Yup.string().required('Address is required'),
-      service: Yup.string().required('Service is required'),
-      workType: Yup.string().required('Work Type is required'),
-      assignedEmployee: Yup.string().required('Assigned Employee is required'),
-      month: Yup.string().required('Month is required'),
-      quarter: Yup.string().required('Quarter is required'),
-      financialYear: Yup.string().required('Financial Year is required'),
-      price: Yup.number().required('Price is required').positive(),
-      quantity: Yup.number().required('Quantity is required').positive().integer(),
-      discount: Yup.number().required('Discount is required').min(0),
-    }),
-    onSubmit: async (values, { resetForm }) => {
-      const token = localStorage.getItem('token');
-      try {
-        const response = await API.post('/addwork', values, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setSuccess(response.data.message);
-        alert(response.data.message)
-        resetForm();
-        setError('');
-      } catch (err) {
-        setError(err.response?.data?.error || 'Failed to create work');
-        setSuccess('');
-      }
-    },
-  });
+  const handleFormSubmit = async (values, { resetForm }) => {
+    const token = localStorage.getItem('token');
+    try {
+      setLoading(true);  // Add loading state if needed
+      const response = await API.post('/addwork', values, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setSuccess(response.data.message || "Work created successfully!");
+      setError("");
+      resetForm();
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to create work');
+      setSuccess("");
+    }
+    setOpen(true);
+    setLoading(false);  // Reset loading state
+  };
+
+
 
   return (
-    <Box component="form" onSubmit={formik.handleSubmit} sx={{ p: 4 }} overflow={'auto'} height={'70vh'}>
-      {/* {error && <Alert severity="error">{error}</Alert>}
-      {success && <Alert severity="success">{success}</Alert>} */}
+    <Box p={2} m="20px" height="67vh" overflow="auto">
+      <Formik
+        initialValues={{
+          customer: '',
+          billingName: '',
+          email: '',
+          mobile: '',
+          pan: '',
+          address: '',
+          service: '',
+          workType: '',
+          assignedEmployee: "",
+          month: '',
+          quarter: '',
+          financialYear: '',
+          price: '',
+          quantity: '',
+          discount: '',
+        }}
+        validationSchema={yup.object().shape({
+          customer: yup.string().required('Customer is required'),
+          billingName: yup.string().required('Billing Name is required'),
+          email: yup.string().email('Invalid email format').required('Email is required'),
+          mobile: yup.string().required('Mobile number is required'),
+          pan: yup.string().required('PAN is required'),
+          address: yup.string().required('Address is required'),
+          service: yup.string().required('Service is required'),
+          workType: yup.string().required('Work Type is required'),
+          assignedEmployee: yup.string().required('Assigned Employee is required'),
+          month: yup.string().required('Month is required'),
+          quarter: yup.string().required('Quarter is required'),
+          financialYear: yup.string().required('Financial Year is required'),
+          price: yup.number().required('Price is required').positive(),
+          quantity: yup.number().required('Quantity is required').positive().integer(),
+          discount: yup.number().required('Discount is required').min(0),
+        })}
+        onSubmit={handleFormSubmit}
+      >
+        {({
+          values,
+          errors,
+          touched,
+          handleBlur,
+          handleChange,
+          handleSubmit,
+          setFieldValue,
+          resetForm
+        }) => (
+          <form onSubmit={handleSubmit}>
+            <Box pb={2}>
+              <Grid2 container spacing={2} gap={2} padding={"10px 20px"} color={colors.grey[200]}>
 
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <TextField
-            select
-            label="Customer"
-            name="customer"
-            value={formik.values.customer}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.customer && Boolean(formik.errors.customer)}
-            helperText={formik.touched.customer && formik.errors.customer}
-            fullWidth
-            required
-            size="small"
-          >
-            <MenuItem value="" disabled>Select Customer</MenuItem>
-            {customers.map((customer) => (
-              <MenuItem key={customer._id} value={customer._id}>
-                {customer.customerName} (Code: {customer.customerCode})
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
+                {/* select customer */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>SELECT CUSTOMER</label>
+                </Grid2>
+                <Grid2 size={6}>
+                  <Autocomplete
+                    options={customers}
+                    getOptionLabel={(option) => option?.customerName || ""}
+                    isOptionEqualToValue={(option, value) => option._id === value?._id}  // Match by _id
+                    onChange={(event, value) => {
+                      // Store the customer ID in the "customer" field
+                      setFieldValue("customer", value?._id || "");  // Update customer field with _id
+                      if (value) {
+                        // Populate other fields when a customer is selected
+                        setFieldValue("billingName", value.billingName || "");
+                        setFieldValue("email", value.email || "");
+                        setFieldValue("mobile", value.mobileNo || "");
+                        setFieldValue("address", value.address || "");
+                        setFieldValue("pan", value.PAN || "");
+                      } else {
+                        // Clear the fields when no customer is selected
+                        setFieldValue("billingName", "");
+                        setFieldValue("email", "");
+                        setFieldValue("mobile", "");
+                        setFieldValue("address", "");
+                        setFieldValue("pan", "");
+                      }
+                    }}
+                    value={customers.find((cust) => cust._id === values.customer) || null}  // Use _id to find the selected customer
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        variant="filled"
+                        placeholder="Select Customer"
+                        error={touched.customer && !!errors.customer}
+                        helperText={touched.customer && errors.customer}
+                      />
+                    )}
+                    fullWidth
+                    size="small"
+                  />
 
-        {/* Other form fields */}
-        {[
-          { name: 'billingName', label: 'Billing Name', type: 'text' },
-          { name: 'email', label: 'Email', type: 'email' },
-          { name: 'mobile', label: 'Mobile', type: 'text' },
-          { name: 'pan', label: 'PAN', type: 'text' },
-          { name: 'address', label: 'Address', type: 'text' },
-          { name: 'service', label: 'Service', type: 'text' },
-          { name: 'workType', label: 'Work Type', type: 'text' },
-          { name: 'month', label: 'Month', type: 'text' },
-          { name: 'quarter', label: 'Quarter', type: 'text' },
-          { name: 'financialYear', label: 'Financial Year', type: 'text' },
-          { name: 'price', label: 'Price', type: 'number' },
-          { name: 'quantity', label: 'Quantity', type: 'number' },
-          { name: 'discount', label: 'Discount', type: 'number' },
-        ].map((field, index) => (
-          <Grid item xs={12} md={6} key={index}>
-            <TextField
-              fullWidth
-              label={field.label}
-              name={field.name}
-              type={field.type}
-              value={formik.values[field.name]}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched[field.name] && Boolean(formik.errors[field.name])}
-              helperText={formik.touched[field.name] && formik.errors[field.name]}
-              required
-              size="small" // Makes the field smaller
-            />
-          </Grid>
-        ))}
 
-        <Grid item xs={12}>
-          <TextField
-            select
-            label="Assigned Employee"
-            name="assignedEmployee"
-            value={formik.values.assignedEmployee}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.assignedEmployee && Boolean(formik.errors.assignedEmployee)}
-            helperText={formik.touched.assignedEmployee && formik.errors.assignedEmployee}
-            fullWidth
-            required
-            size="small"
-          >
-            <MenuItem value="" disabled>Select Assigned Employee</MenuItem>
-            {employees.map((employee) => (
-              <MenuItem key={employee._id} value={employee._id}>
-                {employee.name} (Role: {employee.role})
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
+                </Grid2>
 
-        <Grid item xs={2}>
-          <Button color="primary" variant="contained" fullWidth type="submit">
-            Create Work
-          </Button>
-        </Grid>
-      </Grid>
+                {/* Billing Name */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>BILLING NAME</label>
+                </Grid2>
+                <Grid2 size={6}>
+                  <TextField
+                    placeholder="ENTER BILLING NAME"
+                    size="small"
+                    fullWidth
+                    variant="filled"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.billingName}
+                    name="billingName"
+                    error={touched.billingName && !!errors.billingName}
+                    helperText={touched.billingName && errors.billingName}
+                  />
+                </Grid2>
+
+                {/* Email */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>EMAIL</label>
+                </Grid2>
+                <Grid2 size={6}>
+                  <TextField
+                    placeholder='ENTER EMAIL ID'
+                    size="small"
+                    fullWidth
+                    variant="filled"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.email}
+                    name="email"
+                    error={touched.email && !!errors.email}
+                    helperText={touched.email && errors.email}
+                  />
+                </Grid2>
+
+                {/* Mobile */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>MOBILE</label>
+                </Grid2>
+                <Grid2 size={6}>
+                  <TextField
+                    placeholder='ENTER MOBILE NUMBER'
+                    size="small"
+                    fullWidth
+                    variant="filled"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.mobile}
+                    name="mobile"
+                    error={touched.mobile && !!errors.mobile}
+                    helperText={touched.mobile && errors.mobile}
+                    type="number"
+                    sx={{
+                      '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                        display: 'none'
+                      },
+                      '& input[type=number]': {
+                        MozAppearance: 'textfield'
+                      },
+                    }}
+                  />
+                </Grid2>
+
+                {/* PAN */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>PAN NUMBER</label>
+                </Grid2>
+                <Grid2 size={6}>
+                  <TextField
+                    placeholder="ENTER PAN NUMBER"
+                    size="small"
+                    fullWidth
+                    variant="filled"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.pan}
+                    name="pan"
+                    error={touched.pan && !!errors.pan}
+                    helperText={touched.pan && errors.pan}
+                    slotProps={{
+                      htmlInput: {
+                        style: {
+                          textTransform: 'uppercase', // Capitalize all letters
+                        },
+                        maxLength: 10, // Setting the maximum number of characters to 10
+                      },
+                    }}
+                  />
+                </Grid2>
+
+                {/* Address */}
+                <Grid2 size={6} >
+                  <label>ADDRESS</label>
+                </Grid2>
+                <Grid2 size={6}>
+                  <TextField
+                    multiline
+                    minRows={3}
+                    maxRows={3}
+                    size="small"
+                    fullWidth
+                    variant="filled"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.address}
+                    name="address"
+                    error={touched.address && !!errors.address}
+                    helperText={touched.address && errors.address}
+
+                  />
+                </Grid2>
+
+                {/* fields that will be filled */}
+
+                {/* select SERVICE */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>SELECT SERVICE</label>
+                </Grid2>
+                <Grid2 size={6}>
+                  <Autocomplete
+                    options={services}
+                    value={values.service}
+                    onChange={(event, newValue) => setFieldValue('service', newValue)}
+                    renderInput={(params) => <TextField variant="filled" {...params} placeholder="SELECT SERVICE"
+                      error={touched.service && !!errors.service}
+                      helperText={touched.service && errors.service}
+                    />}
+                    fullWidth
+                    size="small"
+                    onBlur={handleBlur}
+                  />
+                </Grid2>
+
+                {/* select WORK */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>SELECT WORK</label>
+                </Grid2>
+                <Grid2 size={6}>
+                  <Autocomplete
+                    options={workTypes}
+                    value={values.workType}
+                    onChange={(event, newValue) => setFieldValue('workType', newValue)}
+                    renderInput={(params) => <TextField variant="filled" {...params} placeholder="SELECT WORK TYPE"
+                      error={touched.workType && !!errors.workType}
+                      helperText={touched.workType && errors.workType}
+                    />}
+                    fullWidth
+                    size="small"
+                    onBlur={handleBlur}
+                  />
+                </Grid2>
+
+                {/* Assign employee */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>ASSIGN EMPLOYEE</label>
+                </Grid2>
+                <Grid2 size={6}>
+                  <Autocomplete
+                    options={employees}
+                    value={employees.find(emp => emp._id === values.assignedEmployee) || null} // Make sure you select the employee based on _id
+                    getOptionLabel={(option) => option.name || ''} // Show the employee's name
+                    onChange={(event, newValue) => {
+                      setFieldValue('assignedEmployee', newValue ? newValue._id : ''); // Store only the _id in the field
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        variant="filled"
+                        placeholder="Select Employee"
+                        error={touched.assignedEmployee && !!errors.assignedEmployee}
+                        helperText={touched.assignedEmployee && errors.assignedEmployee}
+                      />
+                    )}
+                    fullWidth
+                    size="small"
+                  />
+
+
+                </Grid2>
+
+                {/* select month */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>MONTH</label>
+                </Grid2>
+                <Grid2 size={6}>
+                  <Autocomplete
+                    options={months}
+                    value={values.month}
+                    onChange={(event, newValue) => setFieldValue('month', newValue)}
+                    renderInput={(params) => <TextField variant="filled" {...params} placeholder="SELECT MONTH"
+                      error={touched.month && !!errors.month}
+                      helperText={touched.month && errors.month}
+                    />}
+                    fullWidth
+                    size="small"
+                    onBlur={handleBlur}
+                  />
+                </Grid2>
+
+                {/* select quarter */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>QUARTER</label>
+                </Grid2>
+                <Grid2 size={6}>
+                  <Autocomplete
+                    disablePortal
+                    options={["Q1 (Jan-Mar)", "Q2 (Apr-Jun)", "Q3 (Jul-Sep)", "Q4 (Oct-Dec)"]}
+                    size="small"
+                    value={values.quarter}
+                    onChange={(event, newValue) => setFieldValue('quarter', newValue)}
+                    renderInput={(params) => <TextField variant="filled" {...params} placeholder="SELECT QUARTER"
+                      error={touched.quarter && !!errors.quarter}
+                      helperText={touched.quarter && errors.quarter}
+                    />}
+                  />
+                </Grid2>
+
+                {/* select year */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>YEAR</label>
+                </Grid2>
+                <Grid2 size={6}>
+                  <Autocomplete
+                    options={years}
+                    value={values.financialYear}
+                    onChange={(event, newValue) => setFieldValue('financialYear', newValue)}
+                    renderInput={(params) => <TextField variant="filled" {...params} placeholder="SELECT YEAR"
+                      error={touched.financialYear && !!errors.financialYear}
+                      helperText={touched.financialYear && errors.financialYear}
+                    />}
+                    fullWidth
+                    size="small"
+                    onBlur={handleBlur}
+                  />
+                </Grid2>
+
+                {/* price */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>PRICE</label>
+                </Grid2>
+                <Grid2 size={6}>
+                  <TextField
+                    size="small"
+                    fullWidth
+                    variant="filled"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.price}
+                    name="price"
+                    error={touched.price && !!errors.price}
+                    helperText={touched.price && errors.price}
+                    type="number"
+                    sx={{
+                      '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                        display: 'none'
+                      },
+                      '& input[type=number]': {
+                        MozAppearance: 'textfield'
+                      },
+                    }}
+                  />
+                </Grid2>{/* quantity */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>QUANTITY</label>
+                </Grid2>
+                <Grid2 size={6}>
+                  <TextField
+                    size="small"
+                    fullWidth
+                    variant="filled"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.quantity}
+                    name="quantity"
+                    error={touched.quantity && !!errors.quantity}
+                    helperText={touched.quantity && errors.quantity}
+                    type="number"
+                  />
+                </Grid2>{/* discount */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>DISCOUNT</label>
+                </Grid2>
+                <Grid2 size={6}>
+                  <TextField
+                    size="small"
+                    fullWidth
+                    variant="filled"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.discount}
+                    name="discount"
+                    error={touched.discount && !!errors.discount}
+                    helperText={touched.discount && errors.discount}
+                    type="number"
+                    sx={{
+                      '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                        display: 'none'
+                      },
+                      '& input[type=number]': {
+                        MozAppearance: 'textfield'
+                      },
+                    }}
+                  />
+                </Grid2>
+
+                {/* Submit Button */}
+                <Grid2 size={2} mt={2}>
+                  <Button
+                    variant="contained"
+                    sx={{ bgcolor: colors.teal[300] }}
+                    fullWidth
+                    type="submit"
+                  // disabled={loading}
+                  >
+                    {loading ? "Submitting..." : "Submit"}
+                  </Button>
+                </Grid2>
+                <Modal
+                  disableAutoFocus
+                  open={open}
+                  onClose={() => { setOpen(false) }}
+                  aria-labelledby="modal-modal-title"
+                  aria-describedby="modal-modal-description"
+                  sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                >
+                  <Box sx={{
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                    height: '220px', width: '300px', bgcolor: 'white', borderRadius: '15px', padding: '25px'
+                  }}>
+                    {error ? (
+                      <>
+                        <Cancel color="error" sx={{ height: '80px', width: '80px' }} />
+                        <Typography variant="h2" fontWeight={500} color="error">Error!</Typography>
+                        <Typography variant="h5" mb={1} color={colors.grey[500]}>{error}</Typography>
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle color="success" sx={{ height: '80px', width: '80px' }} />
+                        <Typography variant="h2" fontWeight={500} color="initial">Success</Typography>
+                        <Typography variant="h5" mb={1} color={colors.grey[500]}>{success}</Typography>
+                      </>
+                    )}
+
+                    <Button sx={{ borderRadius: 5 }} color={error ? "error" : "success"} variant="contained" fullWidth onClick={() => setOpen(false)}>
+                      OK
+                    </Button>
+
+                  </Box>
+                </Modal>
+              </Grid2>
+            </Box>
+          </form>
+        )}
+      </Formik>
     </Box>
   );
 };

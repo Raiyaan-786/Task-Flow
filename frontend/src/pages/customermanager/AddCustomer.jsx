@@ -10,7 +10,7 @@ import { CheckCircle, Cancel } from '@mui/icons-material';
 const AddCustomer = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [open, setOpen] = React.useState(false); //for modal opening and closing
+  const [open, setOpen] =useState(false); //for modal opening and closing
   const [firmNames, setFirmNames] = useState([]);
   const [isFieldsDisabled, setFieldsDisabled] = useState(true);
   const [error, setError] = useState("");
@@ -149,7 +149,7 @@ const AddCustomer = () => {
           <form onSubmit={handleSubmit}>
             <Box pb={2}>
               {panError ? <Alert severity="error">{panError}</Alert> : undefined}
-              <Grid2 container spacing={2} gap={2} padding={"10px 20px"}>
+              <Grid2 container spacing={2} gap={2} padding={"10px 20px"} color={colors.grey[200]}>
                 {/* PAN */}
                 <Grid2 size={6} display={'flex'} alignItems={'center'}>
                   <label>PAN NUMBER</label>

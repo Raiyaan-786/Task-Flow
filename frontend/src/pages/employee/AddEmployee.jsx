@@ -77,7 +77,7 @@ const AddEmployee = () => {
                 }) => (
                     <form onSubmit={handleSubmit} >
                         <Box pb={2}>
-                            <Grid2 container spacing={2} gap={2} padding={"10px 20px"}>
+                            <Grid2 container spacing={2} gap={2} padding={"10px 20px"} color={colors.grey[200]}>
                                 {/* Employee Name */}
                                 <Grid2 size={6} display={'flex'} alignItems={'center'}>
                                     <label>EMPLOYEE NAME</label>
