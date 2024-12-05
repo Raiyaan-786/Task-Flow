@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, TextField, Grid, Typography } from '@mui/material';
+import { Box, Grid, Button, TextField, Typography, IconButton, useTheme } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
+import CustomToolbar from '../../components/CustomToolbar';
 import API from '../../api/api';
+import { tokens } from "../../theme";
+import {Add, Delete, Edit} from '@mui/icons-material';
 
 const CustomerGroup = () => {
-    // States for CreateCustomerGroup functionality
+    const theme = useTheme();
+    const colors = tokens(theme.palette.mode);
     const [groupName, setGroupName] = useState('');
     const [customers, setCustomers] = useState([]);
     const [selectedCustomers, setSelectedCustomers] = useState([]);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(true);
 
     // States for UpdateCustomerGroup functionality
     const [groups, setGroups] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [editGroupId, setEditGroupId] = useState(null);
     const [newGroupName, setNewGroupName] = useState('');
 
@@ -35,14 +39,28 @@ const CustomerGroup = () => {
     }, []);
 
     // Fetch all groups
+    const formatDate = (date) => {
+        if (typeof date !== 'string' || !Date.parse(date)) return 'Invalid Date';
+        return new Date(date).toLocaleString();
+      };
     const fetchGroups = async () => {
         setLoading(true);
         try {
             const response = await API.get('/allgroups', {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
             });
-            setGroups(response.data.groups);
-            console.log(groups)
+            const mappedGroups = response.data.groups.map((groups,index)=>({
+                ...groups,
+                sn:index+1,
+                createdAt: formatDate(groups.createdAt),
+                updatedAt: formatDate(groups.updatedAt),
+                id: groups._id,
+                groupName: groups.groupName,
+                memberCount: groups.customers ? groups.customers.length : 0, // Assuming customerIds is an array of IDs in each group
+
+            }))
+            setGroups(mappedGroups);
+            // console.log(mappedGroups)
         } catch (err) {
             setError("An error occurred while fetching groups.");
             console.error(err);
@@ -114,135 +132,88 @@ const CustomerGroup = () => {
 
     // Columns for DataGrid, including "Number of Members"
     const columns = [
-        { field: 'groupName', headerName: 'Group Name', flex: 1 },
-        { field: 'memberCount', headerName: 'Number of Members', flex: 0.5 },
+        
+// createdAt
+
+        { field: "sn", headerName: "S.No", flex: 0.5, headerAlign: "center", align: "center" },
+        { field: 'groupName', headerName: 'Group Name', flex: 1, headerAlign: "center", align: "center"  },
+        { field: 'createdAt', headerName: 'Created At', flex: 1, headerAlign: "center", align: "center"  },
+        { field: 'memberCount', headerName: 'Number of Members', flex: .8, headerAlign: "center", align: "center" },
+        { field: 'updatedAt', headerName: 'Updated At', flex: 1, headerAlign: "center", align: "center" },
         {
-            field: 'edit',
-            headerName: 'Edit',
+            field: 'actions',
+            headerName: 'Actions',
+            headerAlign: "center",
+            align: "center",
             renderCell: (params) => (
-                <Button 
-                    variant='contained' 
-                    sx={{ bgcolor: '#007499' }}  
-                    onClick={() => { setEditGroupId(params.row.id); setNewGroupName(params.row.groupName); }}
+                <Box  display={'flex'} justifyContent={'space-evenly'} alignItems={'center'} 
+                sx={{
+                    height:'100%',
+                    width:'100%',
+                }}
                 >
-                    Edit
+
+                <Button
+                startIcon={<Edit/>}
+                size='small'
+                sx={{ bgcolor: '#007499',color:'white' }}
+                onClick={() => { setEditGroupId(params.row.id); setNewGroupName(params.row.groupName); }}
+                >
+                Edit
                 </Button>
-            ),
-            flex: 0.5
-        },
-        {
-            field: 'delete',
-            headerName: 'Delete',
-            renderCell: (params) => (
-                <Button 
-                    variant='contained' 
-                    color="error" 
+                <Button
+                    // variant="outlined" 
+                    startIcon={<Delete/>}
+                    size='small'
+                    sx={{ bgcolor: '#007499',color:'white' }}
                     onClick={() => handleDeleteGroup(params.row.id)}
                 >
-                    Delete
+                Delete
                 </Button>
+                </Box>
             ),
-            flex: 0.5
+            flex: 1.5
         }
     ];
 
-    // Rows for DataGrid, calculating the number of members per group
-    const rows = groups.map(group => ({
-        id: group._id,
-        groupName: group.groupName,
-        memberCount: group.customers ? group.customers.length : 0, // Assuming customerIds is an array of IDs in each group
-    }));
-
     return (
-        <Grid container spacing={2} p={2}>
-            {/* Left side: Create Customer Group */}
-            <Grid item xs={12} md={5} height={'65vh'} overflow={'auto'}>
-                <Typography variant="h5" gutterBottom>
-                    Create a New Customer Group
-                </Typography>
-                <form onSubmit={handleCreateGroup}>
-                    <TextField
-                        size='small'
-                        label="Group Name"
-                        fullWidth
-                        value={groupName}
-                        onChange={(e) => setGroupName(e.target.value)}
-                        required
-                    />
-                    <Box mt={2}>
-                        <Typography>Select Customers:</Typography>
-                        <ul>
-                            {customers.map((customer) => (
-                                <li key={customer._id}>
-                                    <span>{customer.customerName}</span>
-                                    <Button sx={{ ml:1, mb:1 }} variant='outlined' onClick={() => setSelectedCustomers(prev => [...prev, customer._id])}>
-                                        Add
-                                    </Button>
-                                </li>
-                            ))}
-                        </ul>
-                    </Box>
-                    <Box mt={2}>
-                        <Typography>Selected Customers:</Typography>
-                        <ul>
-                            {selectedCustomers.map((customerId) => {
-                                const customer = customers.find(c => c._id === customerId);
-                                return (
-                                    <li key={customerId}>
-                                        {customer ? customer.customerName : 'Unknown Customer'}
-                                        <Button sx={{ ml:1, mb:2 }} variant='contained' color="error" onClick={() => setSelectedCustomers(prev => prev.filter(id => id !== customerId))}>
-                                            Remove
-                                        </Button>
-                                    </li>
-                                );
-                            })}
-                        </ul>
-                    </Box>
-                    <Box mt={2}>
-                        <Button type="submit" variant="contained">
-                            Create Group
-                        </Button>
-                    </Box>
-                    {message && <Typography color="primary">{message}</Typography>}
-                </form>
-            </Grid>
-
-            {/* Right side: Update Customer Groups */}
-            <Grid item xs={12} md={7} height={'65vh'} overflow={'auto'}>
-                <Typography variant="h5" gutterBottom>
-                    Update Customer Groups
-                </Typography>
-                <Box mt={2} height={400}>
-                    <DataGrid
-                        rows={rows}
-                        columns={columns}
-                        pageSize={5}
-                    />
-                </Box>
-
-                {/* Edit Group Name Input */}
-                {editGroupId && (
-                    <Box mt={2}>
-                        <TextField
-                            size='small'
-                            label="New Group Name"
-                            fullWidth
-                            value={newGroupName}
-                            onChange={(e) => setNewGroupName(e.target.value)}
-                        />
-                        <Box mt={1}>
-                            <Button variant="contained" onClick={() => handleUpdateGroupName(editGroupId)}>
-                                Update Group Name
-                            </Button>
-                            <Button variant='outlined' onClick={() => setEditGroupId(null)} sx={{ ml: 1 }}>
-                                Cancel
-                            </Button>
-                        </Box>
-                    </Box>
-                )}
-                {error && <Typography color="error">{error}</Typography>}
-            </Grid>
-        </Grid>
+        <Box sx={{
+            height: '66vh',
+            "& .MuiDataGrid-root": { border: "none" },
+            "& .MuiDataGrid-cell": { borderBottom: "none" },
+            "& .MuiDataGrid-columnHeaders": {
+                backgroundColor: colors.primary[900],
+                borderBottom: "none"
+            },
+            "& .MuiDataGrid-virtualScroller": {
+                backgroundColor: colors.bgc[100],
+            },
+            "& .MuiDataGrid-footerContainer": {
+                borderTop: "none",
+                backgroundColor: colors.primary[900],
+            },
+        }}>
+            <Button
+             startIcon={<Add/>}
+             sx={{ bgcolor: '#007499',color:'white',m:2}}
+            >
+              CREATE GROUP
+            </Button>
+            {loading ? (
+                <p>Loading customers...</p>
+            ) : error ? (
+                <p style={{ color: 'red' }}>Error: {error}</p>
+            ) : (
+                
+                <DataGrid
+                    disableColumnMenu
+                    slots={{ toolbar: CustomToolbar }}
+                    rows={groups}
+                    columns={columns}
+                    pageSize={10}
+                />
+            )}
+        </Box>
     );
 };
 

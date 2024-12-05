@@ -132,7 +132,7 @@ const AddWork = () => {
 
                 {/* select customer */}
                 <Grid2 size={6} display={'flex'} alignItems={'center'}>
-                  <label>SELECT CUSTOMER</label>
+                  <label>CUSTOMER</label>
                 </Grid2>
                 <Grid2 size={6}>
                   <Autocomplete
@@ -163,7 +163,7 @@ const AddWork = () => {
                       <TextField
                         {...params}
                         variant="filled"
-                        placeholder="Select Customer"
+                        placeholder="SELECT CUSTOMER"
                         error={touched.customer && !!errors.customer}
                         helperText={touched.customer && errors.customer}
                       />
@@ -346,7 +346,7 @@ const AddWork = () => {
                       <TextField
                         {...params}
                         variant="filled"
-                        placeholder="Select Employee"
+                        placeholder="SELECT EMPLOYEE"
                         error={touched.assignedEmployee && !!errors.assignedEmployee}
                         helperText={touched.assignedEmployee && errors.assignedEmployee}
                       />
