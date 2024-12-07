@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid, Button, TextField, Typography, IconButton, useTheme, Modal } from '@mui/material';
+import { Box, Button, TextField, Typography, IconButton, useTheme, Modal } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import CustomToolbar from '../../components/CustomToolbar';
 import API from '../../api/api';
 import { tokens } from "../../theme";
-import { Add, Delete, Edit } from '@mui/icons-material';
+import { Add, Delete, Edit, Visibility } from '@mui/icons-material';
 
 const CustomerGroup = () => {
     const theme = useTheme();
@@ -13,14 +13,23 @@ const CustomerGroup = () => {
     const [groupName, setGroupName] = useState('');
     const [customers, setCustomers] = useState([]);
     const [selectedCustomers, setSelectedCustomers] = useState([]);
-    const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
 
     // States for UpdateCustomerGroup functionality
     const [groups, setGroups] = useState([]);
-    const [editGroupId, setEditGroupId] = useState(null);
-    const [newGroupName, setNewGroupName] = useState('');
+
+    // experimental code starts 
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
+    const [openEditModal, setOpenEditModal] = useState(false);
+    const [groupToDelete, setGroupToDelete] = useState(null); // For delete confirmation
+    const [editGroupData, setEditGroupData] = useState({ groupName: '', customers: [] }); // For editing group
+
+    const [openViewModal, setOpenViewModal] = useState(false);
+    const [groupCustomers, setGroupCustomers] = useState([]); // Store customers of a group
+    const [currentGroupName,setCurrentGroupName]=useState(''); // store group name of the group to view
+
+    // experimental code ends
 
     // Fetch all customers
     useEffect(() => {
@@ -95,41 +104,69 @@ const CustomerGroup = () => {
     };
 
     // Handle update of an existing group name
-    const handleUpdateGroupName = async (groupId) => {
-        if (!newGroupName) {
-            alert("Please enter a new group name.");
-            return;
-        }
+    const handleEditGroup = (groupId) => {
+        const groupToEdit = groups.find(group => group.id === groupId);
+        setEditGroupData({ groupName: groupToEdit.groupName, customers: groupToEdit.customers });
+        setOpenEditModal(true);
+    };
 
+    const handleUpdateGroup = async (e, groupId) => {
+        e.preventDefault();
         try {
-            await API.put(`/updategroup/${groupId}`, { groupName: newGroupName }, {
+            await API.put(`/updategroup/${groupId}`, {
+                groupName: editGroupData.groupName,
+                // customerIds: editGroupData.customers,
+            }, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
             });
-            fetchGroups(); // Refresh the list after update
-            setNewGroupName('');
-            setEditGroupId(null);
-            setMessage("Group name updated successfully!");
+            fetchGroups(); // Refresh groups after update
+            setOpenEditModal(false);
+            setMessage("Group updated successfully!");
         } catch (err) {
-            setError("An error occurred while updating the group name.");
+            setError("An error occurred while updating the group.");
             console.error(err);
         }
     };
 
+
     // Handle group deletion
     const handleDeleteGroup = async (groupId) => {
-        if (window.confirm("Are you sure you want to delete this group?")) {
-            try {
-                await API.delete(`/deletegroup/${groupId}`, {
-                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-                });
-                fetchGroups(); // Refresh the list after deletion
-                setMessage("Group deleted successfully!");
-            } catch (err) {
-                setError("An error occurred while deleting the group.");
-                console.error(err);
-            }
+        try {
+            await API.delete(`/deletegroup/${groupId}`, {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+            });
+            fetchGroups(); // Refresh groups after deletion
+            setMessage("Group deleted successfully!");
+        } catch (err) {
+            setError("An error occurred while deleting the group.");
+            console.error(err);
+        } finally {
+            setOpenDeleteModal(false); // Close the modal after deletion
         }
     };
+    // handle group view
+    const handleViewCustomers = async (groupId) => {
+        try {
+            const response = await API.get('/allgroups', {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+            });
+    
+            // Find the specific group by its ID
+            const group = response.data.groups.find(group => group._id === groupId);
+    
+            if (group) {
+                setCurrentGroupName(group.groupName)
+                setGroupCustomers(group.customers); // Assuming the group object has a 'customers' field
+                setOpenViewModal(true); // Open the modal to show customers
+            } else {
+                setError("Group not found.");
+            }
+        } catch (err) {
+            setError("An error occurred while fetching group customers.");
+            console.error(err);
+        }
+    };
+    
 
     // Columns for DataGrid, including "Number of Members"
     const columns = [
@@ -153,27 +190,18 @@ const CustomerGroup = () => {
                         width: '100%',
                     }}
                 >
-
-                    <Button
-                        startIcon={<Edit />}
-                        size='small'
-                        sx={{ bgcolor: '#007499', color: 'white' }}
-                        onClick={() => { setEditGroupId(params.row.id); setNewGroupName(params.row.groupName); }}
-                    >
-                        Edit
-                    </Button>
-                    <Button
-                        // variant="outlined" 
-                        startIcon={<Delete />}
-                        size='small'
-                        sx={{ bgcolor: '#007499', color: 'white' }}
-                        onClick={() => handleDeleteGroup(params.row.id)}
-                    >
-                        Delete
-                    </Button>
+                    <IconButton aria-label="view-customers" onClick={() => handleViewCustomers(params.row.id)}>
+                        <Visibility/>
+                    </IconButton>
+                    <IconButton aria-label="edit" onClick={() => handleEditGroup(params.row.id)}>
+                        <Edit />
+                    </IconButton>
+                    <IconButton  aria-label="delete" onClick={() => { setGroupToDelete(params.row.id); setOpenDeleteModal(true); }}>
+                        <Delete />
+                    </IconButton>
                 </Box>
             ),
-            flex: 1.5
+            flex: .8
         }
     ];
 
@@ -201,6 +229,150 @@ const CustomerGroup = () => {
             >
                 CREATE GROUP
             </Button>
+            <Modal
+                open={openViewModal}
+                onClose={() => setOpenViewModal(false)}
+                aria-labelledby="view-customers-modal"
+                sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+            >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '40vw',
+                        bgcolor: 'white',
+                        borderRadius: '15px',
+                        padding: '20px',
+                        boxShadow: 24,
+                    }}
+                >
+                    <Typography variant="h6">List of Customers in {currentGroupName}</Typography>
+                    <Box
+                        sx={{
+                            height: '200px',
+                            overflowY: 'auto',
+                            border: '1px solid #ccc',
+                            padding: '10px',
+                            borderRadius: '5px',
+                            width: '100%',
+                        }}
+                    >
+                        {groupCustomers.length === 0 ? (
+                            <Typography>No customers in this group.</Typography>
+                        ) : (
+                            groupCustomers.map((customer) => (
+                                <Box key={customer._id} display="flex" alignItems="center" gap="10px" sx={{ mb: 1 }}>
+                                    <Typography>{customer.customerName}</Typography>
+                                </Box>
+                            ))
+                        )}
+                    </Box>
+                    <Box display="flex" justifyContent="space-between" sx={{ mt: 2 }}>
+                        <Button onClick={() => setOpenViewModal(false)} variant="outlined">Close</Button>
+                    </Box>
+                </Box>
+            </Modal>
+
+            <Modal
+                open={openEditModal}
+                onClose={() => setOpenEditModal(false)}
+                aria-labelledby="edit-group-modal"
+                sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+            >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '40vw',
+                        bgcolor: 'white',
+                        borderRadius: '15px',
+                        padding: '20px',
+                        boxShadow: 24,
+                    }}
+                >
+                    <Typography variant="h6">Edit Group</Typography>
+                    <form
+                        onSubmit={(e) => handleUpdateGroup(e, editGroupData.id)}
+                        style={{ display: 'flex', flexDirection: 'column', gap: '15px', width: '100%' }}
+                    >
+                        <TextField
+                            fullWidth
+                            label="Group Name"
+                            value={editGroupData.groupName}
+                            onChange={(e) => setEditGroupData({ ...editGroupData, groupName: e.target.value })}
+                            required
+                        />
+                        <Typography variant="body1" sx={{ mt: 1 }}>Select Customers:</Typography>
+                        <Box
+                            sx={{
+                                height: '200px',
+                                overflowY: 'auto',
+                                border: '1px solid #ccc',
+                                padding: '10px',
+                                borderRadius: '5px',
+                            }}
+                        >
+                            {customers.map((customer) => (
+                                <Box key={customer._id} display="flex" alignItems="center" gap="10px" sx={{ mb: 1 }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={editGroupData.customers.includes(customer._id)}
+                                        onChange={(e) => {
+                                            const updatedCustomers = e.target.checked
+                                                ? [...editGroupData.customers, customer._id]
+                                                : editGroupData.customers.filter(id => id !== customer._id);
+                                            setEditGroupData({ ...editGroupData, customers: updatedCustomers });
+                                        }}
+                                    />
+                                    <Typography>{customer.customerName}</Typography>
+                                </Box>
+                            ))}
+                        </Box>
+                        <Box display="flex" justifyContent="space-between" sx={{ mt: 2 }}>
+                            <Button onClick={() => setOpenEditModal(false)} variant="outlined">Cancel</Button>
+                            <Button type="submit" variant="contained" sx={{ bgcolor: '#007499', color: 'white' }}>
+                                Save Changes
+                            </Button>
+                        </Box>
+                    </form>
+                </Box>
+            </Modal>
+
+            <Modal
+                open={openDeleteModal}
+                onClose={() => setOpenDeleteModal(false)}
+                aria-labelledby="delete-group-modal"
+                sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+            >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '300px',
+                        height: '200px',
+                        bgcolor: 'white',
+                        borderRadius: '15px',
+                        padding: '20px',
+                        boxShadow: 24,
+                    }}
+                >
+                    <Typography variant="h5" fontWeight={400} textAlign={'center'}>Are you sure you want to delete this group?</Typography>
+                    <Box display="flex" justifyContent="space-between" sx={{ width: '70%', mt: 2 }} >
+                        <Button onClick={() => setOpenDeleteModal(false)} variant="outlined">Cancel</Button>
+                        <Button onClick={() => handleDeleteGroup(groupToDelete)} variant="contained" sx={{ bgcolor: '#d32f2f', color: 'white' }}>
+                            Delete
+                        </Button>
+                    </Box>
+                </Box>
+            </Modal>
+
+
             <Modal
                 disableAutoFocus
                 open={open}
@@ -236,6 +408,7 @@ const CustomerGroup = () => {
                     >
                         <TextField
                             fullWidth
+                            size='small'
                             label="Group Name"
                             value={groupName}
                             onChange={(e) => setGroupName(e.target.value)}
