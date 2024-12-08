@@ -54,8 +54,6 @@ const TotalWorks = () => {
     if (typeof date !== 'string' || !Date.parse(date)) return 'Invalid Date';
     return new Date(date).toLocaleString();
   };
-
-  if (loading) return <CircularProgress />;
   if (error) return <Alert severity="error">{error}</Alert>;
 
   const columns = [
@@ -92,6 +90,13 @@ const TotalWorks = () => {
       }}
     > 
       <DataGrid
+        loading={loading}
+        slotProps={{
+          loadingOverlay: {
+            variant: 'skeleton',
+            noRowsVariant: 'skeleton',
+          },
+        }}
         rows={works}
         columns={columns}
         pageSize={10}

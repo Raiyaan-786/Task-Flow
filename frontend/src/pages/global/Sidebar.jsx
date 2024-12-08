@@ -139,7 +139,7 @@ const Sidebar = ({isCollapsed}) => {
               setSelected={setSelected}
             />
               <Item
-              title="Employee"
+              title="HR Section"
               to="/employee"
               icon={<BadgeOutlined/>}
               selected={selected}

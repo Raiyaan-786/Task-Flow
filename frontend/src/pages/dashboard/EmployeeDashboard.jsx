@@ -201,7 +201,19 @@ const EmployeeDashboard = () => {
         '& .MuiCheckbox-root': { color: `${colors.teal[200]} !important` },
       }}
     >
-      <DataGrid disableColumnMenu slots={{ toolbar: CustomToolbar }} rows={rows} columns={columns} />
+      <DataGrid 
+       loading={loading}
+       slotProps={{
+         loadingOverlay: {
+           variant: 'skeleton',
+           noRowsVariant: 'skeleton',
+         },
+       }}
+       disableColumnMenu 
+       slots={{ toolbar: CustomToolbar }} 
+       rows={rows}
+        columns={columns}
+         />
     </Box>
   );
 };
