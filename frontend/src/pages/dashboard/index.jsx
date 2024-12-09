@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, useTheme, Typography, Divider, Tabs, Tab, Button, IconButton } from "@mui/material";
 import { tokens } from '../../theme';
 import StatBox from '../../components/StatBox';
-import { ArrowBack, AssignmentLateOutlined, AssignmentTurnedInOutlined, DateRangeRounded, EventAvailableRounded, HighlightOffRounded, PauseCircleOutlineRounded, ScheduleRounded } from '@mui/icons-material';
+import { ArrowBack } from '@mui/icons-material';
 import { styled } from '@mui/system';
 import MainDashboard from './MainDashboard';
 import EmployeeDashboard from './EmployeeDashboard'
@@ -84,7 +84,7 @@ const Dashboard = () => {
 
                     <Box display={individualWorksTab === 0 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
                         <Box p={1} display={'flex'} flexDirection={'row'} alignItems={'center'} gap={2}>
-                            <IconButton onClick={() => setIndividualWorks(false)} size='small' sx={{ bgcolor: colors.teal[400], color: 'white', ":hover": 'black' }} >
+                            <IconButton onClick={() => setIndividualWorks(false)} size='small' sx={{ bgcolor: '#007499', color: 'white', ":hover": 'black' }} >
                                 <ArrowBack />
                             </IconButton>
                             <Typography variant="h4" fontWeight={'bold'}>Total Works</Typography>
@@ -93,7 +93,7 @@ const Dashboard = () => {
                     </Box>
                     <Box display={individualWorksTab === 1 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
                     <Box p={1} display={'flex'} flexDirection={'row'} alignItems={'center'} gap={2}>
-                            <IconButton onClick={() => setIndividualWorks(false)} size='small' sx={{ bgcolor: colors.teal[400], color: 'white', ":hover": 'black' }} >
+                            <IconButton onClick={() => setIndividualWorks(false)} size='small' sx={{ bgcolor: '#007499', color: 'white', ":hover": 'black' }} >
                                 <ArrowBack />
                             </IconButton>
                             <Typography variant="h4" fontWeight={'bold'}>Completed Works</Typography>
@@ -105,40 +105,36 @@ const Dashboard = () => {
                     </Box>
                     <Box display={individualWorksTab === 3 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
                         <Box p={1} display={'flex'} flexDirection={'row'} alignItems={'center'} gap={2}>
-                            <IconButton onClick={() => setIndividualWorks(false)} size='small' sx={{ bgcolor: colors.teal[400], color: 'white', ":hover": 'black' }} >
+                            <IconButton onClick={() => setIndividualWorks(false)} size='small' sx={{ bgcolor: '#007499', color: 'white', ":hover": 'black' }} >
                                 <ArrowBack />
                             </IconButton>
-                            {/* <Button startIcon={<ArrowBack/>} size='small' onClick={()=>setIndividualWorks(false)} variant='contained' sx={{bgcolor:colors.teal[400]}} >Back</Button> */}
                             <Typography variant="h4" fontWeight={'bold'}>Assigned Works</Typography>
                         </Box>
                         <AssignedWorks/>
                     </Box>
                     <Box display={individualWorksTab === 4 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
                     <Box p={1} display={'flex'} flexDirection={'row'} alignItems={'center'} gap={2}>
-                            <IconButton onClick={() => setIndividualWorks(false)} size='small' sx={{ bgcolor: colors.teal[400], color: 'white', ":hover": 'black' }} >
+                            <IconButton onClick={() => setIndividualWorks(false)} size='small' sx={{ bgcolor: '#007499', color: 'white', ":hover": 'black' }} >
                                 <ArrowBack />
                             </IconButton>
-                            {/* <Button startIcon={<ArrowBack/>} size='small' onClick={()=>setIndividualWorks(false)} variant='contained' sx={{bgcolor:colors.teal[400]}} >Back</Button> */}
                             <Typography variant="h4" fontWeight={'bold'}>Unassigned Works</Typography>
                         </Box>
                         <UnassignedWorks/>
                     </Box>
                     <Box display={individualWorksTab === 5 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
                     <Box p={1} display={'flex'} flexDirection={'row'} alignItems={'center'} gap={2}>
-                            <IconButton onClick={() => setIndividualWorks(false)} size='small' sx={{ bgcolor: colors.teal[400], color: 'white', ":hover": 'black' }} >
+                            <IconButton onClick={() => setIndividualWorks(false)} size='small' sx={{ bgcolor: '#007499', color: 'white', ":hover": 'black' }} >
                                 <ArrowBack />
                             </IconButton>
-                            {/* <Button startIcon={<ArrowBack/>} size='small' onClick={()=>setIndividualWorks(false)} variant='contained' sx={{bgcolor:colors.teal[400]}} >Back</Button> */}
                             <Typography variant="h4" fontWeight={'bold'}>Hold Works</Typography>
                         </Box>
                         <HoldWorks/>
                     </Box>
                     <Box display={individualWorksTab === 6 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
                     <Box p={1} display={'flex'} flexDirection={'row'} alignItems={'center'} gap={2}>
-                            <IconButton onClick={() => setIndividualWorks(false)} size='small' sx={{ bgcolor: colors.teal[400], color: 'white', ":hover": 'black' }} >
+                            <IconButton onClick={() => setIndividualWorks(false)} size='small' sx={{ bgcolor: '#007499', color: 'white', ":hover": 'black' }} >
                                 <ArrowBack />
                             </IconButton>
-                            {/* <Button startIcon={<ArrowBack/>} size='small' onClick={()=>setIndividualWorks(false)} variant='contained' sx={{bgcolor:colors.teal[400]}} >Back</Button> */}
                             <Typography variant="h4" fontWeight={'bold'}>Cancelled Works</Typography>
                         </Box>
                         <CancelledWorks/>

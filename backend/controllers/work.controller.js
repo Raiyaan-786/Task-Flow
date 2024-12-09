@@ -253,7 +253,7 @@ const getMutedWorks = async (req, res) => {
   }
 };
 const updateWorkStatus = async (req, res) => {
-  const { workId } = req.params;
+  const { id } = req.params;
   const { newStatus } = req.body;
   const validStatuses = [
     "Assigned",
@@ -270,7 +270,7 @@ const updateWorkStatus = async (req, res) => {
     return res.status(400).json({ error: "Invalid status value" });
   }
   try {
-    const work = await Work.findById(workId);
+    const work = await Work.findById(id);
     
     if (!work) {
       return res.status(404).json({ error: "Work not found" });
