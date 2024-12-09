@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Alert, useTheme, Typography, Select, MenuItem, FormControl, IconButton, Modal, Autocomplete, Button, TextField } from '@mui/material';
+import { Box, Alert, useTheme, Typography, Select, MenuItem, FormControl, IconButton, Modal, Autocomplete, Button, TextField, Tooltip } from '@mui/material';
 import { tokens } from '../../theme';
 import API from '../../api/api';
 import CustomToolbar from '../../components/CustomToolbar';
@@ -209,12 +209,16 @@ const WorkList = () => {
             width: '100%',
           }}
         >
-          <IconButton aria-label="assign-customer" onClick={() => handleOpenModal(row._id)} >
+          <Tooltip title="Assign Employee">
+          <IconButton aria-label="assign-employee" onClick={() => handleOpenModal(row._id)} >
             <HowToReg />
           </IconButton>
+          </Tooltip>
+          <Tooltip title="Edit">
           <IconButton aria-label="edit" onClick={() => handleEditClick(row._id)}>
             <Edit />
           </IconButton>
+          </Tooltip>
         </Box>
       ),
 
