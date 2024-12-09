@@ -97,7 +97,7 @@ const Dashboard = () => {
                 <Divider orientation='vertical' sx={{ borderColor: colors.bgc[100] }} />
                 <Box onClick={() => handleStatBoxClick(1)} width={'100%'} display={'felx'} ><StatBox value={completedWorks} title={'Completed'} textcolor={'green'} /></Box>
                 <Divider orientation='vertical' sx={{ borderColor: colors.bgc[100] }} />
-                <Box onClick={() => handleStatBoxClick(2)} width={'100%'} display={'felx'} ><StatBox value={999} title={'Pending'} textcolor={'orange'} /></Box>
+                <Box onClick={() => handleStatBoxClick(2)} width={'100%'} display={'felx'} ><StatBox value={0} title={'Pending'} textcolor={'orange'} /></Box>
                 <Divider orientation='vertical' sx={{ borderColor: colors.bgc[100] }} />
                 <Box onClick={() => handleStatBoxClick(3)} width={'100%'} display={'felx'} ><StatBox value={assignedWorks} title={'Assigned'} /></Box>
                 <Divider orientation='vertical' sx={{ borderColor: colors.bgc[100] }} />

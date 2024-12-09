@@ -2,73 +2,74 @@ import React, { useState } from "react";
 import { Box, Button, Grid2, Modal, TextField, Typography } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import API from "../../api/api";
+import { useTheme } from "@emotion/react";
+import { tokens } from "../../theme";
+import { CheckCircle, Cancel } from '@mui/icons-material';
 
 const AddConsultant = () => {
-  const [consultantName, setConsultantName] = useState("");
-  const [email, setEmail] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [address, setAddress] = useState("");
-  const [username, setUsername] = useState("");
-  const [bankAccountNumber, setBankAccountNumber] = useState("");
-  const [ifscCode, setIfscCode] = useState("");
-  const [accountHolderName, setAccountHolderName] = useState("");
-  const [signature, setSignature] = useState("");
-  const [open, setOpen] = useState(false);
-  const isNonMobile = useMediaQuery("(min-width:600px)");
 
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+  const [open, setOpen] = useState(false); //for modal opening and closing
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const createConsultant = async () => {
-    const token = localStorage.getItem("token");
+  const handleFormSubmit = async (values, { resetForm }) => {
+    const token = localStorage.getItem('token');
     try {
-      const response = await API.post("/createconsultant", {
-        consultantName: consultantName,
-        email: email,
-        mobile: mobile,
-        address: address,
-        username: username,
-        bankAccountNumber: bankAccountNumber,
-        bankIFSCCode: ifscCode,
-        accountHolderName: accountHolderName,
-        signature: "signature",
-      }, {
+      setLoading(true);
+      const response = await API.post('/createconsultant', values, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      setSuccess(response.data.message);
+      setSuccess(response.data.message || "Consultant created successfully!");
       setError("");
-      console.log('Consultant created successfully')
+      resetForm();
     } catch (err) {
-      setError(err.response?.data?.error || "Failed to create consultant");
-      console.log(error)
+      setError(err.response?.data?.error || 'Failed to create Consultant');
       setSuccess("");
     }
+    setOpen(true);
+    setLoading(false);
   };
-  const handleFormSubmit = (values) => {
-    createConsultant();
-    console.log(values);
-  };
+
 
   return (
     <Box p={2} m="20px" height={"67vh"} overflow={"auto"}>
       <Formik
         initialValues={{
-          consultantName,
-          email,
-          mobile,
-          address,
-          username,
-          bankAccountNumber,
-          ifscCode,
-          accountHolderName,
-          signature,
+          consultantName: '',
+          email: '',
+          mobile: '',
+          address: '',
+          username: '',
+          bankAccountNumber: '',
+          bankIFSCCode: '',
+          accountHolderName: '',
+          signature: '',
         }}
+        validationSchema={yup.object().shape({
+          consultantName: yup.string().required("Consultant Name is required"),
+          email: yup.string().email("Invalid email").required("Email is required"),
+          mobile: yup.string().required("Mobile is required"),
+          address: yup.string().required("Address is required"),
+          username: yup.string().required("Username is required"),
+          bankAccountNumber: yup.string().required("Bank Account Number is required"),
+          bankIFSCCode: yup.string().required("Bank IFSC Code is required"),
+          accountHolderName: yup.string().required("Account Holder Name is required"),
+          signature: yup
+            .mixed()
+            .required("Signature is required")
+            .test(
+              "fileType",
+              "Uploaded file is not a JPEG",
+              (value) => value && value.type === "image/jpeg"
+            ),
+        })}
         onSubmit={handleFormSubmit}
-        validationSchema={checkoutSchema}
       >
         {({
           values,
@@ -81,189 +82,192 @@ const AddConsultant = () => {
           resetForm,
         }) => (
           <form onSubmit={handleSubmit}>
-            <Box pt={1} sx={{ flexGrow: 1 }}>
-              <Grid2 container spacing={2}>
+            <Box pb={2}>
+              <Grid2 container spacing={2} gap={2} padding={"10px 20px"} color={colors.grey[200]}>
                 {/* Consultant Name */}
-                <Grid2 item size={4}>
-                  <label>Consultant Name</label>
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>CONSULTANT NAME</label>
                 </Grid2>
-                <Grid2 item size={8}>
+                <Grid2 size={6}>
                   <TextField
+                    placeholder="ENTER CONSULTANT NAME"
                     size="small"
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     onBlur={handleBlur}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setConsultantName(e.target.value);
-                    }}
+                    onChange={handleChange}
                     value={values.consultantName}
                     name="consultantName"
                     error={!!touched.consultantName && !!errors.consultantName}
                     helperText={touched.consultantName && errors.consultantName}
                   />
                 </Grid2>
-
-                {/* Email */}
-                <Grid2 item size={4}>
-                  <label>Email</label>
+                {/* Username */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>USERNAME</label>
                 </Grid2>
-                <Grid2 item size={8}>
+                <Grid2 size={6}>
                   <TextField
+                    placeholder='ENTER USERNAME'
                     size="small"
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     onBlur={handleBlur}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setEmail(e.target.value);
-                    }}
+                    onChange={handleChange}
+                    value={values.username}
+                    name="username"
+                    error={!!touched.username && !!errors.username}
+                    helperText={touched.username && errors.username}
+                    autoComplete="new-username"
+                  />
+                </Grid2>
+                {/* Email */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>EMAIL</label>
+                </Grid2>
+                <Grid2 size={6}>
+                  <TextField
+                    placeholder='ENTER EMAIL ID'
+                    size="small"
+                    fullWidth
+                    variant="filled"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
                     value={values.email}
                     name="email"
-                    error={!!touched.email && !!errors.email}
+                    error={touched.email && !!errors.email}
                     helperText={touched.email && errors.email}
                   />
                 </Grid2>
 
                 {/* Mobile */}
-                <Grid2 item size={4}>
-                  <label>Mobile</label>
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>MOBILE</label>
                 </Grid2>
-                <Grid2 item size={8}>
+                <Grid2 size={6}>
                   <TextField
+                    placeholder='ENTER MOBILE NUMBER'
                     size="small"
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     onBlur={handleBlur}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setMobile(e.target.value);
-                    }}
+                    onChange={handleChange}
                     value={values.mobile}
                     name="mobile"
-                    error={!!touched.mobile && !!errors.mobile}
+                    error={touched.mobile && !!errors.mobile}
                     helperText={touched.mobile && errors.mobile}
+                    type="number"
+                    sx={{
+                      '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                        display: 'none'
+                      },
+                      '& input[type=number]': {
+                        MozAppearance: 'textfield'
+                      },
+                    }}
                   />
                 </Grid2>
 
                 {/* Address */}
-                <Grid2 item size={4}>
-                  <label>Address</label>
+                <Grid2 size={6} >
+                  <label>ADDRESS</label>
                 </Grid2>
-                <Grid2 item size={8}>
+                <Grid2 size={6}>
                   <TextField
+                    multiline
+                    minRows={3}
+                    maxRows={3}
                     size="small"
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     onBlur={handleBlur}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setAddress(e.target.value);
-                    }}
+                    onChange={handleChange}
                     value={values.address}
                     name="address"
-                    error={!!touched.address && !!errors.address}
+                    error={touched.address && !!errors.address}
                     helperText={touched.address && errors.address}
+
                   />
                 </Grid2>
 
-                {/* Username */}
-                <Grid2 item size={4}>
-                  <label>Username</label>
+                {/* Bank Account Number  */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>BANK ACCOUNT NUMBER</label>
                 </Grid2>
-                <Grid2 item size={8}>
+                <Grid2 size={6}>
                   <TextField
+                    placeholder='ENTER BANK ACCOUNT NUMBER'
                     size="small"
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     onBlur={handleBlur}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setUsername(e.target.value);
-                    }}
-                    value={values.username}
-                    name="username"
-                    error={!!touched.username && !!errors.username}
-                    helperText={touched.username && errors.username}
-                  />
-                </Grid2>
-
-                {/* Bank Account Number */}
-                <Grid2 item size={4}>
-                  <label>Bank Account Number</label>
-                </Grid2>
-                <Grid2 item size={8}>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="outlined"
-                    onBlur={handleBlur}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setBankAccountNumber(e.target.value);
-                    }}
+                    onChange={handleChange}
                     value={values.bankAccountNumber}
                     name="bankAccountNumber"
-                    error={
-                      !!touched.bankAccountNumber && !!errors.bankAccountNumber
-                    }
-                    helperText={
-                      touched.bankAccountNumber && errors.bankAccountNumber
-                    }
+                    error={touched.bankAccountNumber && !!errors.bankAccountNumber}
+                    helperText={touched.bankAccountNumber && errors.bankAccountNumber}
+                    type="number"
+                    sx={{
+                      '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                        display: 'none'
+                      },
+                      '& input[type=number]': {
+                        MozAppearance: 'textfield'
+                      },
+                    }}
+                  />
+                </Grid2>
+                {/* BANK ifsc code */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>BANK IFSC CODE</label>
+                </Grid2>
+                <Grid2 size={6}>
+                  <TextField
+                    placeholder="ENTER BANK IFSC CODE"
+                    size="small"
+                    fullWidth
+                    variant="filled"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.bankIFSCCode}
+                    name="bankIFSCCode"
+                    error={touched.bankIFSCCode && !!errors.bankIFSCCode}
+                    helperText={touched.bankIFSCCode && errors.bankIFSCCode}
+                    slotProps={{
+                      htmlInput: {
+                        style: {
+                          textTransform: 'uppercase', // Capitalize all letters
+                        },
+                        maxLength: 11, // Setting the maximum number of characters to 10
+                      },
+                    }}
                   />
                 </Grid2>
 
-                {/* Bank IFSC Code */}
-                <Grid2 item size={4}>
-                  <label>Bank IFSC Code</label>
+                {/* Account holder name */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>ACCOUNT HOLDER NAME</label>
                 </Grid2>
-                <Grid2 item size={8}>
+                <Grid2 size={6}>
                   <TextField
+                    placeholder="ENTER ACCOUNT HOLDER NAME"
                     size="small"
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     onBlur={handleBlur}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setIfscCode(e.target.value);
-                    }}
-                    value={values.ifscCode}
-                    name="ifscCode"
-                    error={!!touched.ifscCode && !!errors.ifscCode}
-                    helperText={touched.ifscCode && errors.ifscCode}
-                  />
-                </Grid2>
-
-                {/* Account Holder Name */}
-                <Grid2 item size={4}>
-                  <label>Account Holder Name</label>
-                </Grid2>
-                <Grid2 item size={8}>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    variant="outlined"
-                    onBlur={handleBlur}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setAccountHolderName(e.target.value);
-                    }}
+                    onChange={handleChange}
                     value={values.accountHolderName}
                     name="accountHolderName"
-                    error={
-                      !!touched.accountHolderName && !!errors.accountHolderName
-                    }
-                    helperText={
-                      touched.accountHolderName && errors.accountHolderName
-                    }
+                    error={touched.accountHolderName && !!errors.accountHolderName}
+                    helperText={touched.accountHolderName && errors.accountHolderName}
                   />
                 </Grid2>
 
                 {/* Signature Upload */}
-                <Grid2 item size={4}>
-                  <label>Signature</label>
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>SIGNATURE</label>
                 </Grid2>
-                <Grid2 item size={8}>
+                <Grid2 size={6}>
                   <input
                     type="file"
                     accept="image/jpeg"
@@ -280,59 +284,57 @@ const AddConsultant = () => {
                   )}
                 </Grid2>
 
-                {/* Submit Button */}
-                <Grid2 item>
-                  <Box display="flex" justifyContent="end" mt="20px">
-                    <Button onClick={() => setOpen(true)} variant="contained">
-                      Submit
-                    </Button>
-                  </Box>
+                {/* submit button */}
+                <Grid2 size={2} mt={2}>
+                  <Button
+                    variant="contained"
+                    sx={{ bgcolor: colors.teal[300] }}
+                    fullWidth
+                    type="submit"
+                  // disabled={loading}
+                  >
+                    {loading ? "Submitting..." : "Submit"}
+                  </Button>
                 </Grid2>
-              </Grid2>
-            </Box>
-            <Box display="flex" justifyContent="end" mt="20px">
-              <Modal
-                open={open}
-                onClose={() => { setOpen(!open) }}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-                sx={{ display: "flex", alignItems: "center", justifyContent: 'center' }}
-              >
-                <Box display={'flex'} flexDirection={'column'} gap={3} sx={{ height: '150px', width: "250px", bgcolor: "white", borderRadius: '8px', p: 3 }} >
-                  <Typography id="modal-modal-title" variant="h4" component="h2" textAlign={'center'}>
-                    Create a New Consultant ?
-                  </Typography>
-                  <Box display={'flex'} alignItems={'center'} justifyContent={'center'} gap={4}>
-                    <Button variant="outlined" onClick={() => setOpen(false)}>Cancel</Button>
-                    <Button onClick={() => { handleSubmit(); setOpen(false);resetForm(); }} type="submit" variant="outlined">Create</Button>
+                <Modal
+                  disableAutoFocus
+                  open={open}
+                  onClose={() => { setOpen(false) }}
+                  aria-labelledby="modal-modal-title"
+                  aria-describedby="modal-modal-description"
+                  sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                >
+                  <Box sx={{
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                    height: '220px', width: '300px', bgcolor: 'white', borderRadius: '15px', padding: '25px'
+                  }}>
+                    {error ? (
+                      <>
+                        <Cancel color="error" sx={{ height: '80px', width: '80px' }} />
+                        <Typography variant="h2" fontWeight={500} color="error">Error!</Typography>
+                        <Typography variant="h5" mb={1} color={colors.grey[500]}>{error}</Typography>
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle color="success" sx={{ height: '80px', width: '80px' }} />
+                        <Typography variant="h2" fontWeight={500} color="initial">Success</Typography>
+                        <Typography variant="h5" mb={1} color={colors.grey[500]}>{success}</Typography>
+                      </>
+                    )}
+
+                    <Button sx={{ borderRadius: 5 }} color={error ? "error" : "success"} variant="contained" fullWidth onClick={() => setOpen(false)}>
+                      OK
+                    </Button>
+
                   </Box>
-                </Box>
-              </Modal>
+                </Modal>
+              </Grid2>
             </Box>
           </form>
         )}
       </Formik>
-    </Box>
+    </Box >
   );
 };
-
-const checkoutSchema = yup.object().shape({
-  consultantName: yup.string().required("Consultant Name is required"),
-  email: yup.string().email("Invalid email").required("Email is required"),
-  mobile: yup.string().required("Mobile is required"),
-  address: yup.string().required("Address is required"),
-  username: yup.string().required("Username is required"),
-  bankAccountNumber: yup.string().required("Bank Account Number is required"),
-  ifscCode: yup.string().required("Bank IFSC Code is required"),
-  accountHolderName: yup.string().required("Account Holder Name is required"),
-  signature: yup
-    .mixed()
-    .required("Signature is required")
-    .test(
-      "fileType",
-      "Uploaded file is not a JPEG",
-      (value) => value && value.type === "image/jpeg"
-    ),
-});
 
 export default AddConsultant;

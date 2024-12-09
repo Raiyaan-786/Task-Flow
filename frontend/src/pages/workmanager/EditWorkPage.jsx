@@ -2,8 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { TextField, Button, Box, Typography } from '@mui/material';
 import API from '../../api/api';
+import { useTheme } from '@emotion/react';
+import { tokens } from '../../theme';
+import Header from '../../components/Header';
 
 const EditWorkPage = () => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+
   const { id } = useParams(); // Get the work ID from the URL
   const navigate = useNavigate();
   const [work, setWork] = useState(null);
@@ -48,9 +54,16 @@ const EditWorkPage = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <Box sx={{ width: 400, margin: 'auto', padding: 2 }}>
-      <Typography variant="h5" gutterBottom>Edit Work</Typography>
-
+    <Box display={'flex'} flexDirection={'column'} height={'88%'} margin={'10px'} p={.1}>
+      <Header title={'Work Profile'}/>
+      <Box
+        bgcolor={colors.primary[900]}
+        flexGrow={1}
+        mt="2px"
+        display="flex"
+        flexDirection="column"
+        borderRadius={'10px'}
+      >
       <TextField
         label="Billing Name"
         name="billingName"
@@ -84,6 +97,7 @@ const EditWorkPage = () => {
         <Button variant="contained" onClick={handleSaveChanges}>
           Save Changes
         </Button>
+      </Box>
       </Box>
     </Box>
   );
