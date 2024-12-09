@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, useTheme, Typography, Divider, Tabs, Tab, Button, IconButton } from "@mui/material";
 import { tokens } from '../../theme';
 import StatBox from '../../components/StatBox';
@@ -14,6 +14,8 @@ import CompletedWorks from './individualworks/CompletedWorks';
 import UnassignedWorks from './individualworks/UnassignedWorks';
 import HoldWorks from './individualworks/HoldWorks';
 import CancelledWorks from './individualworks/CancelledWorks';
+import API from '../../api/api';
+
 
 const RoundedTabs = styled(Tabs)({
     padding: '10px',
@@ -49,28 +51,61 @@ const Dashboard = () => {
     const handleTabChange = (event, newValue) => {
         setSelectedTab(newValue);
     };
-    // Click handler for StatBox to change the selected tab
+
+    const [worksData, setWorksData] = useState([]);
+
+    // Fetch works data from the backend
+    useEffect(() => {
+        const fetchWorksData = async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+              setError('No authentication token found. Please log in.');
+              setLoading(false);
+              return;
+            }
+            try {
+                const response = await  API.get('/total-works', { headers: { Authorization: `Bearer ${token}` } }); // Replace with your API endpoint
+                setWorksData(response.data); // Assuming response.data contains the array of works\
+                console.log(response.data)
+            } catch (error) {
+                console.error("Error fetching works data:", error);
+            }
+        };
+
+        fetchWorksData();
+    }, []);
+
+    // Calculate dynamic values
+    const totalWorks = worksData.length;
+    const completedWorks = worksData.filter(work => work.currentStatus === "Completed").length;
+    const pendingWorks = worksData.filter(work => work.currentStatus === "Pending").length;
+    const assignedWorks = worksData.filter(work => work.currentStatus === "Assigned").length;
+    const unassignedWorks = worksData.filter(work => work.currentStatus === "Unassigned").length;
+    const holdWorks = worksData.filter(work => work.currentStatus === "Hold Work").length;
+    const cancelledWorks = worksData.filter(work => work.currentStatus === "Cancel").length;
+
     const handleStatBoxClick = (tabIndex) => {
         setIndividualWorksTab(tabIndex);
-        setIndividualWorks(true)
+        setIndividualWorks(true);
     };
+
 
     return (
         <Box p={.1} display="flex" flexDirection="column" height={'88%'} m={'10px'}>
             <Box bgcolor={colors.primary[900]} height={'60px'} display={'flex'} borderRadius={"10px"} justifyContent={'space-evenly'}>
-                <Box onClick={() => handleStatBoxClick(0)} width={'100%'} display={'felx'} ><StatBox value={3482} title={'Total Works'} /></Box>
+                <Box onClick={() => handleStatBoxClick(0)} width={'100%'} display={'felx'} ><StatBox value={totalWorks}  title={'Total Works'} /></Box>
                 <Divider orientation='vertical' sx={{ borderColor: colors.bgc[100] }} />
-                <Box onClick={() => handleStatBoxClick(1)} width={'100%'} display={'felx'} ><StatBox value={3017} title={'Completed'} textcolor={'green'} /></Box>
+                <Box onClick={() => handleStatBoxClick(1)} width={'100%'} display={'felx'} ><StatBox value={completedWorks} title={'Completed'} textcolor={'green'} /></Box>
                 <Divider orientation='vertical' sx={{ borderColor: colors.bgc[100] }} />
-                <Box onClick={() => handleStatBoxClick(2)} width={'100%'} display={'felx'} ><StatBox value={96} title={'Pending'} textcolor={'orange'} /></Box>
+                <Box onClick={() => handleStatBoxClick(2)} width={'100%'} display={'felx'} ><StatBox value={999} title={'Pending'} textcolor={'orange'} /></Box>
                 <Divider orientation='vertical' sx={{ borderColor: colors.bgc[100] }} />
-                <Box onClick={() => handleStatBoxClick(3)} width={'100%'} display={'felx'} ><StatBox value={90} title={'Assigned'} /></Box>
+                <Box onClick={() => handleStatBoxClick(3)} width={'100%'} display={'felx'} ><StatBox value={assignedWorks} title={'Assigned'} /></Box>
                 <Divider orientation='vertical' sx={{ borderColor: colors.bgc[100] }} />
-                <Box onClick={() => handleStatBoxClick(4)} width={'100%'} display={'felx'} ><StatBox value={5} title={'Unassigned'} /></Box>
+                <Box onClick={() => handleStatBoxClick(4)} width={'100%'} display={'felx'} ><StatBox value={unassignedWorks} title={'Unassigned'} /></Box>
                 <Divider orientation='vertical' sx={{ borderColor: colors.bgc[100] }} />
-                <Box onClick={() => handleStatBoxClick(5)} width={'100%'} display={'felx'} ><StatBox value={14} title={'Hold'} /></Box>
+                <Box onClick={() => handleStatBoxClick(5)} width={'100%'} display={'felx'} ><StatBox value={holdWorks} title={'Hold'} /></Box>
                 <Divider orientation='vertical' sx={{ borderColor: colors.bgc[100] }} />
-                <Box onClick={() => handleStatBoxClick(6)} width={'100%'} display={'felx'} ><StatBox value={350} title={'Cancelled'} textcolor={'red'} /></Box>
+                <Box onClick={() => handleStatBoxClick(6)} width={'100%'} display={'felx'} ><StatBox value={cancelledWorks} title={'Cancelled'} textcolor={'red'} /></Box>
             </Box>
             {individualWorks ?
                 <Box
