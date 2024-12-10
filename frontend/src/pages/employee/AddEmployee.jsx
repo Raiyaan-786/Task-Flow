@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, TextField, FormControl, Typography, Grid2, MenuItem, Select, InputLabel, Modal } from "@mui/material";
+import { Box, Button, TextField, FormControl, Typography, Grid2, MenuItem, Select, InputLabel, Modal, Autocomplete } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import API from '../../api/api';
@@ -15,7 +15,12 @@ const AddEmployee = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // Create user function (formerly createUser)
+    const [departmentList] = useState([
+        "department1", "department2", "department3"
+    ])
+    const [postnameList] = useState([
+        "post1", "post2", "post3"
+    ]);
     const handleFormSubmit = async (values, { resetForm }) => {
         setLoading(true);
         const token = localStorage.getItem('token');
@@ -46,6 +51,9 @@ const AddEmployee = () => {
                     mobile: '',
                     address: '',
                     role: '',
+                    department: '',
+                    postname: '',
+                    dateofjoining: '',
                 }}
                 validationSchema={yup.object().shape({
                     empname: yup.string().required("Employee Name is required"),
@@ -55,6 +63,9 @@ const AddEmployee = () => {
                     mobile: yup.string().required("Mobile No is required"),
                     address: yup.string().required("Address is required"),
                     role: yup.string().required("Assign Role is required"),
+                    department: yup.string().required("Department is required"),
+                    postname: yup.string().required("Post Name is required"),
+                    dateofjoining: yup.date().required("Date of Joining is required"),
                 })}
                 onSubmit={(values, { resetForm }) => {
                     const payload = {
@@ -94,7 +105,7 @@ const AddEmployee = () => {
                                         name="empname"
                                         error={!!touched.empname && !!errors.empname}
                                         helperText={touched.empname && errors.empname}
-                                        // autoComplete="name"
+                                    // autoComplete="name"
                                     />
                                 </Grid2>
                                 {/* Username */}
@@ -203,7 +214,60 @@ const AddEmployee = () => {
                                         helperText={touched.address && errors.address}
                                     />
                                 </Grid2>
-
+                                {/* department */}
+                                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                                    <label>SELECT DEPARTMENT</label>
+                                </Grid2>
+                                <Grid2 size={6}>
+                                    <Autocomplete
+                                        options={departmentList}
+                                        value={values.department}
+                                        onChange={(event, newValue) => setFieldValue('department', newValue)}
+                                        renderInput={(params) => <TextField variant="filled" {...params} placeholder="SELECT DEPARTMENT"
+                                            error={touched.department && !!errors.department}
+                                            helperText={touched.department && errors.department}
+                                        />}
+                                        fullWidth
+                                        size="small"
+                                        onBlur={handleBlur}
+                                    />
+                                </Grid2>
+                                {/* postname */}
+                                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                                    <label>SELECT POST</label>
+                                </Grid2>
+                                <Grid2 size={6}>
+                                    <Autocomplete
+                                        options={postnameList}
+                                        value={values.postname}
+                                        onChange={(event, newValue) => setFieldValue('postname', newValue)}
+                                        renderInput={(params) => <TextField variant="filled" {...params} placeholder="SELECT POST"
+                                            error={touched.postname && !!errors.postname}
+                                            helperText={touched.postname && errors.postname}
+                                        />}
+                                        fullWidth
+                                        size="small"
+                                        onBlur={handleBlur}
+                                    />
+                                </Grid2>
+                                  {/* date of joining*/}
+                                  <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                                    <label>DATE OF JOINING</label>
+                                </Grid2>
+                                <Grid2 size={6}>
+                                    <TextField
+                                        size="small"
+                                        type='date'
+                                        fullWidth
+                                        variant="filled"
+                                        onBlur={handleBlur}
+                                        onChange={handleChange}
+                                        value={values.dateofjoining}
+                                        name="dateofjoining"
+                                        error={!!touched.dateofjoining && !!errors.dateofjoining}
+                                        helperText={touched.dateofjoining && errors.dateofjoining}
+                                    />
+                                </Grid2>
                                 {/* Assign Role */}
                                 <Grid2 size={6} display={'flex'} alignItems={'center'}>
                                     <label>ASSIGN ROLE</label>
@@ -227,7 +291,7 @@ const AddEmployee = () => {
                                         <Box color="error.main" fontSize="0.75rem">{errors.role}</Box>
                                     )}
                                 </Grid2>
-
+                              
                                 {/* Submit Button */}
                                 <Grid2 size={2} mt={2}>
                                     <Button

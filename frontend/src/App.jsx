@@ -19,6 +19,7 @@ import WorkManager from './pages/workmanager';
 import Report from './pages/report';
 import FileManager from './pages/filemanager';
 import UsefulLinks from './pages/usefullinks';
+import EditWorkPage from './pages/workmanager/EditWorkPage';
 
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
             <Route element={<PrivateRoute><PrivateLayout isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed}/></PrivateRoute>} >
               <Route path='/' element={ <PrivateRoute><Dashboard/></PrivateRoute>}/>
               <Route path='/workmanager' element={ <PrivateRoute><WorkManager/></PrivateRoute>}/>
+              <Route path="/edit-work/:id" element={<PrivateRoute><EditWorkPage/></PrivateRoute>}/>
               <Route path='/customermanager' element={ <PrivateRoute><CustomerManager/></PrivateRoute>}/>
               <Route path='/consultantmanager' element={ <PrivateRoute><ConsultantManager/></PrivateRoute>}/>
               <Route path='/employee' element={ <PrivateRoute><Employee/></PrivateRoute>}/>

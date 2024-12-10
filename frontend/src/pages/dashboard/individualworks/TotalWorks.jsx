@@ -1,16 +1,55 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, CircularProgress, Alert, useTheme, Typography } from '@mui/material';
+import { Box, Alert, useTheme, Typography, Select, MenuItem, FormControl, IconButton, Modal, Autocomplete, Button, TextField } from '@mui/material';
 import { tokens } from '../../../theme';
 import API from '../../../api/api';
 import CustomToolbar from '../../../components/CustomToolbar';
+import { Edit, HowToReg } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 const TotalWorks = () => {
+
+  const navigate = useNavigate();
+
+  const handleEditClick = (workId) => {
+    navigate(`/edit-work/${workId}`); // Navigate to EditWorkPage with workId as a URL parameter
+  };
+
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedWorkId, setSelectedWorkId] = useState(null);
+  const [employeeList, setEmployeeList] = useState([]); // Store employee options
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+
+
   const [works, setWorks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [columnVisibilityModel, setColumnVisibilityModel] = useState(() => {
+    const savedModel = localStorage.getItem('columnVisibilityModel');
+    return savedModel ? JSON.parse(savedModel) : {
+      sn: true,
+      name: true,
+      billingName: false,
+      createdAt: true,
+      email: false,
+      mobile: true,
+      pan: false,
+      address: false,
+      service: true,
+      workType: true,
+      quantity: false,
+      price: false,
+      discount: false,
+      financialYear: true,
+      month: true,
+      quarter: true,
+      assignedEmployee: true,
+      currentStatus: true,
+    };
+  });
 
   useEffect(() => {
     fetchEmployeesAndWorks();
@@ -27,21 +66,23 @@ const TotalWorks = () => {
     try {
       const [worksResponse, employeesResponse] = await Promise.all([
         API.get('/total-works', { headers: { Authorization: `Bearer ${token}` } }),
-        API.get('/auth/allusers', { headers: { Authorization: `Bearer ${token}` } })
+        API.get('/auth/allusers', { headers: { Authorization: `Bearer ${token}` } }),
       ]);
+      const employeeOptions = employeesResponse.data.users.map((emp) => ({
+        label: emp.name,
+        value: emp._id,
+      }));
 
-      const employeesMap = employeesResponse.data.users.reduce((acc, emp) => {
-        acc[emp._id] = emp.name;
-        return acc;
-      }, {});
+      setEmployeeList(employeeOptions);
 
       const mappedWorks = worksResponse.data.map((work, index) => ({
         ...work,
         sn: index + 1,
-        assignedEmployee: employeesMap[work.assignedEmployee] || 'Not Assigned',
-        createdAt: formatDate(work.createdAt)
+        assignedEmployee: work.assignedEmployee?.name || 'Not Assigned',
+        name: work.customer?.customerName,
+        createdAt: formatDate(work.createdAt),
       }));
-      console.log(worksResponse) //test
+
       setWorks(mappedWorks);
       setLoading(false);
     } catch (err) {
@@ -54,10 +95,68 @@ const TotalWorks = () => {
     if (typeof date !== 'string' || !Date.parse(date)) return 'Invalid Date';
     return new Date(date).toLocaleString();
   };
+
+  const handleColumnVisibilityChange = (newModel) => {
+    setColumnVisibilityModel(newModel);
+    localStorage.setItem('columnVisibilityModel', JSON.stringify(newModel));
+  };
+
+  const handleStatusChange = async (workId, newStatus) => {
+    console.log(workId)
+    console.log(typeof (newStatus))
+    const token = localStorage.getItem('token');
+    try {
+      await API.put(`/updateworkstatus/${workId}`, { newStatus }, { headers: { Authorization: `Bearer ${token}` } });
+      await fetchEmployeesAndWorks();
+    } catch (error) {
+      setError('Failed to update status');
+    }
+  };
+
+  const handleOpenModal = (workId) => {
+    setSelectedWorkId(workId);
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedWorkId(null);
+    setSelectedEmployee(null);
+  };
+
+  const handleAssignEmployee = async () => {
+    if (!selectedEmployee) return;
+
+    const token = localStorage.getItem('token');
+    try {
+
+      await API.put(
+        `/updatework/${selectedWorkId}`,
+        { assignedEmployee: selectedEmployee.value },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setWorks((prevWorks) =>
+        prevWorks.map((work) =>
+          work._id === selectedWorkId
+            ? { ...work, assignedEmployee: selectedEmployee.label }
+            : work
+        )
+      );
+
+      handleCloseModal();
+    } catch (error) {
+      setError('Failed to assign employee');
+    }
+  };
+
+
+
   if (error) return <Alert severity="error">{error}</Alert>;
 
   const columns = [
     { field: 'sn', headerName: 'Sn', flex: 0.5, headerAlign: 'center', align: 'center' },
+    { field: 'name', headerName: 'Name', flex: 1.5 },
     { field: 'billingName', headerName: 'Billing Name', flex: 1.5 },
     { field: 'createdAt', headerName: 'Created At', flex: 1.5 },
     { field: 'email', headerName: 'Email', flex: 1.5 },
@@ -70,41 +169,111 @@ const TotalWorks = () => {
     { field: 'price', headerName: 'Price', flex: 1.5 },
     { field: 'discount', headerName: 'Discount', flex: 1.5 },
     { field: 'financialYear', headerName: 'Financial Year', flex: 1.5 },
-    { field: 'month', headerName: 'Month', flex: 1.5 },
+    { field: 'month', headerName: 'Month', flex: 1 },
     { field: 'quarter', headerName: 'Quarter', flex: 0.1 },
     { field: 'assignedEmployee', headerName: 'Assigned Employee', flex: 1.5 },
-    { field: 'currentStatus', headerName: 'Current Status', flex: 1.5 },
+    {
+      field: 'currentStatus',
+      headerName: 'Current Status',
+      flex: 2,
+      renderCell: ({ row: { currentStatus, _id } }) => (
+        <Box height={'100%'} display="flex" justifyContent="center" alignItems={'center'}>
+          <FormControl fullWidth size='small' variant='outlined'  >
+            <Select
+              inputProps={{ 'aria-label': 'Without label' }}
+              sx={{ bgcolor: colors.teal[400] }}
+              displayEmpty
+              value={currentStatus}
+              onChange={(e) => handleStatusChange(_id, e.target.value)}
+            >
+              {["Assigned", "Picked Up", "Customer Verification", "Ready for Checking", "Hold Work", "EVC Pending", "Cancel", "Completed", "Mute"].map((status) => (
+                <MenuItem key={status} value={status}>
+                  {status}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
+      ),
+    },
+    {
+      field: 'actions',
+      flex: 1.5,
+      headerName: 'Actions',
+      headerAlign: "center",
+      align: "center",
+      renderCell: ({ row }) => (
+        <Box display={'flex'} justifyContent={'space-evenly'} alignItems={'center'}
+          sx={{
+            height: '100%',
+            width: '100%',
+          }}
+        >
+          <IconButton aria-label="assign-customer" onClick={() => handleOpenModal(row._id)} >
+            <HowToReg />
+          </IconButton>
+          <IconButton aria-label="edit" onClick={() => handleEditClick(row._id)}>
+            <Edit />
+          </IconButton>
+        </Box>
+      ),
+
+    }
   ];
 
   return (
-    <Box
-      display="flex"
-      sx={{
-        height: '67vh',
-        width: '100%',
-        '& .MuiDataGrid-root': { border: 'none' },
-        '& .MuiDataGrid-cell': { borderBottom: 'none' },
-        '& .MuiDataGrid-columnHeader': { backgroundColor: colors.primary[900], borderBottom: 'none' },
-        '& .MuiDataGrid-virtualScroller': { backgroundColor: colors.bgc[100] },
-        '& .MuiDataGrid-footerContainer': { borderTop: 'none', backgroundColor: colors.primary[900] },
-      }}
-    > 
-      <DataGrid
-        loading={loading}
-        slotProps={{
-          loadingOverlay: {
-            variant: 'skeleton',
-            noRowsVariant: 'skeleton',
-          },
-        }}
-        rows={works}
-        columns={columns}
-        pageSize={10}
-        disableColumnMenu
-        getRowId={(row) => row._id}
-        slots={{ toolbar: CustomToolbar }}
-      />
-    </Box>
+    <>
+      <Box display="flex" sx={{ height: '67vh', width: '100%', '& .MuiDataGrid-root': { border: 'none' }, '& .MuiDataGrid-cell': { borderBottom: 'none' }, '& .MuiDataGrid-columnHeader': { backgroundColor: colors.primary[900], borderBottom: 'none' }, '& .MuiDataGrid-virtualScroller': { backgroundColor: colors.bgc[100] }, '& .MuiDataGrid-footerContainer': { borderTop: 'none', backgroundColor: colors.primary[900] } }}>
+        <DataGrid
+          rows={works}
+          columns={columns}
+          columnVisibilityModel={columnVisibilityModel}
+          onColumnVisibilityModelChange={handleColumnVisibilityChange}
+          pageSize={10}
+          loading={loading}
+          slotProps={{ loadingOverlay: { variant: 'skeleton', noRowsVariant: 'skeleton' } }}
+          disableColumnMenu
+          getRowId={(row) => row._id}
+          slots={{ toolbar: CustomToolbar }}
+        />
+      </Box>
+      <Modal open={openModal} onClose={handleCloseModal}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: '25px',
+            width: '300px',
+            height: '200px',
+            borderRadius: '25px'
+          }}
+        >
+          <Typography variant="h5" mb={2}>
+            Assign Employee
+          </Typography>
+          <Autocomplete
+            size='small'
+            options={employeeList}
+            getOptionLabel={(option) => option.label}
+            value={selectedEmployee}
+            onChange={(e, value) => setSelectedEmployee(value)}
+            renderInput={(params) => <TextField  {...params} label="Select Employee" />}
+          />
+          <Box display="flex" justifyContent="flex-end" mt={2}>
+            <Button onClick={handleCloseModal} sx={{ mr: 1 }}  >
+              Cancel
+            </Button>
+            <Button sx={{ bgcolor: colors.teal[200] }} variant="contained" onClick={handleAssignEmployee} disabled={!selectedEmployee}>
+              Assign
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+    </>
   );
 };
 

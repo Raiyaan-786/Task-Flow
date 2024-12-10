@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, IconButton, useTheme } from "@mui/material";
+import { Box, IconButton, Tooltip, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import API from '../../api/api';
 import CustomToolbar from '../../components/CustomToolbar';
-import { Visibility } from '@mui/icons-material';
+import { Edit, Visibility } from '@mui/icons-material';
 
 const CustomerList = () => {
     const theme = useTheme();
@@ -12,6 +12,28 @@ const CustomerList = () => {
     const [customers, setCustomers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+
+    const [columnVisibilityModel, setColumnVisibilityModel] = useState(() => {
+        const savedModel = localStorage.getItem('columnVisibilityModel');
+        return savedModel ? JSON.parse(savedModel) : {
+            Sn:true,
+            customerName:true,
+            customerCode:true,
+            billingName:true,
+            companyName:true,
+            email:true,
+            mobileNo:true,
+            whatsappNo:true,
+            PAN:true,
+            address:true,
+            contactPerson:true,
+            actions:true,
+        };
+      });
+      const handleColumnVisibilityChange = (newModel) => {
+        setColumnVisibilityModel(newModel);
+        localStorage.setItem('columnVisibilityModel', JSON.stringify(newModel));
+      };
 
     useEffect(() => {
         const fetchCustomers = async () => {
@@ -22,22 +44,18 @@ const CustomerList = () => {
                 setLoading(false);
                 return;
             }
-
             try {
                 const response = await API.get('/getallcustomers', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-
                 const customersData = response.data.customers || [];
-                // Map the customers to include a serial number
                 const formattedData = customersData.map((customer, index) => ({
                     id: customer._id,
-                    Sn: index + 1,  // Assign S.No based on index
+                    Sn: index + 1,
                     ...customer,
                 }));
-
                 setCustomers(formattedData);
             } catch (err) {
                 setError(err.response?.data?.error || 'Failed to fetch customers');
@@ -46,7 +64,6 @@ const CustomerList = () => {
                 setLoading(false);
             }
         };
-
         fetchCustomers();
     }, []);
 
@@ -57,62 +74,60 @@ const CustomerList = () => {
 
     const columns = [
         { field: "Sn", headerName: "S.No", flex: 0.5, headerAlign: "center", align: "center" },
-        { field: "customerName", headerName: "Customer Name", flex: 1.5, headerAlign: "center", align: "center" },
-        { field: "customerCode", headerName: "Customer Code", flex: 1, headerAlign: "center", align: "center" },
-        { field: "billingName", headerName: "Billing Name", flex: 1.5, headerAlign: "center", align: "center" },
-        { field: "companyName", headerName: "Company/Firm Name", flex: 1, headerAlign: "center", align: "center" },
-        { field: "email", headerName: "Email", flex: 1.5, headerAlign: "center", align: "center" },
-        { field: "mobileNo", headerName: "Mobile No", flex: 1, headerAlign: "center", align: "center" },
-        { field: "whatsappNo", headerName: "WhatsApp No", flex: 1, headerAlign: "center", align: "center" },
-        { field: "PAN", headerName: "PAN", flex: 1, headerAlign: "center", align: "center" },
-        { field: "address", headerName: "Address", flex: 2, headerAlign: "center", align: "center" },
-        { field: "contactPerson", headerName: "Contact Person", flex: 1, headerAlign: "center", align: "center" },
+        { field: "customerName", headerName: "Customer Name", flex: 1.5},
+        { field: "customerCode", headerName: "Customer Code", flex: 1,},
+        { field: "billingName", headerName: "Billing Name", flex: 1.5,},
+        { field: "companyName", headerName: "Company/Firm Name", flex: 1 },
+        { field: "email", headerName: "Email", flex: 1.5},
+        { field: "mobileNo", headerName: "Mobile No", flex: 1 },
+        { field: "whatsappNo", headerName: "WhatsApp No", flex: 1},
+        { field: "PAN", headerName: "PAN", flex: 1 },
+        { field: "address", headerName: "Address", flex: 2 },
+        { field: "contactPerson", headerName: "Contact Person", flex: 1},
         {
             field: "actions",
+            flex: 1.5,
             headerName: "Actions",
-            flex: 1,
             headerAlign: "center",
             align: "center",
-            renderCell: (params) => (
-                <Box display="flex" justifyContent="center">
-                    <IconButton onClick={() => handleView(params.row.id)} color="primary">
+            renderCell: ({ row }) => (
+                <Box display={'flex'} justifyContent={'space-evenly'} alignItems={'center'}
+                    sx={{
+                        height: '100%',
+                        width: '100%',
+                    }}
+                >   
+                   <Tooltip title="View">
+                    <IconButton aria-label="view" onClick={() => handleOpenModal(row._id)} >
                         <Visibility />
                     </IconButton>
+                   </Tooltip>
+                   <Tooltip title="Edit">
+                    <IconButton aria-label="edit" onClick={() => handleEditClick(row._id)}>
+                        <Edit />
+                    </IconButton>
+                   </Tooltip>
                 </Box>
             ),
         },
     ];
 
     return (
-        <Box sx={{
-            height: '70vh',
-            "& .MuiDataGrid-root": { border: "none" },
-            "& .MuiDataGrid-cell": { borderBottom: "none" },
-            "& .MuiDataGrid-columnHeaders": {
-                backgroundColor: colors.primary[900],
-                borderBottom: "none"
-            },
-            "& .MuiDataGrid-virtualScroller": {
-                backgroundColor: colors.bgc[100],
-            },
-            "& .MuiDataGrid-footerContainer": {
-                borderTop: "none",
-                backgroundColor: colors.primary[900],
-            },
-        }}>
-            {loading ? (
-                <p>Loading customers...</p>
-            ) : error ? (
-                <p style={{ color: 'red' }}>Error: {error}</p>
-            ) : (
-                <DataGrid
-                    disableColumnMenu
-                    slots={{ toolbar: CustomToolbar }}
-                    rows={customers}
-                    columns={columns}
-                    pageSize={10}
-                />
-            )}
+        <Box display="flex" sx={{ height: '67vh', width: '100%', '& .MuiDataGrid-root': { border: 'none' }, '& .MuiDataGrid-cell': { borderBottom: 'none' }, '& .MuiDataGrid-columnHeader': { backgroundColor: colors.primary[900], borderBottom: 'none' }, '& .MuiDataGrid-virtualScroller': { backgroundColor: colors.bgc[100] }, '& .MuiDataGrid-footerContainer': { borderTop: 'none', backgroundColor: colors.primary[900] } }}>
+
+            <DataGrid
+                rows={customers}
+                columns={columns}
+                columnVisibilityModel={columnVisibilityModel}
+                onColumnVisibilityModelChange={handleColumnVisibilityChange}
+                pageSize={10}
+                loading={loading}
+                slotProps={{ loadingOverlay: { variant: 'skeleton', noRowsVariant: 'skeleton' } }}
+                disableColumnMenu
+                getRowId={(row) => row._id}
+                slots={{ toolbar: CustomToolbar }}
+            />
+
         </Box>
     );
 }
