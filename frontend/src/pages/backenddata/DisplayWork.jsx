@@ -76,7 +76,6 @@ const DisplayWork = () => {
 
   const handleUpdate = (workId) => {
     console.log("Update clicked for work ID:", workId);
-    // Add your update logic here
   };
 
   const handleShare = (workId) => {

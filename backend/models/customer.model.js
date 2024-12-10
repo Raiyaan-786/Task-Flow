@@ -52,6 +52,11 @@ const customerSchema = new mongoose.Schema(
     contactPersonPhone: {
       type: Number,
     },
+    groupName: {
+      type: mongoose.Schema.Types.ObjectId, ref: "CustomerGroup",
+      // type: String, 
+      required: false, 
+    },
   },
   { timestamps: true }
 );
@@ -59,10 +64,10 @@ const customerSchema = new mongoose.Schema(
 const CustomergroupSchema = new mongoose.Schema(
   {
     groupName: { type: String, required: true, unique: true },
-    customers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Customer" }]
+    customers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Customer" }],
   },
   { timestamps: true }
-)
+);
 
 export const Customer = mongoose.model("Customer", customerSchema);
-export const CustomerGroup = mongoose.model("CustomeGroup", CustomergroupSchema);
+export const CustomerGroup = mongoose.model("CustomerGroup", CustomergroupSchema);

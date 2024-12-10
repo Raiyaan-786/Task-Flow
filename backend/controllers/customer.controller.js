@@ -2,36 +2,89 @@ import mongoose from "mongoose";
 import { Customer, CustomerGroup } from "../models/customer.model.js";
 import { Work } from "../models/work.model.js"; 
 
-const createCustomer = async (req, res) => {
-    try {
-      const {
-        customerName, customerCode , password, billingName, companyName, email, mobileNo,
-        whatsappNo, sameAsMobileNo, PAN ,AadharNo , address, contactPersonName, contactPersonPhone
-      } = req.body;
+// const createCustomer = async (req, res) => {
+//     try {
+//       const {
+//         customerName, customerCode , password, billingName, companyName, email, mobileNo,
+//         whatsappNo, sameAsMobileNo, PAN ,AadharNo , address, contactPersonName, contactPersonPhone
+//       } = req.body;
   
-      const newCustomer = new Customer({
-        customerName,
-        customerCode,
-        password,
-        billingName,
-        companyName,
-        email,
-        mobileNo,
-        whatsappNo: sameAsMobileNo ? mobileNo : whatsappNo, 
-        sameAsMobileNo,
-        PAN,
-        AadharNo,
-        address,
-        contactPersonName,
-        contactPersonPhone,
+//       const newCustomer = new Customer({
+//         customerName,
+//         customerCode,
+//         password,
+//         billingName,
+//         companyName,
+//         email,
+//         mobileNo,
+//         whatsappNo: sameAsMobileNo ? mobileNo : whatsappNo, 
+//         sameAsMobileNo,
+//         PAN,
+//         AadharNo,
+//         address,
+//         contactPersonName,
+//         contactPersonPhone,
         
-      });
+//       });
   
-      await newCustomer.save();
-      res.status(201).json({ message: 'Customer created successfully', customer: newCustomer });
-    } catch (err) {
-      res.status(400).json({ error: err.message });
+//       await newCustomer.save();
+//       res.status(201).json({ message: 'Customer created successfully', customer: newCustomer });
+//     } catch (err) {
+//       res.status(400).json({ error: err.message });
+//     }
+// };
+const createCustomer = async (req, res) => {
+  try {
+    const {
+      customerName,
+      customerCode,
+      password,
+      billingName,
+      companyName,
+      email,
+      mobileNo,
+      whatsappNo,
+      sameAsMobileNo,
+      PAN,
+      AadharNo,
+      address,
+      contactPersonName,
+      contactPersonPhone,
+      groupName, 
+    } = req.body;
+    let group = null;
+    if (groupName) {
+      group = await CustomerGroup.findById(groupName);
+      if (!group) {
+        return res.status(400).json({ error: 'Invalid groupName: Group does not exist' });
+      }
     }
+    const newCustomer = new Customer({
+      customerName,
+      customerCode,
+      password,
+      billingName,
+      companyName,
+      email,
+      mobileNo,
+      whatsappNo: sameAsMobileNo ? mobileNo : whatsappNo,
+      sameAsMobileNo,
+      PAN,
+      AadharNo,
+      address,
+      contactPersonName,
+      contactPersonPhone,
+      groupName: group ? group._id : null, 
+    });
+    await newCustomer.save();
+    if (group) {
+      group.customers.push(newCustomer._id);
+      await group.save();
+    }
+    res.status(201).json({ message: 'Customer created successfully', customer: newCustomer });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 };
 
 const getCustomer = async (req, res) => {
