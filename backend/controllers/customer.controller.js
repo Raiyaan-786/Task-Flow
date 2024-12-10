@@ -2,37 +2,6 @@ import mongoose from "mongoose";
 import { Customer, CustomerGroup } from "../models/customer.model.js";
 import { Work } from "../models/work.model.js"; 
 
-// const createCustomer = async (req, res) => {
-//     try {
-//       const {
-//         customerName, customerCode , password, billingName, companyName, email, mobileNo,
-//         whatsappNo, sameAsMobileNo, PAN ,AadharNo , address, contactPersonName, contactPersonPhone
-//       } = req.body;
-  
-//       const newCustomer = new Customer({
-//         customerName,
-//         customerCode,
-//         password,
-//         billingName,
-//         companyName,
-//         email,
-//         mobileNo,
-//         whatsappNo: sameAsMobileNo ? mobileNo : whatsappNo, 
-//         sameAsMobileNo,
-//         PAN,
-//         AadharNo,
-//         address,
-//         contactPersonName,
-//         contactPersonPhone,
-        
-//       });
-  
-//       await newCustomer.save();
-//       res.status(201).json({ message: 'Customer created successfully', customer: newCustomer });
-//     } catch (err) {
-//       res.status(400).json({ error: err.message });
-//     }
-// };
 const createCustomer = async (req, res) => {
   try {
     const {
@@ -110,6 +79,14 @@ const getAllCustomers = async (req, res) => {
       res.status(500).json({ error: err.message });
     }
 };
+const getAllUnassignedCustomers = async (req, res) => {
+  try {
+    const unassignedCustomers = await Customer.find({ groupName: null });
+    res.status(200).json({ unassignedCustomers });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 const updateCustomer = async (req, res) => {
     try {
@@ -172,25 +149,113 @@ const getPAN = async (req, res) => {
   }
 };
 
+// const createGroup = async (req, res) => {
+//   try {
+//     console.log("Request Body:", req.body);
+//     const { groupName, customerIds } = req.body;
+
+//     if (!groupName) {
+//       return res.status(400).json({ error: "Group name is required." });
+//     }
+//     const customers = customerIds
+//       ? await Customer.find({ _id: { $in: customerIds } })
+//       : [];
+//     const newGroup = new CustomerGroup({
+//       groupName,
+//       customers: customers.map(customer => customer._id),
+//     });
+//     await newGroup.save();
+//     res.status(201).json({ message: "Group created successfully", group: newGroup });
+//   } catch (error) {
+//     console.error("Error creating group:", error); 
+//     res.status(500).json({ error: "An error occurred while creating the group." });
+//   }
+// };
+
+// const createGroup = async (req, res) => {
+//   try {
+//     console.log("Request Body:", req.body);
+//     const { groupName, customerIds, groupAdmin } = req.body;
+//     if (!groupName) {
+//       return res.status(400).json({ error: "Group name is required." });
+//     }
+//     if (!groupAdmin) {
+//       return res.status(400).json({ error: "Group admin is required." });
+//     }
+//     const admin = await Customer.findById(groupAdmin);
+//     if (!admin) {
+//       return res.status(400).json({ error: "Invalid group admin: Customer does not exist." });
+//     }
+//     const customers = customerIds
+//       ? await Customer.find({ _id: { $in: customerIds } })
+//       : [];
+//     const adminInCustomers = customers.some(
+//       (customer) => customer._id.toString() === groupAdmin
+//     );
+//     if (!adminInCustomers) {
+//       return res
+//         .status(400)
+//         .json({ error: "Group admin must be included in the customers list." });
+//     }
+//     const newGroup = new CustomerGroup({
+//       groupName,
+//       customers: customers.map((customer) => customer._id),
+//       groupAdmin, 
+//     });
+//     await newGroup.save();
+//     res
+//       .status(201)
+//       .json({ message: "Group created successfully", group: newGroup });
+//   } catch (error) {
+//     console.error("Error creating group:", error);
+//     res
+//       .status(500)
+//       .json({ error: "An error occurred while creating the group." });
+//   }
+// };
+
 const createGroup = async (req, res) => {
   try {
     console.log("Request Body:", req.body);
-    const { groupName, customerIds } = req.body;
-
+    const { groupName, customerIds, groupAdmin } = req.body;
     if (!groupName) {
       return res.status(400).json({ error: "Group name is required." });
+    }
+    if (!groupAdmin) {
+      return res.status(400).json({ error: "Group admin is required." });
+    }
+    const admin = await Customer.findById(groupAdmin);
+    if (!admin) {
+      return res.status(400).json({ error: "Invalid group admin: Customer does not exist." });
     }
     const customers = customerIds
       ? await Customer.find({ _id: { $in: customerIds } })
       : [];
+    const adminInCustomers = customers.some(
+      (customer) => customer._id.toString() === groupAdmin
+    );
+    if (!adminInCustomers) {
+      return res
+        .status(400)
+        .json({ error: "Group admin must be included in the customers list." });
+    }
     const newGroup = new CustomerGroup({
       groupName,
-      customers: customers.map(customer => customer._id),
+      customers: customers.map((customer) => customer._id),
+      groupAdmin,
     });
-    await newGroup.save();
-    res.status(201).json({ message: "Group created successfully", group: newGroup });
+    const savedGroup = await newGroup.save();
+    await Customer.updateMany(
+      { _id: { $in: customerIds } },
+      { groupName: savedGroup._id }
+    );
+
+    res.status(201).json({
+      message: "Group created successfully",
+      group: savedGroup,
+    });
   } catch (error) {
-    console.error("Error creating group:", error); 
+    console.error("Error creating group:", error);
     res.status(500).json({ error: "An error occurred while creating the group." });
   }
 };
@@ -211,13 +276,13 @@ const addCustomerToGroup = async (req, res) => {
     }
     group.customers.push(customerId);
     await group.save();
-
+    customer.groupName = groupId;
+    await customer.save();
     res.status(200).json({ message: "Customer added to group successfully", group });
   } catch (error) {
     res.status(500).json({ error: "An error occurred while adding the customer to the group." });
   }
 };
-
 const removeCustomerFromGroup = async (req, res) => {
   try {
     const { groupId, customerId } = req.body;
@@ -231,7 +296,11 @@ const removeCustomerFromGroup = async (req, res) => {
     }
     group.customers.splice(customerIndex, 1);
     await group.save();
-
+    const customer = await Customer.findById(customerId);
+    if (customer) {
+      customer.groupName = null;  
+      await customer.save();
+    }
     res.status(200).json({ message: "Customer removed from group successfully", group });
   } catch (error) {
     res.status(500).json({ error: "An error occurred while removing the customer from the group." });
@@ -258,48 +327,117 @@ const getSingleGroup = async (req, res) => {
     res.status(500).json({ error: "An error occurred while retrieving the group." });
   }
 };
+
+
 const deleteGroup = async (req, res) => {
   try {
     const { id } = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: "Invalid group ID format." });
     }
-
     const group = await CustomerGroup.findByIdAndDelete(id);
-
     if (!group) {
       return res.status(404).json({ error: "Group not found." });
     }
-    res.status(200).json({ message: "Group deleted successfully." });
+    await Customer.updateMany({ groupName: id }, { $set: { groupName: null } });
+    res.status(200).json({ message: "Group deleted successfully, customers' groupName updated." });
   } catch (error) {
     console.error("Error deleting group:", error);
     res.status(500).json({ error: "An error occurred while deleting the group." });
   }
 };
-const updateGroupName = async (req, res) => {
+
+// const updateGroup = async (req, res) => {
+//   try {
+//     const { groupName, groupAdmin, newMembers } = req.body;
+//     const { id } = req.params; 
+//     if (!mongoose.Types.ObjectId.isValid(id)) {
+//       return res.status(400).json({ error: "Invalid group ID format." });
+//     }
+//     const group = await CustomerGroup.findById(id);
+//     if (!group) {
+//       return res.status(404).json({ error: "Group not found." });
+//     }
+//     if (newMembers && !Array.isArray(newMembers)) {
+//       return res.status(400).json({ error: "New members must be an array of customer IDs." });
+//     }
+//     if (groupAdmin) {
+//       if (!mongoose.Types.ObjectId.isValid(groupAdmin)) {
+//         return res.status(400).json({ error: "Invalid group admin ID format." });
+//       }
+
+//       const adminExists = await Customer.findById(groupAdmin);
+//       if (!adminExists) {
+//         return res.status(400).json({ error: "Group admin does not exist." });
+//       }
+//     }
+//     const updatedGroup = await CustomerGroup.findByIdAndUpdate(
+//       id,
+//       { groupName, ...(groupAdmin && { groupAdmin }) },
+//       { new: true, runValidators: true } // Return updated group and run validations
+//     );
+
+//     if (!updatedGroup) {
+//       return res.status(404).json({ error: "Group not found." });
+//     }
+//     if (newMembers) {
+//       updatedGroup.customers = newMembers;
+//       await Customer.updateMany(
+//         { _id: { $in: newMembers } },
+//         { $set: { groupName: id } }
+//       );
+
+//       await updatedGroup.save();
+//     }
+
+//     res.status(200).json({
+//       message: "Group updated successfully",
+//       group: updatedGroup,
+//     });
+//   } catch (error) {
+//     console.error("Error updating group:", error);
+//     res.status(500).json({ error: "An error occurred while updating the group." });
+//   }
+// };
+
+const updateGroup= async (req, res) => {
   try {
-    const { id } = req.params; 
-    const { groupName } = req.body; 
+    const { id } = req.params; // Group ID from the URL
+    const { groupName, groupAdmin } = req.body; // Group name and admin from the request body
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: "Invalid group ID format." });
     }
     if (!groupName) {
       return res.status(400).json({ error: "Group name is required." });
     }
+    if (groupAdmin) {
+      if (!mongoose.Types.ObjectId.isValid(groupAdmin)) {
+        return res.status(400).json({ error: "Invalid group admin ID format." });
+      }
+      const adminExists = await Customer.findById(groupAdmin);
+      if (!adminExists) {
+        return res.status(400).json({ error: "Group admin does not exist." });
+      }
+    }
     const updatedGroup = await CustomerGroup.findByIdAndUpdate(
       id,
-      { groupName }, 
-      { new: true, runValidators: true } 
+      { groupName, ...(groupAdmin && { groupAdmin }) }, // Update groupAdmin only if it's provided
+      { new: true, runValidators: true } // Return the updated document and run validations
     );
+
     if (!updatedGroup) {
       return res.status(404).json({ error: "Group not found." });
     }
-    res.status(200).json({ message: "Group name updated successfully", group: updatedGroup });
+    res.status(200).json({
+      message: "Group updated successfully",
+      group: updatedGroup,
+    });
   } catch (error) {
-    console.error("Error updating group name:", error);
-    res.status(500).json({ error: "An error occurred while updating the group name." });
+    console.error("Error updating group:", error);
+    res.status(500).json({ error: "An error occurred while updating the group." });
   }
 };
+
 const getTotalWorks = async (req, res) => {
   try {
     const { customerId } = req.params;
@@ -387,4 +525,4 @@ const getWorksByEmployee = async (req, res) => {
   }
 };
 
-export {createCustomer ,getCustomer , getAllCustomers , updateCustomer , deleteCustomer , createGroup , addCustomerToGroup , removeCustomerFromGroup , getAllGroups , getSingleGroup , deleteGroup ,updateGroupName , getUniqueFirmNames , getPAN}
+export {createCustomer ,getCustomer , getAllCustomers , updateCustomer , deleteCustomer , createGroup , addCustomerToGroup , removeCustomerFromGroup , getAllGroups , getSingleGroup , deleteGroup ,updateGroup , getUniqueFirmNames , getPAN , getAllUnassignedCustomers } 

@@ -65,9 +65,9 @@ const CustomergroupSchema = new mongoose.Schema(
   {
     groupName: { type: String, required: true, unique: true },
     customers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Customer" }],
+    groupAdmin: { type: mongoose.Schema.Types.ObjectId, ref: "Customer", required: true }, 
   },
   { timestamps: true }
 );
-
 export const Customer = mongoose.model("Customer", customerSchema);
 export const CustomerGroup = mongoose.model("CustomerGroup", CustomergroupSchema);
