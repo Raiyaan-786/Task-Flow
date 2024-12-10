@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Box, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
-import { AssessmentOutlined, AutoAwesomeOutlined, BadgeOutlined, CalculateOutlined, CalendarMonthOutlined, ChatOutlined, DashboardOutlined, FolderOpenOutlined, GroupOutlined, HomeOutlined, LinkOutlined, ListAltOutlined, PeopleOutlined, PersonAddAlt1Outlined, PlaylistAddOutlined, ReceiptLongOutlined, ReceiptOutlined, SupervisorAccountOutlined, WorkOffOutlined, WorkOutline, WorkOutlineOutlined } from "@mui/icons-material";
+import { AssessmentOutlined, BadgeOutlined, DashboardOutlined, FolderOpenOutlined, GroupOutlined, LinkOutlined, ReceiptLongOutlined, SupervisorAccountOutlined, WorkOutlineOutlined } from "@mui/icons-material";
+import { useSelector } from "react-redux";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -28,7 +29,15 @@ const Sidebar = ({isCollapsed}) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [selected, setSelected] = useState("Dashboard");
+  const { user } = useSelector((state) => state.auth);
 
+  useEffect(() => {
+    if (!user) {
+      console.log("User is not logged in!");
+    }
+  }, [user]);
+
+  console.log(user)
   return (
     <Box
       height={'100vh'}
@@ -93,10 +102,10 @@ const Sidebar = ({isCollapsed}) => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  John Doe
+                  {user.name}
                 </Typography>
                 <Typography variant="h6" color={colors.teal[500]}>
-                  Admin
+                  {user.role}
                 </Typography>
               </Box>
             </Box>

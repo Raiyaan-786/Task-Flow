@@ -20,6 +20,8 @@ import Report from './pages/report';
 import FileManager from './pages/filemanager';
 import UsefulLinks from './pages/usefullinks';
 import EditWorkPage from './pages/workmanager/EditWorkPage';
+import UserProfilePage from './pages/user/UserProfilePage';
+import Settings from './pages/user/Settings';
 
 
 function App() {
@@ -41,6 +43,8 @@ function App() {
               <Route path='/customermanager' element={ <PrivateRoute><CustomerManager/></PrivateRoute>}/>
               <Route path='/consultantmanager' element={ <PrivateRoute><ConsultantManager/></PrivateRoute>}/>
               <Route path='/employee' element={ <PrivateRoute><Employee/></PrivateRoute>}/>
+              <Route path='/userprofile' element={ <PrivateRoute><UserProfilePage/></PrivateRoute>}/>
+              <Route path='/settings' element={ <PrivateRoute><Settings/></PrivateRoute>}/>
               <Route path='/invoices' element={<PrivateRoute><Invoices/></PrivateRoute>}/>
               <Route path='/report' element={<PrivateRoute><Report/></PrivateRoute>}/>
               <Route path='/filemanager' element={<PrivateRoute><FileManager/></PrivateRoute>}/>
