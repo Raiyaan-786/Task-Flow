@@ -10,7 +10,7 @@ import { CheckCircle, Cancel } from '@mui/icons-material';
 const AddCustomer = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [open, setOpen] =useState(false); //for modal opening and closing
+  const [open, setOpen] = useState(false); //for modal opening and closing
   const [firmNames, setFirmNames] = useState([]);
   const [isFieldsDisabled, setFieldsDisabled] = useState(true);
   const [error, setError] = useState("");
@@ -18,6 +18,25 @@ const AddCustomer = () => {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [panChecked, setPanChecked] = useState(false);
+  const [allGroups, setAllGroups] = useState([]); // Add a state for group names
+
+  useEffect(() => {
+    const fetchGroupNames = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await API.get("/allgroups", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setAllGroups(response.data.groups || []);
+        console.log(allGroups)
+      } catch (err) {
+        setError(err.response?.data?.message || "Failed to fetch group names");
+      }
+    };
+
+    fetchGroupNames();
+  }, []);
+
 
   useEffect(() => {
     const fetchFirmNames = async () => {
@@ -109,7 +128,8 @@ const AddCustomer = () => {
           contactPersonName: "",
           contactPersonPhone: "",
           AadharNo: "", //
-          password: ""
+          password: "",
+          groupName: "",
         }}
         validationSchema={yup.object().shape({
           PAN: yup
@@ -126,7 +146,8 @@ const AddCustomer = () => {
           address: yup.string(),
           contactPersonName: yup.string(),
           contactPersonPhone: yup.string(),
-          AadharNo: yup.string()
+          AadharNo: yup.string(),
+          groupName: yup.string(),
         })}
         onSubmit={(values, { resetForm }) => {
           const modifiedValues = {
@@ -217,6 +238,32 @@ const AddCustomer = () => {
                     value={values.customerCode}
                     name="customerCode"
                     disabled={!panChecked}
+                  />
+                </Grid2>
+                {/* customer group Name */}
+                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                  <label>CUSTOMER GROUP</label>
+                </Grid2 >
+                <Grid2 size={6}>
+                  <Autocomplete
+                    options={allGroups}  // List of groups fetched from your backend
+                    size="small"
+                    disabled={!panChecked} // Disabled until PAN is checked
+                    freeSolo // Allow free text entry
+                    getOptionLabel={(option) => option.groupName || ""} // Ensure it only shows the group name
+                    value={values.groupName ? allGroups.find(group => group._id === values.groupName) : null} 
+                    onChange={(event, newValue) => {
+                      // Set the group _id in Formik value
+                      setFieldValue('groupName', newValue ? newValue._id : null);
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        placeholder="ENTER GROUP NAME"
+                        variant="filled"
+                        onBlur={handleBlur}
+                      />
+                    )}
                   />
                 </Grid2>
                 {/* Aadhar Number */}
@@ -384,7 +431,7 @@ const AddCustomer = () => {
                 </Grid2>
                 <Grid2 size={6}>
                   <Autocomplete
-                    
+
                     disablePortal
                     options={firmNames}
                     size="small"
