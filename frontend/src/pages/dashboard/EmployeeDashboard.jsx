@@ -178,7 +178,6 @@ const EmployeeDashboard = () => {
     },
   ];
 
-  if (loading) return <Typography>Loading data...</Typography>;
   if (error) return <Typography>Error: {error}</Typography>;
 
   return (
@@ -203,12 +202,7 @@ const EmployeeDashboard = () => {
     >
       <DataGrid 
        loading={loading}
-       slotProps={{
-         loadingOverlay: {
-           variant: 'skeleton',
-           noRowsVariant: 'skeleton',
-         },
-       }}
+       slotProps={{ loadingOverlay: { variant: 'skeleton', noRowsVariant: 'skeleton' } }}
        disableColumnMenu 
        slots={{ toolbar: CustomToolbar }} 
        rows={rows}

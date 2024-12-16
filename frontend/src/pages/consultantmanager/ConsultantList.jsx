@@ -47,7 +47,6 @@ const ConsultantList = () => {
     console.log(`Deleted consultant with ID: ${id}`);
   };
 
-  if (loading) return <p>Loading consultants...</p>;
   if (error) return <p>Error: {error}</p>;
 
   const columns = [
@@ -89,7 +88,10 @@ const ConsultantList = () => {
         "& .MuiDataGrid-footerContainer": { borderTop: "none", backgroundColor: colors.primary[900] },
       }}
     >
-      <DataGrid disableColumnMenu slots={{ toolbar: CustomToolbar }} rows={consultants} columns={columns} />
+      <DataGrid
+       loading={loading}
+       slotProps={{ loadingOverlay: { variant: 'skeleton', noRowsVariant: 'skeleton' } }}
+       disableColumnMenu slots={{ toolbar: CustomToolbar }} rows={consultants} columns={columns} />
     </Box>
   );
 };

@@ -1,19 +1,14 @@
-import React, { useState } from 'react'
-import { Box, Divider, styled, Tab, Tabs, Typography } from '@mui/material'
-import Header from '../../components/Header'
+import React, { useState } from 'react';
+import { Box, Divider, styled, Tab, Tabs } from '@mui/material';
+import Header from '../../components/Header';
 import { useTheme } from '@emotion/react';
 import { tokens } from '../../theme';
-import DuplicateCustomer from './DuplicateCustomer';
 import AddCustomer from './AddCustomer';
-import CustomerList from './CustomerList';
 import CustomerGroup from './CustomerGroup';
-import UpdateCustomer from './UpdateCustomer';
+import CustomerList from './CustomerList';
 import MutedCustomers from './MutedCustomers';
 
-
-
 const RoundedTabs = styled(Tabs)({
-    // background:'red',A
     padding: '10px',
     minHeight: '40px',
     '& .MuiTabs-indicator': {
@@ -22,7 +17,6 @@ const RoundedTabs = styled(Tabs)({
 });
 
 const RoundedTab = styled(Tab)(({ theme }) => ({
-    
     marginRight: '5px',
     textTransform: 'none',
     fontWeight: 400,
@@ -30,7 +24,6 @@ const RoundedTab = styled(Tab)(({ theme }) => ({
     minHeight: '35px',
     padding: '0px 10px',
     color: 'obsidian',
-    // color: '#999999',
     '&.Mui-selected': {
         backgroundColor: '#007499',
         color: 'white',
@@ -46,9 +39,26 @@ const CustomerManager = () => {
     const handleTabChange = (event, newValue) => {
         setSelectedTab(newValue);
     };
+
+    // Lazy render tab content
+    const renderTabContent = () => {
+        switch (selectedTab) {
+            case 0:
+                return <AddCustomer />;
+            case 1:
+                return <CustomerGroup />;
+            case 2:
+                return <CustomerList />;
+            case 3:
+                return <MutedCustomers />;
+            default:
+                return null;
+        }
+    };
+
     return (
-        <Box display={'flex'} flexDirection={'column'} height={'88%'} margin={'10px'} p={.1}>
-            <Header title={'Customer Management'}/>
+        <Box display={'flex'} flexDirection={'column'} height={'88%'} margin={'10px'} p={0.1}>
+            <Header title={'Customer Management'} />
             <Box
                 bgcolor={colors.primary[900]}
                 flexGrow={1}
@@ -56,38 +66,22 @@ const CustomerManager = () => {
                 display="flex"
                 flexDirection="column"
                 borderRadius={'10px'}
-
             >
                 {/* Rounded Tabs */}
-                <RoundedTabs value={selectedTab} onChange={handleTabChange} >
+                <RoundedTabs value={selectedTab} onChange={handleTabChange}>
                     <RoundedTab label="Add Customer" />
                     <RoundedTab label="Customer Group" />
                     <RoundedTab label="Customer List" />
                     {/* <RoundedTab label="Muted Customers" /> */}
-                    {/* <RoundedTab label="Duplicate Customer" /> */}
                 </RoundedTabs>
-                <Divider  sx={{borderColor:colors.bgc[100]}}/>
-                {/* Render All Tab Panels Once */}
-                <Box p='0 1px' flexGrow={1} position="relative" display="flex" flexDirection="column" height={'90%'}>
-                    <Box display={selectedTab === 0 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
-                      <AddCustomer/>
-                    </Box>
-
-                    <Box display={selectedTab === 1 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
-                      <CustomerGroup/>
-                    </Box>
-
-                    <Box display={selectedTab === 2 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
-                       <CustomerList/>
-                    </Box>
-
-                    <Box display={selectedTab === 3 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
-                    <MutedCustomers/>
-                    </Box>
+                <Divider sx={{ borderColor: colors.bgc[100] }} />
+                {/* Render only the selected tab */}
+                <Box p="0 1px" flexGrow={1} position="relative" display="flex" flexDirection="column" height={'90%'}>
+                    {renderTabContent()}
                 </Box>
             </Box>
         </Box>
-    )
-}
+    );
+};
 
-export default CustomerManager
+export default CustomerManager;

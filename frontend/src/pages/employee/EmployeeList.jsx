@@ -73,14 +73,13 @@ const EmployeeList = () => {
     console.log(`Delete employee with ID: ${id}`);
   };
 
-  if (loading) return <p>Loading employees...</p>;
   if (error) return <p>Error: {error}</p>;
 
   const columns = [
     { field: 'id', headerName: 'Sn', flex: 0.5, headerAlign: 'center', align: 'center' },
-    { field: 'username', headerName: 'Username', flex: 1.5 },
     // { field: 'password', headerName: 'Password', flex: 1.5 },
     { field: 'name', headerName: 'Name', flex: 1.5 },
+    { field: 'username', headerName: 'Username', flex: 1.5 },
     { field: 'address', headerName: 'Address', flex: 1.5 },
     { field: 'mobile', headerName: 'Mobile', flex: 1.5 },
     { field: 'email', headerName: 'Email', flex: 2 },
@@ -93,7 +92,7 @@ const EmployeeList = () => {
       headerAlign: 'center',
       align: 'center',
       renderCell: ({ row }) => (
-        <Box display="flex" justifyContent="center">
+        <Box display="flex" justifyContent="center" alignItems={'center'} >
           <Tooltip title="View">
             <IconButton aria-label="view" onClick={() => handleView(row._id)}>
               <Visibility />
@@ -250,6 +249,8 @@ const EmployeeList = () => {
                 </Box>
             </Modal>
       <DataGrid
+       loading={loading}
+       slotProps={{ loadingOverlay: { variant: 'skeleton', noRowsVariant: 'skeleton' } }}
         rows={employees}
         columns={columns}
         pageSize={10}

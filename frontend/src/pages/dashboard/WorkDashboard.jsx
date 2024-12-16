@@ -78,7 +78,6 @@ const WorkDashboard = () => {
     { field: "cancel", headerName: "Cancel", type: "number", headerAlign: "center", align: "center", flex: 1 },
   ];
 
-  if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
@@ -94,7 +93,10 @@ const WorkDashboard = () => {
         "& .MuiCheckbox-root": { color: `${colors.teal[200]} !important` },
       }}
     >
-      <DataGrid disableColumnMenu slots={{ toolbar: CustomToolbar }} rows={workSummary} columns={columns} />
+      <DataGrid
+       loading={loading}
+       slotProps={{ loadingOverlay: { variant: 'skeleton', noRowsVariant: 'skeleton' } }}
+      disableColumnMenu slots={{ toolbar: CustomToolbar }} rows={workSummary} columns={columns} />
     </Box>
   );
 };

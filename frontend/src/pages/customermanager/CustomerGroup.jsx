@@ -141,31 +141,31 @@ const CustomerGroup = () => {
     // Handle updating the group with the selected admin and other details
     const handleUpdateGroup = async (e, groupId) => {
         e.preventDefault();
-      
+
         if (!groupAdmin) {
-          setError("Please select a group admin.");
-          return;
+            setError("Please select a group admin.");
+            return;
         }
-      
+
         try {
-          // Send the updated group data to the backend
-          await API.put(`/updategroup/${groupId}`, {
-            groupName: editGroupData.groupName,
-            customerIds: editGroupData.customers,  // Send the updated list of customer IDs
-            groupAdmin: groupAdmin,
-          }, {
-            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-          });
-      
-          // Refresh the groups after the update
-          fetchGroups();
-          setOpenEditModal(false);  // Close the modal
+            // Send the updated group data to the backend
+            await API.put(`/updategroup/${groupId}`, {
+                groupName: editGroupData.groupName,
+                customerIds: editGroupData.customers,  // Send the updated list of customer IDs
+                groupAdmin: groupAdmin,
+            }, {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+            });
+
+            // Refresh the groups after the update
+            fetchGroups();
+            setOpenEditModal(false);  // Close the modal
         } catch (err) {
-          setError("An error occurred while updating the group.");
-          console.error(err);
+            setError("An error occurred while updating the group.");
+            console.error(err);
         }
-      };
-      
+    };
+
 
 
     // Handle group deletion
@@ -546,22 +546,15 @@ const CustomerGroup = () => {
             </Modal>
 
 
-
-
-            {loading ? (
-                <p>Loading customers...</p>
-            ) : error ? (
-                <p style={{ color: 'red' }}>Error: {error}</p>
-            ) : (
-
-                <DataGrid
-                    disableColumnMenu
-                    slots={{ toolbar: CustomToolbar }}
-                    rows={groups}
-                    columns={columns}
-                    pageSize={10}
-                />
-            )}
+            <DataGrid
+                loading={loading}
+                slotProps={{ loadingOverlay: { variant: 'skeleton', noRowsVariant: 'skeleton' } }}
+                disableColumnMenu
+                slots={{ toolbar: CustomToolbar }}
+                rows={groups}
+                columns={columns}
+                pageSize={10}
+            />
         </Box>
     );
 };
