@@ -15,6 +15,7 @@ import UnassignedWorks from './individualworks/UnassignedWorks';
 import HoldWorks from './individualworks/HoldWorks';
 import CancelledWorks from './individualworks/CancelledWorks';
 import API from '../../api/api';
+import MutedWorks from './individualworks/MutedWorks';
 
 
 const RoundedTabs = styled(Tabs)({
@@ -83,6 +84,7 @@ const Dashboard = () => {
     const unassignedWorks = worksData.filter(work => work.currentStatus === "Unassigned").length;
     const holdWorks = worksData.filter(work => work.currentStatus === "Hold Work").length;
     const cancelledWorks = worksData.filter(work => work.currentStatus === "Cancel").length;
+    const mutedWorks = worksData.filter(work => work.currentStatus === "Mute").length;
 
     const handleStatBoxClick = (tabIndex) => {
         setIndividualWorksTab(tabIndex);
@@ -97,15 +99,17 @@ const Dashboard = () => {
                 <Divider orientation='vertical' sx={{ borderColor: colors.bgc[100] }} />
                 <Box onClick={() => handleStatBoxClick(1)} width={'100%'} display={'felx'} ><StatBox value={completedWorks} title={'Completed'} textcolor={'green'} /></Box>
                 <Divider orientation='vertical' sx={{ borderColor: colors.bgc[100] }} />
-                <Box onClick={() => handleStatBoxClick(2)} width={'100%'} display={'felx'} ><StatBox value={0} title={'Pending'} textcolor={'orange'} /></Box>
-                <Divider orientation='vertical' sx={{ borderColor: colors.bgc[100] }} />
+                {/* <Box onClick={() => handleStatBoxClick(2)} width={'100%'} display={'felx'} ><StatBox value={0} title={'Pending'} textcolor={'orange'} /></Box>
+                <Divider orientation='vertical' sx={{ borderColor: colors.bgc[100] }} /> */}
                 <Box onClick={() => handleStatBoxClick(3)} width={'100%'} display={'felx'} ><StatBox value={assignedWorks} title={'Assigned'} /></Box>
                 <Divider orientation='vertical' sx={{ borderColor: colors.bgc[100] }} />
                 <Box onClick={() => handleStatBoxClick(4)} width={'100%'} display={'felx'} ><StatBox value={unassignedWorks} title={'Unassigned'} /></Box>
                 <Divider orientation='vertical' sx={{ borderColor: colors.bgc[100] }} />
-                <Box onClick={() => handleStatBoxClick(5)} width={'100%'} display={'felx'} ><StatBox value={holdWorks} title={'Hold'} /></Box>
+                <Box onClick={() => handleStatBoxClick(5)} width={'100%'} display={'felx'} ><StatBox value={holdWorks} title={'Hold'} textcolor={'orange'} /></Box>
                 <Divider orientation='vertical' sx={{ borderColor: colors.bgc[100] }} />
                 <Box onClick={() => handleStatBoxClick(6)} width={'100%'} display={'felx'} ><StatBox value={cancelledWorks} title={'Cancelled'} textcolor={'red'} /></Box>
+                <Divider orientation='vertical' sx={{ borderColor: colors.bgc[100] }} />
+                <Box onClick={() => handleStatBoxClick(7)} width={'100%'} display={'felx'} ><StatBox value={mutedWorks} title={'Muted'} textcolor={'grey'} /></Box>
             </Box>
             {individualWorks ?
                 <Box
@@ -135,9 +139,9 @@ const Dashboard = () => {
                         </Box>
                         <CompletedWorks/>
                     </Box>
-                    <Box display={individualWorksTab === 2 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
+                    {/* <Box display={individualWorksTab === 2 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
                         hello 2
-                    </Box>
+                    </Box> */}
                     <Box display={individualWorksTab === 3 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
                         <Box p={1} display={'flex'} flexDirection={'row'} alignItems={'center'} gap={2}>
                             <IconButton onClick={() => setIndividualWorks(false)} size='small' sx={{ bgcolor: '#007499', color: 'white', ":hover": 'black' }} >
@@ -173,6 +177,15 @@ const Dashboard = () => {
                             <Typography variant="h4" fontWeight={'bold'}>Cancelled Works</Typography>
                         </Box>
                         <CancelledWorks/>
+                    </Box>
+                    <Box display={individualWorksTab === 7 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
+                    <Box p={1} display={'flex'} flexDirection={'row'} alignItems={'center'} gap={2}>
+                            <IconButton onClick={() => setIndividualWorks(false)} size='small' sx={{ bgcolor: '#007499', color: 'white', ":hover": 'black' }} >
+                                <ArrowBack />
+                            </IconButton>
+                            <Typography variant="h4" fontWeight={'bold'}>Muted Work</Typography>
+                        </Box>
+                        <MutedWorks/>
                     </Box>
 
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './WorkDashboard.css'; // Import the CSS file
+// import './WorkDashboard.css'; // Import the CSS file
 import API from '../../api/api';
 
 const WorkSummary = () => {

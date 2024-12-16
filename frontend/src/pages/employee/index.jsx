@@ -1,17 +1,13 @@
-import React, { useState } from 'react'
-import { Box, Divider, styled, Tab, Tabs, Typography } from '@mui/material'
-import Header from '../../components/Header'
+import React, { useState } from 'react';
+import { Box, Divider, styled, Tab, Tabs } from '@mui/material';
+import Header from '../../components/Header';
 import { useTheme } from '@emotion/react';
 import { tokens } from '../../theme';
 import AddEmployee from './AddEmployee';
 import AddEmployeeWork from './AddEmployeeWork';
 import EmployeeList from './EmployeeList';
-// import DuplicateCustomer from './DuplicateCustomer';
-
-
 
 const RoundedTabs = styled(Tabs)({
-    // background:'red',A
     padding: '10px',
     minHeight: '40px',
     '& .MuiTabs-indicator': {
@@ -20,7 +16,6 @@ const RoundedTabs = styled(Tabs)({
 });
 
 const RoundedTab = styled(Tab)(({ theme }) => ({
-    
     marginRight: '5px',
     textTransform: 'none',
     fontWeight: 400,
@@ -28,7 +23,6 @@ const RoundedTab = styled(Tab)(({ theme }) => ({
     minHeight: '35px',
     padding: '0px 10px',
     color: 'obsidian',
-    // color: '#999999',
     '&.Mui-selected': {
         backgroundColor: '#007499',
         color: 'white',
@@ -44,9 +38,24 @@ const Employee = () => {
     const handleTabChange = (event, newValue) => {
         setSelectedTab(newValue);
     };
+
+    // Render tab content lazily
+    const renderTabContent = () => {
+        switch (selectedTab) {
+            case 0:
+                return <AddEmployee />;
+            case 1:
+                return <EmployeeList />;
+            case 2:
+                return <AddEmployeeWork />;
+            default:
+                return null;
+        }
+    };
+
     return (
-        <Box display={'flex'} flexDirection={'column'} height={'88%'} margin={'10px'} p={.1}>
-            <Header title={'HR Management'}/>
+        <Box display={'flex'} flexDirection={'column'} height={'88%'} margin={'10px'} p={0.1}>
+            <Header title={'HR Management'} />
             <Box
                 bgcolor={colors.primary[900]}
                 flexGrow={1}
@@ -54,32 +63,21 @@ const Employee = () => {
                 display="flex"
                 flexDirection="column"
                 borderRadius={'10px'}
-
             >
                 {/* Rounded Tabs */}
-                <RoundedTabs value={selectedTab} onChange={handleTabChange} >
+                <RoundedTabs value={selectedTab} onChange={handleTabChange}>
                     <RoundedTab label="Add Employee" />
                     <RoundedTab label="Employee List" />
-                    <RoundedTab label="Add Employee Work" />
+                    {/* <RoundedTab label="Add Employee Work" /> */}
                 </RoundedTabs>
-                <Divider  sx={{borderColor:colors.bgc[100]}}/>
-                {/* Render All Tab Panels Once */}
-                <Box p='0 1px' flexGrow={1} position="relative" display="flex" flexDirection="column" height={'90%'}>
-                    <Box display={selectedTab === 0 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
-                       <AddEmployee/>
-                    </Box>
-
-                    <Box display={selectedTab === 1 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
-                       <EmployeeList/>
-                    </Box>
-
-                    <Box display={selectedTab === 2 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
-                       <AddEmployeeWork/>
-                    </Box>
+                <Divider sx={{ borderColor: colors.bgc[100] }} />
+                {/* Render Selected Tab Panel */}
+                <Box p="0 1px" flexGrow={1} position="relative" display="flex" flexDirection="column" height={'90%'}>
+                    {renderTabContent()}
                 </Box>
             </Box>
         </Box>
-    )
-}
+    );
+};
 
-export default Employee
+export default Employee;

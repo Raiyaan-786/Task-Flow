@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import API from '../../api/api'; 
-import './DiplayConsultant.css'; 
+// import './DiplayConsultant.css'; 
 
 const DisplayConsultants = () => {
   const [consultants, setConsultants] = useState([]); 

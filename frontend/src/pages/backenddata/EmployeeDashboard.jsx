@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import API from '../../api/api'; 
-import './EmployeeDashboard.css';
+// import './EmployeeDashboard.css';
 
 const EmployeeDashboard = () => {
   const [workSummary, setWorkSummary] = useState([]);

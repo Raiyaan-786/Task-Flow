@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, TextField, Checkbox, FormControlLabel, Grid2, Typography, Autocomplete, Modal, Alert, } from "@mui/material";
+import { Box, Button, TextField, Checkbox, FormControlLabel, Grid2, Typography, Autocomplete, Modal, Alert, Tooltip, } from "@mui/material";
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import API from '../../api/api';
 import { useTheme } from "@emotion/react";
 import { tokens } from "../../theme";
-import { CheckCircle, Cancel } from '@mui/icons-material';
+import { CheckCircle, Cancel, Delete, Add } from '@mui/icons-material';
+import Header from '../../components/Header';
+import AddCustomer from '../customermanager/AddCustomer';
+import AddEmployee from '../employee/AddEmployee';
 
 const AddWork = () => {
   const [months, setMonths] = useState([
@@ -40,7 +43,11 @@ const AddWork = () => {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  const [newCustomerModal, setNewCustomerModal] = useState(false);
+  const [newEmployeeModal, setNewEmployeeModal] = useState(false);
+
+
+  
     const fetchCustomersAndEmployees = async () => {
       try {
         const customerResponse = await API.get('/getallcustomers');
@@ -51,7 +58,7 @@ const AddWork = () => {
         setError('Failed to load customers or employees');
       }
     };
-
+    useEffect(() => {
     fetchCustomersAndEmployees();
   }, []);
 
@@ -75,7 +82,14 @@ const AddWork = () => {
     setLoading(false);  // Reset loading state
   };
 
-
+  const handleNewCustomerModalClose =()=>{
+    fetchCustomersAndEmployees();
+    setNewCustomerModal(false);
+  }
+  const handleNewEmployeeModalClose =()=>{
+    fetchCustomersAndEmployees();
+    setNewEmployeeModal(false);
+  }
 
   return (
     <Box p={2} m="20px" height="67vh" overflow="auto">
@@ -129,12 +143,29 @@ const AddWork = () => {
           <form onSubmit={handleSubmit}>
             <Box pb={2}>
               <Grid2 container spacing={2} gap={2} padding={"10px 20px"} color={colors.grey[200]}>
+                {/* modal for customer creation */}
+                <Modal open={newCustomerModal} onClose={handleNewCustomerModalClose}
+                  sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                >
+                  <Box sx={{ padding: 2, width: "600px", height: '500px', overflow: 'auto', margin: 'auto', bgcolor: 'white', borderRadius: 2, bgcolor: colors.bgc[100] }}>
+                    <Header title={'Create New Customer'} />
+                     <AddCustomer/>
+                  </Box>
+                </Modal>
+                <Modal open={newEmployeeModal} onClose={handleNewEmployeeModalClose}
+                  sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                >
+                  <Box sx={{ padding: 2, width: "600px", height: '500px', overflow: 'auto', margin: 'auto', bgcolor: 'white', borderRadius: 2, bgcolor: colors.bgc[100] }}>
+                    <Header title={'Create New Employee'} />
+                    <AddEmployee/>
+                  </Box>
+                </Modal>
 
                 {/* select customer */}
                 <Grid2 size={6} display={'flex'} alignItems={'center'}>
                   <label>CUSTOMER</label>
                 </Grid2>
-                <Grid2 size={6}>
+                <Grid2 size={5}>
                   <Autocomplete
                     options={customers}
                     getOptionLabel={(option) => option?.customerName || ""}
@@ -171,8 +202,15 @@ const AddWork = () => {
                     fullWidth
                     size="small"
                   />
+                </Grid2>
 
-
+                {/* button of new customer creation */}
+                <Grid2 size={1} alignItems={'center'} justifyContent={'center'} display={'flex'}>
+                  <Tooltip title="Create New Customer">
+                    <Button onClick={()=>setNewCustomerModal(true)} variant="outlined" sx={{ height: '100%', color: colors.grey[500], bgcolor: '#dbdbdd' }}>
+                      <Add />
+                    </Button>
+                  </Tooltip>
                 </Grid2>
 
                 {/* Billing Name */}
@@ -334,7 +372,7 @@ const AddWork = () => {
                 <Grid2 size={6} display={'flex'} alignItems={'center'}>
                   <label>ASSIGN EMPLOYEE</label>
                 </Grid2>
-                <Grid2 size={6}>
+                <Grid2 size={5}>
                   <Autocomplete
                     options={employees}
                     value={employees.find(emp => emp._id === values.assignedEmployee) || null} // Make sure you select the employee based on _id
@@ -354,8 +392,14 @@ const AddWork = () => {
                     fullWidth
                     size="small"
                   />
-
-
+                </Grid2>
+                  {/* button of new employee creation */}
+                  <Grid2 size={1} alignItems={'center'} justifyContent={'center'} display={'flex'}>
+                  <Tooltip title="Create New Employee">
+                    <Button onClick={()=>setNewEmployeeModal(true)} variant="outlined" sx={{ height: '100%', color: colors.grey[500], bgcolor: '#dbdbdd' }}>
+                      <Add />
+                    </Button>
+                  </Tooltip>
                 </Grid2>
 
                 {/* select month */}

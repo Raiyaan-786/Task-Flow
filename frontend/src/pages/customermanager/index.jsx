@@ -7,6 +7,8 @@ import DuplicateCustomer from './DuplicateCustomer';
 import AddCustomer from './AddCustomer';
 import CustomerList from './CustomerList';
 import CustomerGroup from './CustomerGroup';
+import UpdateCustomer from './UpdateCustomer';
+import MutedCustomers from './MutedCustomers';
 
 
 
@@ -61,7 +63,7 @@ const CustomerManager = () => {
                     <RoundedTab label="Add Customer" />
                     <RoundedTab label="Customer Group" />
                     <RoundedTab label="Customer List" />
-                    <RoundedTab label="Customer Update" />
+                    {/* <RoundedTab label="Muted Customers" /> */}
                     {/* <RoundedTab label="Duplicate Customer" /> */}
                 </RoundedTabs>
                 <Divider  sx={{borderColor:colors.bgc[100]}}/>
@@ -80,12 +82,8 @@ const CustomerManager = () => {
                     </Box>
 
                     <Box display={selectedTab === 3 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
-                       {/* <ConsultantList/> */}hello
+                    <MutedCustomers/>
                     </Box>
-
-                    {/* <Box display={selectedTab === 4 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
-                       <DuplicateCustomer/>
-                    </Box> */}
                 </Box>
             </Box>
         </Box>

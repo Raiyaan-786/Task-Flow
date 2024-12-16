@@ -28,7 +28,7 @@ const AddCustomer = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         setAllGroups(response.data.groups || []);
-        console.log(allGroups)
+        // console.log(allGroups)
       } catch (err) {
         setError(err.response?.data?.message || "Failed to fetch group names");
       }

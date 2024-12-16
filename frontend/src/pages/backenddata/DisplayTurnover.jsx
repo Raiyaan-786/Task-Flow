@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './DisplayTurnover.css'; 
+// import './DisplayTurnover.css'; 
 import API from '../../api/api';
 
 const DisplayTurnover = () => {

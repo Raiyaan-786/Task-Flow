@@ -18,6 +18,7 @@ const CustomerGroup = () => {
 
     // States for UpdateCustomerGroup functionality
     const [groups, setGroups] = useState([]);
+    const [groupAdmin, setGroupAdmin] = useState('');
 
     // experimental code starts 
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -27,7 +28,7 @@ const CustomerGroup = () => {
 
     const [openViewModal, setOpenViewModal] = useState(false);
     const [groupCustomers, setGroupCustomers] = useState([]); // Store customers of a group
-    const [currentGroupName,setCurrentGroupName]=useState(''); // store group name of the group to view
+    const [currentGroupName, setCurrentGroupName] = useState(''); // store group name of the group to view
 
     // experimental code ends
 
@@ -83,19 +84,29 @@ const CustomerGroup = () => {
         fetchGroups();
     }, []);
 
-    // Handle creation of a new customer group
+    // Update handleCreateGroup function
     const handleCreateGroup = async (e) => {
         e.preventDefault();
+        if (!groupAdmin) {
+            setError("Please select a group admin.");
+            return;
+        }
+        if (selectedCustomers.length === 0) {
+            setError("Please select at least one customer.");
+            return;
+        }
+
         try {
             await API.post('/creategroup', {
                 groupName: groupName,
                 customerIds: selectedCustomers,
+                groupAdmin: groupAdmin, // Make sure this is the admin ID
             }, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
             });
-            setMessage("Group created successfully!");
             setGroupName('');
             setSelectedCustomers([]);
+            setGroupAdmin('');
             fetchGroups(); // Refresh groups after creation
         } catch (err) {
             setError("An error occurred while creating the group.");
@@ -103,30 +114,58 @@ const CustomerGroup = () => {
         }
     };
 
+
     // Handle update of an existing group name
     const handleEditGroup = (groupId) => {
         const groupToEdit = groups.find(group => group.id === groupId);
-        setEditGroupData({ groupName: groupToEdit.groupName, customers: groupToEdit.customers });
-        setOpenEditModal(true);
+        setEditGroupData({
+            groupName: groupToEdit.groupName,
+            customers: groupToEdit.customers, // This will contain the customer IDs already in the group
+        });
+        setGroupAdmin(groupToEdit.groupAdmin); // Set the current admin
+        setOpenEditModal(true); // Open the modal
     };
 
+    const handleCustomerChange = (e, customerId) => {
+        const updatedCustomers = e.target.checked
+            ? [...editGroupData.customers, customerId]  // Add customer if checked
+            : editGroupData.customers.filter(id => id !== customerId); // Remove customer if unchecked
+
+        setEditGroupData({
+            ...editGroupData,
+            customers: updatedCustomers,  // Update the customers list in the state
+        });
+    };
+
+
+    // Handle updating the group with the selected admin and other details
     const handleUpdateGroup = async (e, groupId) => {
         e.preventDefault();
-        try {
-            await API.put(`/updategroup/${groupId}`, {
-                groupName: editGroupData.groupName,
-                // customerIds: editGroupData.customers,
-            }, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-            });
-            fetchGroups(); // Refresh groups after update
-            setOpenEditModal(false);
-            setMessage("Group updated successfully!");
-        } catch (err) {
-            setError("An error occurred while updating the group.");
-            console.error(err);
+      
+        if (!groupAdmin) {
+          setError("Please select a group admin.");
+          return;
         }
-    };
+      
+        try {
+          // Send the updated group data to the backend
+          await API.put(`/updategroup/${groupId}`, {
+            groupName: editGroupData.groupName,
+            customerIds: editGroupData.customers,  // Send the updated list of customer IDs
+            groupAdmin: groupAdmin,
+          }, {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          });
+      
+          // Refresh the groups after the update
+          fetchGroups();
+          setOpenEditModal(false);  // Close the modal
+        } catch (err) {
+          setError("An error occurred while updating the group.");
+          console.error(err);
+        }
+      };
+      
 
 
     // Handle group deletion
@@ -136,7 +175,7 @@ const CustomerGroup = () => {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
             });
             fetchGroups(); // Refresh groups after deletion
-            setMessage("Group deleted successfully!");
+            //    setMessage("Group deleted successfully!");
         } catch (err) {
             setError("An error occurred while deleting the group.");
             console.error(err);
@@ -150,10 +189,10 @@ const CustomerGroup = () => {
             const response = await API.get('/allgroups', {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
             });
-    
+
             // Find the specific group by its ID
             const group = response.data.groups.find(group => group._id === groupId);
-    
+
             if (group) {
                 setCurrentGroupName(group.groupName)
                 setGroupCustomers(group.customers); // Assuming the group object has a 'customers' field
@@ -166,7 +205,7 @@ const CustomerGroup = () => {
             console.error(err);
         }
     };
-    
+
 
     // Columns for DataGrid, including "Number of Members"
     const columns = [
@@ -191,12 +230,12 @@ const CustomerGroup = () => {
                     }}
                 >
                     <IconButton aria-label="view-customers" onClick={() => handleViewCustomers(params.row.id)}>
-                        <Visibility/>
+                        <Visibility />
                     </IconButton>
                     <IconButton aria-label="edit" onClick={() => handleEditGroup(params.row.id)}>
                         <Edit />
                     </IconButton>
-                    <IconButton  aria-label="delete" onClick={() => { setGroupToDelete(params.row.id); setOpenDeleteModal(true); }}>
+                    <IconButton aria-label="delete" onClick={() => { setGroupToDelete(params.row.id); setOpenDeleteModal(true); }}>
                         <Delete />
                     </IconButton>
                 </Box>
@@ -316,22 +355,42 @@ const CustomerGroup = () => {
                                 borderRadius: '5px',
                             }}
                         >
-                            {customers.map((customer) => (
-                                <Box key={customer._id} display="flex" alignItems="center" gap="10px" sx={{ mb: 1 }}>
+                            {customers.map(customer => (
+                                <div key={customer._id}>
                                     <input
                                         type="checkbox"
-                                        checked={editGroupData.customers.includes(customer._id)}
-                                        onChange={(e) => {
-                                            const updatedCustomers = e.target.checked
-                                                ? [...editGroupData.customers, customer._id]
-                                                : editGroupData.customers.filter(id => id !== customer._id);
-                                            setEditGroupData({ ...editGroupData, customers: updatedCustomers });
-                                        }}
+                                        id={`customer-${customer._id}`}
+                                        checked={editGroupData.customers.includes(customer._id)}  // Check if customer is in the list
+                                        onChange={(e) => handleCustomerChange(e, customer._id)}  // Handle checkbox change
                                     />
-                                    <Typography>{customer.customerName}</Typography>
-                                </Box>
+                                    <label htmlFor={`customer-${customer._id}`}>{customer.customerName}</label>
+                                </div>
                             ))}
+
+
                         </Box>
+
+                        <Typography variant="body1" sx={{ mt: 2 }}>Select Group Admin:</Typography>
+                        <TextField
+                            select
+                            fullWidth
+                            size="small"
+                            value={groupAdmin}
+                            onChange={(e) => setGroupAdmin(e.target.value)}
+                            SelectProps={{
+                                native: true,
+                            }}
+                            required
+                        >
+                            <option value="" disabled>
+                                -- Select Admin --
+                            </option>
+                            {customers.map((customer) => (
+                                <option key={customer._id} value={customer._id}>
+                                    {customer.customerName}
+                                </option>
+                            ))}
+                        </TextField>
                         <Box display="flex" justifyContent="space-between" sx={{ mt: 2 }}>
                             <Button onClick={() => setOpenEditModal(false)} variant="outlined">Cancel</Button>
                             <Button type="submit" variant="contained" sx={{ bgcolor: '#007499', color: 'white' }}>
@@ -341,6 +400,7 @@ const CustomerGroup = () => {
                     </form>
                 </Box>
             </Modal>
+
 
             <Modal
                 open={openDeleteModal}
@@ -371,7 +431,6 @@ const CustomerGroup = () => {
                     </Box>
                 </Box>
             </Modal>
-
 
             <Modal
                 disableAutoFocus
@@ -408,7 +467,7 @@ const CustomerGroup = () => {
                     >
                         <TextField
                             fullWidth
-                            size='small'
+                            size="small"
                             label="Group Name"
                             value={groupName}
                             onChange={(e) => setGroupName(e.target.value)}
@@ -427,13 +486,7 @@ const CustomerGroup = () => {
                             }}
                         >
                             {customers.map((customer) => (
-                                <Box
-                                    key={customer._id}
-                                    display="flex"
-                                    alignItems="center"
-                                    gap="10px"
-                                    sx={{ mb: 1 }}
-                                >
+                                <Box key={customer._id} display="flex" alignItems="center" gap="10px" sx={{ mb: 1 }}>
                                     <input
                                         type="checkbox"
                                         checked={selectedCustomers.includes(customer._id)}
@@ -441,9 +494,7 @@ const CustomerGroup = () => {
                                             if (e.target.checked) {
                                                 setSelectedCustomers((prev) => [...prev, customer._id]);
                                             } else {
-                                                setSelectedCustomers((prev) =>
-                                                    prev.filter((id) => id !== customer._id)
-                                                );
+                                                setSelectedCustomers((prev) => prev.filter((id) => id !== customer._id));
                                             }
                                         }}
                                     />
@@ -451,6 +502,30 @@ const CustomerGroup = () => {
                                 </Box>
                             ))}
                         </Box>
+
+                        <Typography variant="body1" sx={{ mt: 2 }}>
+                            Select Group Admin:
+                        </Typography>
+                        <TextField
+                            select
+                            fullWidth
+                            size="small"
+                            value={groupAdmin}
+                            onChange={(e) => setGroupAdmin(e.target.value)}
+                            SelectProps={{
+                                native: true,
+                            }}
+                            required
+                        >
+                            <option value="" disabled>
+                                -- Select Admin --
+                            </option>
+                            {customers.map((customer) => (
+                                <option key={customer._id} value={customer._id}>
+                                    {customer.customerName}
+                                </option>
+                            ))}
+                        </TextField>
                         <Box display="flex" justifyContent="space-between" sx={{ mt: 2 }}>
                             <Button
                                 onClick={() => setOpen(false)}
@@ -469,6 +544,7 @@ const CustomerGroup = () => {
                     </form>
                 </Box>
             </Modal>
+
 
 
 
