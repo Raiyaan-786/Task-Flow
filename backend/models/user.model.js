@@ -58,7 +58,6 @@ const userSchema = new mongoose.Schema(
     },
     image: {
       type: Buffer,  // Store image as binary data (Buffer)
-      required: false,
     },
   },
   { timestamps: true }
