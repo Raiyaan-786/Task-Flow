@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import multer from "multer";
-import { createUser, deleteUser, getAllUsers, getMuteUsers, getUser, loginUser, registerUser, updateUser, updateUserRole} from '../controllers/user.controller.js';
+import { createUser, deleteUser, getAllUsers, getMuteUsers, getUser, loginUser, registerUser, updateUser, updateUserImage, updateUserRole} from '../controllers/user.controller.js';
 import {verifyJWT , roleAuthorization } from '../middlewares/auth.middleware.js';
 
 const router = Router();
@@ -16,6 +16,7 @@ router.route("/users").post(upload.single("image"), verifyJWT, roleAuthorization
 router.route('/users/:id/role').put(verifyJWT, roleAuthorization('Admin'), updateUserRole);
 router.route('/users/:id').delete(verifyJWT, roleAuthorization('Admin'), deleteUser);
 router.route('/update/:id').put(upload.single("image"), verifyJWT, roleAuthorization("Admin"), updateUser);
+// router.route('/users/:id/image').put(upload.single("image"), verifyJWT, roleAuthorization("Admin"), updateUserImage);
 
 
 export default router;
