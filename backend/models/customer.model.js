@@ -53,7 +53,8 @@ const customerSchema = new mongoose.Schema(
       type: Number,
     },
     groupName: {
-      type: mongoose.Schema.Types.ObjectId, ref: "CustomerGroup",
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: "CustomerGroup",
       // type: String, 
       required: false, 
     },
