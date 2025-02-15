@@ -154,6 +154,13 @@ const Sidebar = ({isCollapsed}) => {
               selected={selected}
               setSelected={setSelected}
             />
+              <Item
+              title="Chat "
+              to="/chat"
+              icon={<BadgeOutlined/>}
+              selected={selected}
+              setSelected={setSelected}
+            />
                <Typography
               variant="h6"
               color={colors.grey[300]}

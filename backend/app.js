@@ -24,6 +24,7 @@ import customerRoutes from './routes/customer.routes.js'
 import consultantRoutes from './routes/consultant.routes.js'
 import dashboardRoutes from './routes/dashboard.routes.js'
 import turnoverRoutes from './routes/turnover.routes.js'
+import messageRoutes from './routes/message.routes.js'
 
 app.use('/api/auth',userRoutes);
 app.use('/api' , taskRoutes);
@@ -32,5 +33,6 @@ app.use('/api' , customerRoutes);
 app.use('/api' , consultantRoutes);
 app.use('/api' , dashboardRoutes);
 app.use('/api' , turnoverRoutes);
+app.use('/api/message' , messageRoutes);
 
 export { app } ;

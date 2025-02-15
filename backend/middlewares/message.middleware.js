@@ -1,6 +1,6 @@
-import { User } from "../models/User.js";
-import { Customer } from "../models/Customer.js";
-import { Work } from "../models/Work.js";
+import { User } from "../models/user.model.js";
+import { Customer } from "../models/customer.model.js";
+import { Work } from "../models/work.model.js";
 
 
 const canSendMessage = async (sender, receiver) => {
