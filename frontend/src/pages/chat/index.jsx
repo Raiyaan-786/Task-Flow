@@ -18,21 +18,19 @@ const Chat = () => {
   };
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      height="88%"
-      margin="10px"
-      p={0.1}
-    >
+    <Box display="flex" flexDirection="column" height="88%" margin="10px" p={0.1}>
+      {/* Fixed Header */}
       <Header title="Chat Management" />
+
+      {/* Main Chat Container */}
       <Box
         bgcolor={colors.primary[900]}
         flexGrow={1}
         mt="2px"
         display="flex"
+        flexDirection="row"
         borderRadius="10px"
-        height="100%"
+        overflow="hidden" // Prevents entire page from scrolling
       >
         {/* Sidebar - Fixed Contacts Section */}
         <Box
@@ -41,8 +39,9 @@ const Chat = () => {
           borderRight={`1px solid ${colors.bgc[100]}`}
           display="flex"
           flexDirection="column"
+          flexShrink={0} // Prevents shrinking when chat expands
         >
-          {/* Fixed Header */}
+          {/* Contacts Header */}
           <Box
             p={1}
             fontWeight="bold"
@@ -59,23 +58,31 @@ const Chat = () => {
             overflow="auto"
             p={1}
             sx={{
-              maxHeight: isDropdownOpen ? "400px" : "auto",
+              maxHeight: isDropdownOpen ? "400px" : "100%",
               scrollbarWidth: isDropdownOpen ? "auto" : "thin",
               transition: "max-height 0.3s ease-in-out",
             }}
           >
             <SidebarForChat
               onSelectContact={setSelectedContact}
-              onDropdownToggle={setIsDropdownOpen} // Pass dropdown toggle function
+              onDropdownToggle={setIsDropdownOpen}
             />
           </Box>
         </Box>
 
-        {/* Chat Container - Covers Full Remaining Space */}
-        <Box flexGrow={1} display="flex" flexDirection="column" height="100%">
+        {/* Chat Container (Only this part should scroll) */}
+        <Box
+          flexGrow={1}
+          display="flex"
+          flexDirection="column"
+          height="100%"
+          p="0 10px"
+          overflow="hidden" // Prevents full page scrolling
+        >
           <ChatContainer
             selectedContact={selectedContact}
             onCloseChat={handleCloseChat}
+            style={{ flexGrow: 1, overflowY: "auto" }} // Scrolls only ChatContainer
           />
         </Box>
       </Box>

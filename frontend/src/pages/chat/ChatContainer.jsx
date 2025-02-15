@@ -7,12 +7,17 @@ import { clearSelectedContact } from "../../features/chatSlice";
 import API from "../../api/api";
 import { useTheme } from "@emotion/react";
 import { tokens } from "../../theme";
+import { io } from "socket.io-client";
+
+// Initialize socket connection
+const socket = io("http://localhost:5000", { withCredentials: true });
 
 const ChatContainer = () => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const selectedContact = useSelector((state) => state.chat.selectedContact);
+  const currentUser = useSelector((state) => state.auth.user);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef(null);
@@ -20,12 +25,23 @@ const ChatContainer = () => {
   useEffect(() => {
     if (selectedContact) {
       fetchMessages();
+      socket.emit("joinChat", { userId: currentUser._id, contactId: selectedContact._id });
     }
   }, [selectedContact]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    socket.on("receiveMessage", (data) => {
+      setMessages((prevMessages) => [...prevMessages, data]);
+    });
+
+    return () => {
+      socket.off("receiveMessage");
+    };
+  }, []);
 
   const fetchMessages = async () => {
     try {
@@ -48,11 +64,17 @@ const ChatContainer = () => {
       const token = localStorage.getItem("token");
       if (!token) return;
 
-      const response = await API.post(
-        "/message/send",
-        { receiverId: selectedContact._id, text: newMessage },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const messageData = {
+        sender: currentUser._id,
+        receiverId: selectedContact._id,
+        text: newMessage,
+      };
+
+      socket.emit("sendMessage", messageData);
+
+      const response = await API.post("/message/send", messageData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       setMessages([...messages, response.data.newMessage]);
       setNewMessage("");
@@ -63,12 +85,7 @@ const ChatContainer = () => {
 
   if (!selectedContact) {
     return (
-      <Box
-        flexGrow={1}
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-      >
+      <Box flexGrow={1} display="flex" alignItems="center" justifyContent="center">
         <Typography variant="h6" color="gray">
           Select a contact to start chatting
         </Typography>
@@ -77,15 +94,8 @@ const ChatContainer = () => {
   }
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      flexGrow={1}
-      p={2}
-      bgcolor={colors.primary[900]}
-      borderRadius="10px"
-    >
-      {/* Chat Header */}
+    <Box display="flex" flexDirection="column" flexGrow={1} p={2} bgcolor={colors.primary[900]} borderRadius="10px">
+      {/* 🔹 Fixed Chat Header */}
       <Paper
         elevation={3}
         sx={{
@@ -95,6 +105,7 @@ const ChatContainer = () => {
           alignItems: "center",
           justifyContent: "space-between",
           borderRadius: "10px",
+          flexShrink: 0 , // ✅ Keeps header fixed
         }}
       >
         <Box>
@@ -105,47 +116,55 @@ const ChatContainer = () => {
             {selectedContact.email}
           </Typography>
         </Box>
-        <IconButton
-          onClick={() => dispatch(clearSelectedContact())}
-          color="error"
-        >
+        <IconButton onClick={() => dispatch(clearSelectedContact())} color="error">
           <CloseIcon />
         </IconButton>
       </Paper>
 
-      {/* Chat Messages */}
+      {/* 🔹 Scrollable Chat Messages */}
       <Box
-        flexGrow={1}
-        overflow="auto"
+        flexGrow={1} // ✅ Allows this section to take remaining space
+        overflow="auto" // ✅ Enables scrolling only here
         p={2}
         bgcolor={colors.bgc[100]}
         borderRadius="10px"
-        sx={{ maxHeight: "70vh", display: "flex", flexDirection: "column" }}
+        sx={{ maxHeight: "53vh", display: "flex", flexDirection: "column" }}
       >
-        {messages.map((msg) => (
-          <Box
-            key={msg._id}
-            sx={{
-              mb: 1.5,
-              p: 1.5,
-              borderRadius: "8px",
-              bgcolor: msg.sender === selectedContact._id ? "#e0e0e0" : "#007499",
-              color: msg.sender === selectedContact._id ? "black" : "white",
-              alignSelf: msg.sender === selectedContact._id ? "flex-start" : "flex-end",
-              maxWidth: "60%",
-            }}
-          >
-            <Typography variant="body1">{msg.text}</Typography>
-            <Typography variant="caption" display="block" textAlign="right">
-              {new Date(msg.createdAt).toLocaleTimeString()}
-            </Typography>
-          </Box>
-        ))}
+        {messages.map((msg, index) => {
+          const isMyMessage = msg.sender === currentUser._id;
+          return (
+            <Box
+              key={index}
+              sx={{
+                mb: 1.5,
+                p: 1.5,
+                borderRadius: "8px",
+                bgcolor: isMyMessage ? "#007499" : "#e0e0e0",
+                color: isMyMessage ? "white" : "black",
+                alignSelf: isMyMessage ? "flex-end" : "flex-start",
+                maxWidth: "60%",
+              }}
+            >
+              <Typography variant="body1">{msg.text}</Typography>
+              <Typography variant="caption" display="block" textAlign="right">
+                {new Date(msg.createdAt).toLocaleTimeString()}
+              </Typography>
+            </Box>
+          );
+        })}
         <div ref={messagesEndRef} />
       </Box>
 
-      {/* Message Input Box */}
-      <Box display="flex" mt={2} alignItems="center">
+      {/* 🔹 Fixed Message Input */}
+      <Box
+        display="flex"
+        mt={2}
+        alignItems="center"
+        flexShrink={0} // ✅ Keeps input box fixed
+        bgcolor="white"
+        p={1}
+        borderRadius="10px"
+      >
         <TextField
           fullWidth
           variant="outlined"
