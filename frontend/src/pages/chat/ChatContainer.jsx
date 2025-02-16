@@ -10,7 +10,7 @@ import { tokens } from "../../theme";
 import { io } from "socket.io-client";
 
 // Initialize socket connection
-const socket = io("http://localhost:5000", { withCredentials: true });
+const socket = io("http://localhost:4000", { withCredentials: true });
 
 const ChatContainer = () => {
   const dispatch = useDispatch();
@@ -105,7 +105,7 @@ const ChatContainer = () => {
           alignItems: "center",
           justifyContent: "space-between",
           borderRadius: "10px",
-          flexShrink: 0 , // ✅ Keeps header fixed
+          flexShrink: 0 , // Keeps header fixed
         }}
       >
         <Box>
@@ -123,8 +123,8 @@ const ChatContainer = () => {
 
       {/* 🔹 Scrollable Chat Messages */}
       <Box
-        flexGrow={1} // ✅ Allows this section to take remaining space
-        overflow="auto" // ✅ Enables scrolling only here
+        flexGrow={1} //  Allows this section to take remaining space
+        overflow="auto" //  Enables scrolling only here
         p={2}
         bgcolor={colors.bgc[100]}
         borderRadius="10px"
@@ -160,7 +160,7 @@ const ChatContainer = () => {
         display="flex"
         mt={2}
         alignItems="center"
-        flexShrink={0} // ✅ Keeps input box fixed
+        flexShrink={0} //  Keeps input box fixed
         bgcolor="white"
         p={1}
         borderRadius="10px"
@@ -171,7 +171,7 @@ const ChatContainer = () => {
           placeholder="Type a message..."
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+        //   onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
         />
         <IconButton onClick={handleSendMessage} color="primary" sx={{ ml: 1 }}>
           <SendIcon />
