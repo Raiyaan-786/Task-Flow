@@ -3,84 +3,90 @@ import { useSelector, useDispatch } from "react-redux";
 import { Box, Typography, Paper, TextField, IconButton } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import CloseIcon from "@mui/icons-material/Close";
-import { clearSelectedContact } from "../../features/chatSlice";
-import API from "../../api/api";
+import { clearSelectedContact, fetchMessages, sendMessage } from "../../features/chatSlice";
 import { useTheme } from "@emotion/react";
 import { tokens } from "../../theme";
 import { io } from "socket.io-client";
 
-// Initialize socket connection
-const socket = io("http://localhost:4000", { withCredentials: true });
 
 const ChatContainer = () => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const selectedContact = useSelector((state) => state.chat.selectedContact);
+  const messages = useSelector((state) => state.chat.messages);
   const currentUser = useSelector((state) => state.auth.user);
-  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const messagesEndRef = useRef(null);
+  const messageEndRef = useRef(null);
+
+  const socket = io("http://localhost:4000", {
+  query: { userId: currentUser._id },
+  withCredentials: true, // Allow cross-origin requests with authentication
+  transports: ["websocket", "polling"],
+});
+
+  useEffect(() => {
+    if (currentUser) {
+      socket.emit("joinChat", { userId: currentUser._id });
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     if (selectedContact) {
-      fetchMessages();
+      dispatch(fetchMessages(selectedContact._id));
       socket.emit("joinChat", { userId: currentUser._id, contactId: selectedContact._id });
     }
-  }, [selectedContact]);
+  }, [selectedContact, dispatch]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    socket.on("connect", () => {
+      console.log("Client connected with socket id:", socket.id);
+    });
+    socket.on("disconnect", () => {
+      console.log("Client disconnected");
+    });
+  
+    return () => {
+      socket.off("connect");
+      socket.off("disconnect");
+    };
+  }, []);
+  
+  useEffect(() => {
+    if (messageEndRef.current && messages) {
+      messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages]);
 
   useEffect(() => {
-    socket.on("receiveMessage", (data) => {
-      setMessages((prevMessages) => [...prevMessages, data]);
+    if (!selectedContact) return;
+    socket.emit("joinChat", { userId: currentUser._id, contactId: selectedContact._id });
+  
+    socket.on("newMessage", (newMessage) => {
+      if (newMessage.sender === selectedContact._id || newMessage.receiver === selectedContact._id) {
+        dispatch(fetchMessages(selectedContact._id));
+      }
     });
-
+  
     return () => {
-      socket.off("receiveMessage");
+      socket.off("newMessage");
     };
-  }, []);
+  }, [dispatch, selectedContact, currentUser]);
 
-  const fetchMessages = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token || !selectedContact) return;
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+    if (!newMessage.trim() || !selectedContact) return;
 
-      const response = await API.get(`/message/get/${selectedContact._id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setMessages(response.data || []);
-    } catch (err) {
-      console.log("Error fetching messages:", err);
-    }
-  };
-
-  const handleSendMessage = async () => {
-    if (newMessage.trim() === "" || !selectedContact) return;
-
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      const messageData = {
-        sender: currentUser._id,
+    dispatch(
+      sendMessage({
+        senderId: currentUser._id,
         receiverId: selectedContact._id,
         text: newMessage,
-      };
+        socket,
+      })
+    );
+    setNewMessage("");
 
-      socket.emit("sendMessage", messageData);
-
-      const response = await API.post("/message/send", messageData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      setMessages([...messages, response.data.newMessage]);
-      setNewMessage("");
-    } catch (err) {
-      console.log("Error sending message:", err);
-    }
   };
 
   if (!selectedContact) {
@@ -105,7 +111,7 @@ const ChatContainer = () => {
           alignItems: "center",
           justifyContent: "space-between",
           borderRadius: "10px",
-          flexShrink: 0 , // Keeps header fixed
+          flexShrink: 0,
         }}
       >
         <Box>
@@ -123,8 +129,8 @@ const ChatContainer = () => {
 
       {/* 🔹 Scrollable Chat Messages */}
       <Box
-        flexGrow={1} //  Allows this section to take remaining space
-        overflow="auto" //  Enables scrolling only here
+        flexGrow={1}
+        overflow="auto"
         p={2}
         bgcolor={colors.bgc[100]}
         borderRadius="10px"
@@ -152,7 +158,7 @@ const ChatContainer = () => {
             </Box>
           );
         })}
-        <div ref={messagesEndRef} />
+        <div ref={messageEndRef} />
       </Box>
 
       {/* 🔹 Fixed Message Input */}
@@ -160,7 +166,7 @@ const ChatContainer = () => {
         display="flex"
         mt={2}
         alignItems="center"
-        flexShrink={0} //  Keeps input box fixed
+        flexShrink={0}
         bgcolor="white"
         p={1}
         borderRadius="10px"
@@ -171,7 +177,6 @@ const ChatContainer = () => {
           placeholder="Type a message..."
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-        //   onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
         />
         <IconButton onClick={handleSendMessage} color="primary" sx={{ ml: 1 }}>
           <SendIcon />

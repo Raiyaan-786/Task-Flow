@@ -1,8 +1,18 @@
+
 import { io } from "socket.io-client";
 
-// Connect to the backend Socket.io server
-const socket = io("http://localhost:4000", {
-  withCredentials: true,
-});
+let socket;
 
-export default socket;
+export const initiateSocket = (userId) => {
+  if (!socket) {
+    socket = io("http://localhost:4000", {
+      query: { userId }, // Pass the userId here
+      withCredentials: true,
+      transports: ["websocket", "polling"],
+    });
+    console.log("Socket initiated:", socket.id);
+  }
+  return socket;
+};
+
+export const getSocket = () => socket;

@@ -30,7 +30,6 @@ const SidebarForChat = () => {
   const [employees, setEmployees] = useState([]);
   const [others, setOthers] = useState([]);
 
-  // Retrieve logged-in user from localStorage
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
   const loggedInUserId = loggedInUser?._id;
 

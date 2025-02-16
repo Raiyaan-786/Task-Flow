@@ -5,32 +5,40 @@ const initialState = {
   user: JSON.parse(localStorage.getItem('user')) || null,  // Load user from localStorage
   token: localStorage.getItem('token') || null,  // Load token from localStorage
   isAuthenticated: !!localStorage.getItem('token'),  // Check if token exists
+  onlineUsers: [],
+  socket: null
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     login: (state, action) => {
-      state.user = action.payload.user;  // user data from action
-      state.token = action.payload.token;  // token from action
+      state.user = action.payload.user;
+      state.token = action.payload.token;
       state.isAuthenticated = true;
-
-      // Store in localStorage
-      localStorage.setItem('token', state.token);
-      localStorage.setItem('user', JSON.stringify(state.user));
+      localStorage.setItem("token", state.token);
+      localStorage.setItem("user", JSON.stringify(state.user));
     },
     logout: (state) => {
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
-
-      // Remove from localStorage
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      if (state.socket) {
+        state.socket.disconnect();
+        state.socket = null;
+      }
+    },
+    setSocket: (state, action) => {
+      state.socket = action.payload;
+    },
+    setOnlineUsers: (state, action) => {
+      state.onlineUsers = action.payload;
     },
   },
 });
 
-export const { login, logout } = authSlice.actions;
+export const { login, logout, setSocket, setOnlineUsers } = authSlice.actions;
 export default authSlice.reducer;
