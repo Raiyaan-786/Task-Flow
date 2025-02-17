@@ -22,6 +22,7 @@ import UsefulLinks from './pages/usefullinks';
 import EditWorkPage from './pages/workmanager/EditWorkPage';
 import UserProfilePage from './pages/user/UserProfilePage';
 import Settings from './pages/user/Settings';
+import Chat from './pages/chat';
 
 
 function App() {
@@ -50,6 +51,7 @@ function App() {
               <Route path='/filemanager' element={<PrivateRoute><FileManager/></PrivateRoute>}/>
               <Route path='/usefullinks' element={<PrivateRoute><UsefulLinks/></PrivateRoute>}/>
               <Route path='/backenddata' element={<PrivateRoute><BackendData/></PrivateRoute>}/>
+              <Route path='/chat' element={<PrivateRoute><Chat/></PrivateRoute>}/>
             </Route>
           </Routes>
         </CssBaseline>

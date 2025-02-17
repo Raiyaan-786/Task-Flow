@@ -6,6 +6,7 @@ const workSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Customer",
       required: true,
+      index: true,
     },
     billingName: {
       type: String,
@@ -39,6 +40,7 @@ const workSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      index: true,
     },
     month: {
       type: String,

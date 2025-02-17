@@ -40,6 +40,7 @@ const DisplayUsers = () => {
     };
     fetchUsers();
   }, []);
+
   const handleDelete = async (userId) => {
     const token = localStorage.getItem('token');
     try {
@@ -54,6 +55,7 @@ const DisplayUsers = () => {
       console.log(err);
     }
   };
+  
   const handleUpdate = (userId) => {
     console.log('Update user with id:', userId);
   };
