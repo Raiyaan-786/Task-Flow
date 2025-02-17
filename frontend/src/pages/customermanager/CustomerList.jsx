@@ -4,7 +4,7 @@ import { Autocomplete, Box, Button, Checkbox, FormControlLabel, Grid2, IconButto
 import { tokens } from "../../theme";
 import API from '../../api/api';
 import CustomToolbar from '../../components/CustomToolbar';
-import { Edit, Visibility } from '@mui/icons-material';
+import { CloseOutlined, Edit, Visibility } from '@mui/icons-material';
 import Header from '../../components/Header';
 
 const CustomerList = () => {
@@ -171,37 +171,90 @@ const CustomerList = () => {
                 slots={{ toolbar: CustomToolbar }}
             />
             {/* View Customer Modal */}
-            <Modal open={openViewModal} onClose={() => setOpenViewModal(false)}
-                sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+
+            <Modal
+                open={openViewModal}
+                onClose={() => setOpenViewModal(false)}
+                sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
             >
-                <Box sx={{ padding: 2, width: 400, margin: 'auto', bgcolor: 'white', borderRadius: 2 }}>
-                    <Typography variant="h6">Customer Details</Typography>
+                <Box sx={{ width: 450, bgcolor: "white", borderRadius: 2, boxShadow: 3 }}>
+                    {/* Header Bar */}
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            bgcolor: colors.teal[300],
+                            color: "white",
+                            p: 1.5,
+                            borderTopLeftRadius: 7,
+                            borderTopRightRadius: 7,
+                        }}
+                    >
+                        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                            Customer Details
+                        </Typography>
+                        <IconButton
+                            onClick={() => setOpenViewModal(false)}
+                            sx={{ color: "white" }}
+                        >
+                            <CloseOutlined />
+                        </IconButton>
+                    </Box>
+
+                    {/* Customer Data Grid */}
                     {selectedCustomer && (
-                        <div>
-                            <p><strong>Name:</strong> {selectedCustomer.customerName}</p>
-                            <p><strong>Code:</strong> {selectedCustomer.customerCode}</p>
-                            <p><strong>Company/Firm Name:</strong> {selectedCustomer.companyName}</p>
-                            <p><strong>Billing Name:</strong> {selectedCustomer.billingName}</p>
-                            <p><strong>Email:</strong> {selectedCustomer.email}</p>
-                            <p><strong>Mobile No:</strong> {selectedCustomer.mobileNo}</p>
-                            <p><strong>Whatsapp No:</strong> {selectedCustomer.whatsappNo}</p>
-                            <p><strong>PAN:</strong> {selectedCustomer.PAN}</p>
-                            <p><strong>Aadhaar No:</strong> {selectedCustomer.AadharNo}</p>
-                            <p><strong>Address:</strong> {selectedCustomer.address}</p>
-                            <p><strong>Contact Person Name:</strong> {selectedCustomer.contactPersonName}</p>
-                            <p><strong>Contact Person Phone:</strong> {selectedCustomer.contactPersonPhone}</p>
-                            {/* <p><strong>Group Name:</strong> {selectedCustomer.groupName}</p> */}
-                        </div>
+                        <Box sx={{ padding: 3 }}>
+                            <Box
+                                sx={{
+                                    display: "grid",
+                                    gridTemplateColumns: "1fr 1fr",
+                                    gap: 2,
+                                }}
+                            >
+                                {/* Left Column */}
+                                <Box>
+                                    <Typography sx={{ fontWeight: "bold" }}>Name</Typography>
+                                    <Typography sx={{ fontWeight: "bold" }}>Code</Typography>
+                                    <Typography sx={{ fontWeight: "bold" }}>Mobile No</Typography>
+                                    <Typography sx={{ fontWeight: "bold" }}>WhatsApp No</Typography>
+                                    <Typography sx={{ fontWeight: "bold" }}>Email</Typography>
+                                    <Typography sx={{ fontWeight: "bold" }}>PAN</Typography>
+                                    <Typography sx={{ fontWeight: "bold" }}>Aadhaar No</Typography>
+                                    <Typography sx={{ fontWeight: "bold" }}>Address</Typography>
+                                    <Typography sx={{ fontWeight: "bold" }}>Company/Firm Name</Typography>
+                                    <Typography sx={{ fontWeight: "bold" }}>Billing Name</Typography>
+                                    <Typography sx={{ fontWeight: "bold" }}>Contact Person Name</Typography>
+                                    <Typography sx={{ fontWeight: "bold" }}>Contact Person Phone</Typography>
+                                </Box>
+                                {/* Right Column */}
+                                <Box>
+                                    <Typography>{selectedCustomer.customerName || "No Data"}</Typography>
+                                    <Typography>{selectedCustomer.customerCode || "No Data"}</Typography>
+                                    <Typography>{selectedCustomer.mobileNo || "No Data"}</Typography>
+                                    <Typography>{selectedCustomer.whatsappNo || "No Data"}</Typography>
+                                    <Typography>{selectedCustomer.email || "No Data"}</Typography>
+                                    <Typography>{selectedCustomer.PAN || "No Data"}</Typography>
+                                    <Typography>{selectedCustomer.AadharNo || "No Data"}</Typography>
+                                    <Typography>{selectedCustomer.address || "No Data"}</Typography>
+                                    <Typography>{selectedCustomer.companyName || "No Data"}</Typography>
+                                    <Typography>{selectedCustomer.billingName || "No Data"}</Typography>
+                                    <Typography>{selectedCustomer.contactPersonName || "No Data"}</Typography>
+                                    <Typography>{selectedCustomer.contactPersonPhone || "No Data"}</Typography>
+                                </Box>
+                            </Box>
+                        </Box>
                     )}
-                    <Button onClick={() => setOpenViewModal(false)} variant="contained" sx={{ bgcolor: colors.teal[300] }}>Close</Button>
+
                 </Box>
             </Modal>
+
             {/* Edit Customer Modal */}
             <Modal open={openEditModal} onClose={() => setOpenEditModal(false)}
-                sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
             >
-                <Box sx={{ padding: 2, width: "600px", height: '500px', overflow: 'auto', margin: 'auto', bgcolor: 'white', borderRadius: 2 ,bgcolor:colors.bgc[100]  }}>
-                    <Header  title={'Edit Customer'} />
+                <Box sx={{ padding: 2, width: "600px", height: '500px', overflow: 'auto', margin: 'auto', bgcolor: 'white', borderRadius: 2, bgcolor: colors.bgc[100] }}>
+                    <Header title={'Edit Customer'} />
                     {editCustomerData && (
                         <Grid2 container spacing={2} gap={2} padding={"10px 20px"} color={colors.grey[200]}>
                             <Grid2 size={6} display={'flex'} alignItems={'center'}>
@@ -376,8 +429,8 @@ const CustomerList = () => {
                                 />
                             </Grid2>
 
-                            <Button onClick={handleSaveEdit} variant="contained" sx={{bgcolor:colors.teal[300], marginTop: 2 }} >Save</Button>
-                            <Button onClick={() => setOpenEditModal(false)} variant="outlined"  sx={{color:colors.grey[300], marginTop: 2 }}>Cancel</Button>
+                            <Button onClick={handleSaveEdit} variant="contained" sx={{ bgcolor: colors.teal[300], marginTop: 2 }} >Save</Button>
+                            <Button onClick={() => setOpenEditModal(false)} variant="outlined" sx={{ color: colors.grey[300], marginTop: 2 }}>Cancel</Button>
                         </Grid2>
                     )}
                 </Box>

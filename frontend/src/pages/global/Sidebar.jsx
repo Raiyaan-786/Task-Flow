@@ -37,7 +37,7 @@ const Sidebar = ({isCollapsed}) => {
     }
   }, [user]);
 
-  console.log(user)
+  // console.log(user)
   return (
     <Box
       height={'100vh'}

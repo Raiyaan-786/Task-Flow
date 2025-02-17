@@ -1,17 +1,43 @@
 import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Box, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, IconButton, Tooltip, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import CustomToolbar from "../../components/CustomToolbar";
-import { CheckCircle, Delete } from "@mui/icons-material";
+import { CheckCircle, Delete, Edit, NoAccounts, Visibility } from "@mui/icons-material";
 import API from "../../api/api";
 
 const ConsultantList = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [consultants, setConsultants] = useState([]); 
+  const [consultants, setConsultants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const [openViewModal, setOpenViewModal] = useState(false); // To open the view modal
+  const [selectedEmployee, setSelectedEmployee] = useState(null); // For view/edit customer details
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [editEmployeeData, setEditEmployeeData] = useState(null);
+
+  const handleView = (employeeId) => {
+    const employee = employees.find(c => c._id === employeeId);
+    setSelectedEmployee(employee);
+    setOpenViewModal(true); // Open view modal
+  };
+
+  const handleEditClick = (employeeId) => {
+    const employee = employees.find(c => c._id === employeeId);
+    setEditEmployeeData(employee);
+    setOpenEditModal(true); // Open edit modal
+  };
+  const handleSaveEdit = async () => {
+    try {
+      await API.put(`/users/${editEmployeeData._id}`, editEmployeeData);
+      setEmployees(employees.map(c => (c._id === editEmployeeData._id ? editEmployeeData : c)));
+      setOpenEditModal(false); // Close edit modal
+    } catch (err) {
+      setError('Failed to save customer details');
+    }
+  };
 
   useEffect(() => {
     const fetchConsultants = async () => {
@@ -51,12 +77,12 @@ const ConsultantList = () => {
 
   const columns = [
     { field: "id", headerName: "S.No", flex: 0.5, headerAlign: "center", align: "center" },
-    { field: "consultantName", headerName: "Name", flex: 1.5},
-    { field: "mobile", headerName: "Mobile", flex: 1},
-    { field: "email", headerName: "Email", flex: 2},
-    { field: "address", headerName: "Address", flex: 2},
-    { field: "bankAccountNumber", headerName: "Account No", flex: 1},
-    { field: "bankIFSCCode", headerName: "IFSC Code", flex: 1},
+    { field: "consultantName", headerName: "Name", flex: 1.5 },
+    { field: "mobile", headerName: "Mobile", flex: 1 },
+    { field: "email", headerName: "Email", flex: 2 },
+    { field: "address", headerName: "Address", flex: 2 },
+    { field: "bankAccountNumber", headerName: "Account No", flex: 1 },
+    { field: "bankIFSCCode", headerName: "IFSC Code", flex: 1 },
     {
       field: "actions",
       headerName: "Actions",
@@ -64,13 +90,25 @@ const ConsultantList = () => {
       headerAlign: "center",
       align: "center",
       renderCell: (params) => (
-        <Box display="flex" justifyContent="center">
-          <IconButton onClick={() => handleApprove(params.row.id)} color="primary">
-            <CheckCircle />
-          </IconButton>
-          <IconButton onClick={() => handleDelete(params.row.id)} color="error">
-            <Delete />
-          </IconButton>
+        <Box display="flex" justifyContent="center" alignItems={'center'} >
+          <Tooltip title="View">
+            <IconButton aria-label="view" onClick={() => handleView(row._id)}>
+              <Visibility />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Edit">
+            <IconButton aria-label="edit" onClick={() => handleEditClick(row._id)}>
+              <Edit />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Mute">
+            <IconButton onClick={() => handleDelete(params.row.id)} >
+              <NoAccounts />
+            </IconButton>
+          </Tooltip>
+
         </Box>
       ),
     },
@@ -89,9 +127,9 @@ const ConsultantList = () => {
       }}
     >
       <DataGrid
-       loading={loading}
-       slotProps={{ loadingOverlay: { variant: 'skeleton', noRowsVariant: 'skeleton' } }}
-       disableColumnMenu slots={{ toolbar: CustomToolbar }} rows={consultants} columns={columns} />
+        loading={loading}
+        slotProps={{ loadingOverlay: { variant: 'skeleton', noRowsVariant: 'skeleton' } }}
+        disableColumnMenu slots={{ toolbar: CustomToolbar }} rows={consultants} columns={columns} />
     </Box>
   );
 };
