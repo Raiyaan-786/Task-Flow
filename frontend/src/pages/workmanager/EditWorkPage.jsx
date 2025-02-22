@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { TextField, Button, Box, Grid2, Typography } from '@mui/material';
+import { TextField, Button, Box, Grid2, Typography, FormControl, Select, MenuItem } from '@mui/material';
 import API from '../../api/api';
 import { useTheme } from '@emotion/react';
 import { tokens } from '../../theme';
@@ -298,16 +298,23 @@ const EditWorkPage = () => {
             />
           </Grid2>
           <Grid2 size={4}>
-            <TextField
-              label="Update Payment Status"
-              value={work.paymentStatus || ''}
-              variant="filled"
-              onChange={handleInputChange}
-              name="paymentStatus"
-              fullWidth
-
-            />
+            <FormControl fullWidth variant='filled'>
+              <Select
+                inputProps={{ 'aria-label': 'Without label' }}
+                displayEmpty
+                name="paymentStatus" // Add name to track the field
+                value={work.paymentStatus || ''}
+                onChange={(e) => handleInputChange({ target: { name: "paymentStatus", value: e.target.value } })}
+              >
+                {["Pending", "Received", "Partly Received", "Invoice Generated", "Advance Payment"].map((status) => (
+                  <MenuItem key={status} value={status}>
+                    {status}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid2>
+
           <Grid2 size={12}>
             <TextField
               label="Remark"

@@ -16,6 +16,7 @@ import HoldWorks from './individualworks/HoldWorks';
 import CancelledWorks from './individualworks/CancelledWorks';
 import API from '../../api/api';
 import MutedWorks from './individualworks/MutedWorks';
+import GroupDashboard from './GroupDashboard';
 
 
 const RoundedTabs = styled(Tabs)({
@@ -67,7 +68,7 @@ const Dashboard = () => {
             try {
                 const response = await  API.get('/total-works', { headers: { Authorization: `Bearer ${token}` } }); // Replace with your API endpoint
                 setWorksData(response.data); // Assuming response.data contains the array of works\
-                console.log(response.data)
+               
             } catch (error) {
                 console.error("Error fetching works data:", error);
             }
@@ -207,6 +208,7 @@ const Dashboard = () => {
                         <RoundedTab label="Employee Dashboard" />
                         <RoundedTab label="Work Dashboard" />
                         <RoundedTab label="Customer Dashboard" />
+                        <RoundedTab label="Customer Group Dashboard" />
                     </RoundedTabs>
                     <Divider sx={{ borderColor: colors.bgc[100] }} />
                     {/* Render All Tab Panels Once */}
@@ -226,6 +228,9 @@ const Dashboard = () => {
 
                         <Box display={selectedTab === 3 ? 'block' : 'none'} flexGrow={1}>
                             <CustomerDashboard />
+                        </Box>
+                        <Box display={selectedTab === 4 ? 'block' : 'none'} flexGrow={1}>
+                            <GroupDashboard />
                         </Box>
                     </Box>
                 </Box>

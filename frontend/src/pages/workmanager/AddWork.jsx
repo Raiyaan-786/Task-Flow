@@ -197,6 +197,7 @@ const AddWork = () => {
                         placeholder="SELECT CUSTOMER"
                         error={touched.customer && !!errors.customer}
                         helperText={touched.customer && errors.customer}
+                        
                       />
                     )}
                     fullWidth
@@ -229,6 +230,7 @@ const AddWork = () => {
                     name="billingName"
                     error={touched.billingName && !!errors.billingName}
                     helperText={touched.billingName && errors.billingName}
+                    disabled
                   />
                 </Grid2>
 
@@ -248,6 +250,7 @@ const AddWork = () => {
                     name="email"
                     error={touched.email && !!errors.email}
                     helperText={touched.email && errors.email}
+                    disabled
                   />
                 </Grid2>
 
@@ -276,6 +279,7 @@ const AddWork = () => {
                         MozAppearance: 'textfield'
                       },
                     }}
+                    disabled
                   />
                 </Grid2>
 
@@ -303,6 +307,7 @@ const AddWork = () => {
                         maxLength: 10, // Setting the maximum number of characters to 10
                       },
                     }}
+                    disabled
                   />
                 </Grid2>
 
@@ -324,7 +329,7 @@ const AddWork = () => {
                     name="address"
                     error={touched.address && !!errors.address}
                     helperText={touched.address && errors.address}
-
+                    disabled
                   />
                 </Grid2>
 
