@@ -4,7 +4,7 @@ import { Box, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
-import { AssessmentOutlined, BadgeOutlined, DashboardOutlined, FolderOpenOutlined, GroupOutlined, LinkOutlined, ReceiptLongOutlined, SupervisorAccountOutlined, WorkOutlineOutlined } from "@mui/icons-material";
+import { AssessmentOutlined, BadgeOutlined, ChatBubbleOutline, DashboardOutlined, FolderOpenOutlined, GroupOutlined, LinkOutlined, ReceiptLongOutlined, SupervisorAccountOutlined, WhatsApp, WorkOutlineOutlined } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
@@ -157,7 +157,7 @@ const Sidebar = ({isCollapsed}) => {
               <Item
               title="Chat "
               to="/chat"
-              icon={<BadgeOutlined/>}
+              icon={<ChatBubbleOutline/>}
               selected={selected}
               setSelected={setSelected}
             />
