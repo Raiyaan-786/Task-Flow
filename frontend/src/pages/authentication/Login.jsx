@@ -1,11 +1,13 @@
-import { Avatar, Box, Button, Grid2, Paper, TextField, Typography, Link, useTheme } from '@mui/material';
+import { Box, Button, TextField, Typography, Link, useTheme } from '@mui/material';
 import React, { useState } from 'react';
-import { Lock } from '@mui/icons-material';
 import API from '../../api/api';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { login } from '../../features/authSlice';
 import { tokens } from '../../theme';
+import Preloader from '../../components/Preloader';
+
+
 
 const Login = () => {
   const theme = useTheme();
@@ -15,16 +17,16 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(""); // Error message state
   const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [showLoadingScreen, setShowLoadingScreen] = useState(false); // Loading screen state
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const paperStyle = { padding: '40px 30px', width: 350, margin: '50px auto' };
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setErrorMessage(""); // Clear any previous error messages
-    setIsLoading(true); // Set loading to true
+    setErrorMessage("");
+    setIsLoading(true); 
 
     try {
       const { data } = await API.post('/auth/login', {
@@ -33,23 +35,49 @@ const Login = () => {
       });
 
       const { token, user } = data;
-
       dispatch(login({ user, token }));
-      navigate('/');
+      setShowLoadingScreen(true);
+      setTimeout(() => {
+        navigate('/');
+      }, 5000); 
     } catch (err) {
       setErrorMessage('Login failed. Please check your credentials.');
     } finally {
-      setIsLoading(false); 
+      setIsLoading(false);
     }
   };
 
+  if (showLoadingScreen) {
+    return <Preloader/>;
+  }
+  
+
   return (
-    <Box height={"100vh"} width={'100vw'} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <Paper elevation={10} style={paperStyle}>
-        <Grid2 align='center' sx={{ paddingBottom: "20px", height: '190px' }}>
-          <Avatar sx={{ height: '150px', width: '150px' }} src='/logoicon2.png' />
-        </Grid2>
+    <Box height={"100vh"} width={'100vw'}
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundImage: `url('/login_background5.svg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
+      <Box sx={{
+        padding: '40px 40px',
+        width: 400,
+        margin: '50px auto',
+        borderRadius: 5,
+        background: 'rgba(255, 255, 255, 0.1)', // Semi-transparent background
+        backdropFilter: 'blur(10px)', // Glassmorphic blur effect
+        border: '1px solid rgba(255, 255, 255, 0.3)', // Subtle border
+        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)', // Soft shadow for depth
+      }}>
+
+        <Typography variant='h1' fontWeight={500} color={'white'}>Login to your account</Typography>
+        <br />
         <form onSubmit={handleLogin} >
+          <Typography color={'white'} variant="body2" fontWeight={300} gutterBottom>Email</Typography>
           <TextField
             size='small'
             fullWidth
@@ -58,11 +86,12 @@ const Login = () => {
             type='email'
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder='Email'
+            placeholder='Enter your email'
             required
           />
           <br />
           <br />
+          <Typography color={'white'} variant="body2" fontWeight={300} gutterBottom>Password</Typography>
           <TextField
             size='small'
             fullWidth
@@ -71,7 +100,7 @@ const Login = () => {
             type='password'
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder='Password'
+            placeholder='Enter your password'
             required
           />
           <br />
@@ -82,17 +111,17 @@ const Login = () => {
               {errorMessage}
             </Typography>
           )}
-          <Button fullWidth variant='contained' type="submit" disabled={isLoading} sx={{ bgcolor: colors.teal[500] }}>
+          <Button color='black' fullWidth variant='contained' type="submit" disabled={isLoading} sx={{ bgcolor: 'white', color: 'black' }}>
             {isLoading ? "Logging in..." : "LOGIN"}
           </Button>
           <br />
           <br />
           <Box display={'flex'} alignItems={'center'} justifyContent={'center'}>
-            <Typography variant="caption">Already have an account? <Link href="/signup" underline="none" color={colors.teal[500]}>Signup</Link>
+            <Typography variant="caption" color='#e6dfdf' >Don't Have An Account? <Link href="/Sign Up" underline="none" color={"white"}>Signup</Link>
             </Typography>
           </Box>
         </form>
-      </Paper>
+      </Box>
     </Box>
   );
 };
