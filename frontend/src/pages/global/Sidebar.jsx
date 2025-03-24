@@ -4,7 +4,7 @@ import { Box, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
-import { AssessmentOutlined, BadgeOutlined, ChatBubbleOutline, DashboardOutlined, FolderOpenOutlined, GroupOutlined, LinkOutlined, ReceiptLongOutlined, SupervisorAccountOutlined, WhatsApp, WorkOutlineOutlined } from "@mui/icons-material";
+import { AssessmentOutlined, BadgeOutlined, ChatBubbleOutline, DashboardOutlined, FolderOpenOutlined, GroupOutlined, LinkOutlined, Receipt, ReceiptLongOutlined, ReceiptOutlined, SupervisorAccountOutlined, WhatsApp, WorkOutlineOutlined } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
@@ -169,13 +169,19 @@ const Sidebar = ({isCollapsed}) => {
             Finance
             </Typography>
             <Item
+              title="Payroll"
+              to="/payroll"
+              icon={<ReceiptOutlined/>}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
               title="Invoices"
               to="/invoices"
               icon={< ReceiptLongOutlined/>}
               selected={selected}
               setSelected={setSelected}
             />
-
             <Item
               title="Report"
               to="/report"

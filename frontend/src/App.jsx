@@ -23,6 +23,8 @@ import EditWorkPage from './pages/workmanager/EditWorkPage';
 import UserProfilePage from './pages/user/UserProfilePage';
 import Settings from './pages/user/Settings';
 import Chat from './pages/chat';
+import Payroll from './pages/payroll';
+
 
 
 function App() {
@@ -52,6 +54,7 @@ function App() {
               <Route path='/usefullinks' element={<PrivateRoute><UsefulLinks/></PrivateRoute>}/>
               <Route path='/backenddata' element={<PrivateRoute><BackendData/></PrivateRoute>}/>
               <Route path='/chat' element={<PrivateRoute><Chat/></PrivateRoute>}/>
+              <Route path='/payroll' element={<PrivateRoute><Payroll/></PrivateRoute>}/>
             </Route>
           </Routes>
         </CssBaseline>

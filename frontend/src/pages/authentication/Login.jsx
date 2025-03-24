@@ -26,7 +26,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setErrorMessage("");
-    setIsLoading(true); 
+    setIsLoading(true);
 
     try {
       const { data } = await API.post('/auth/login', {
@@ -39,7 +39,7 @@ const Login = () => {
       setShowLoadingScreen(true);
       setTimeout(() => {
         navigate('/');
-      }, 5000); 
+      }, 5000);
     } catch (err) {
       setErrorMessage('Login failed. Please check your credentials.');
     } finally {
@@ -48,9 +48,9 @@ const Login = () => {
   };
 
   if (showLoadingScreen) {
-    return <Preloader/>;
+    return <Preloader />;
   }
-  
+
 
   return (
     <Box height={"100vh"} width={'100vw'}
@@ -88,6 +88,23 @@ const Login = () => {
             onChange={(e) => setEmail(e.target.value)}
             placeholder='Enter your email'
             required
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "25px", // Rounded corners
+                backgroundColor: "transparent", // Transparent background
+                border: "1px solid rgba(255, 255, 255, 0.5)", // Light border
+                color: "white", // White text color
+              },
+              "& .MuiInputBase-input": {
+                color: "white", // White input text
+              },
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "rgba(255, 255, 255, 0.5)", // Border color
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "rgba(255, 255, 255, 0.8)", // Border color on hover
+              },
+            }}
           />
           <br />
           <br />
@@ -102,6 +119,23 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             placeholder='Enter your password'
             required
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "25px", // Rounded corners
+                backgroundColor: "transparent", // Transparent background
+                border: "1px solid rgba(255, 255, 255, 0.5)", // Light border
+                color: "white", // White text color
+              },
+              "& .MuiInputBase-input": {
+                color: "white", // White input text
+              },
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "rgba(255, 255, 255, 0.5)", // Border color
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "rgba(255, 255, 255, 0.8)", // Border color on hover
+              },
+            }}
           />
           <br />
           <br />
@@ -111,7 +145,23 @@ const Login = () => {
               {errorMessage}
             </Typography>
           )}
-          <Button color='black' fullWidth variant='contained' type="submit" disabled={isLoading} sx={{ bgcolor: 'white', color: 'black' }}>
+          <Button
+            color='black'
+            fullWidth
+            variant='contained'
+            type="submit"
+            disabled={isLoading}
+            sx={{
+              borderRadius: '25px',
+              bgcolor: 'white',
+              color: 'black',
+              boxShadow: 'none', // Removes the shadow
+              '&:hover': {
+                bgcolor: '#f0f0f0', // Optional: Change hover color
+                boxShadow: 'none' // Ensure no shadow on hover
+              }
+            }}
+          >
             {isLoading ? "Logging in..." : "LOGIN"}
           </Button>
           <br />
