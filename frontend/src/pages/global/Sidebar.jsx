@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
-import { Box, Typography, useTheme } from "@mui/material";
+import {  Box, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
-import { AssessmentOutlined, BadgeOutlined, ChatBubbleOutline, DashboardOutlined, FolderOpenOutlined, GroupOutlined, LinkOutlined, Receipt, ReceiptLongOutlined, ReceiptOutlined, SupervisorAccountOutlined, WhatsApp, WorkOutlineOutlined } from "@mui/icons-material";
+import { AssessmentOutlined,  ChatBubble,Badge, ChatBubbleOutline, DashboardOutlined, FolderOpenOutlined, Group, GroupOutlined, LinkOutlined, Receipt, ReceiptLongOutlined, ReceiptOutlined, SupervisorAccount, SupervisorAccountOutlined, WhatsApp, Work, WorkOutlineOutlined, Dashboard, ReceiptLong, Assessment, FolderOpen, Folder } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
@@ -51,6 +51,12 @@ const Sidebar = ({isCollapsed}) => {
         "& .pro-inner-item": {
           padding: "5px 35px 5px 20px !important",
         },
+        "& .pro-icon": {
+          color: `${colors.pink[600]} !important`,
+        },
+        // "& .pro-icon": {
+        //   color: "#cb3cff !important",
+        // },
         "& .pro-inner-item:hover": {
           color: "#cb3cff !important",
         },
@@ -115,91 +121,94 @@ const Sidebar = ({isCollapsed}) => {
             <Item
               title="Dashboard"
               to="/"
-              icon={<DashboardOutlined/>}
+              icon={<Dashboard/>}
               selected={selected}
               setSelected={setSelected}
             />
             <Typography
-              variant="h6"
+              variant="body2"
+              fontWeight={500}
               color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 15px" }}
+              sx={{ m: "15px 0 5px 20px" }}
             >
               Manage
             </Typography>
             <Item
               title="Work"
               to="/workmanager"
-              icon={<WorkOutlineOutlined/>}
+              icon={<Work/>}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Customer"
               to="/customermanager"
-              icon={<GroupOutlined/>}
+              icon={<Group/>}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Consultant"
               to="/consultantmanager"
-              icon={<SupervisorAccountOutlined/>}
+              icon={<SupervisorAccount/>}
               selected={selected}
               setSelected={setSelected}
             />
               <Item
               title="HR Section"
               to="/employee"
-              icon={<BadgeOutlined/>}
+              icon={<Badge/>}
               selected={selected}
               setSelected={setSelected}
             />
               <Item
               title="Chat "
               to="/chat"
-              icon={<ChatBubbleOutline/>}
+              icon={<ChatBubble/>}
               selected={selected}
               setSelected={setSelected}
             />
                <Typography
-              variant="h6"
+              variant="body2"
+              fontWeight={500}
               color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 15px" }}
+              sx={{ m: "15px 0 5px 20px" }}
             >
             Finance
             </Typography>
             <Item
               title="Payroll"
               to="/payroll"
-              icon={<ReceiptOutlined/>}
+              icon={<Receipt/>}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Invoices"
               to="/invoices"
-              icon={< ReceiptLongOutlined/>}
+              icon={< ReceiptLong/>}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Report"
               to="/report"
-              icon={<AssessmentOutlined/>}
+              icon={<Assessment/>}
               selected={selected}
               setSelected={setSelected}
             />
             <Typography
-              variant="h6"
+              variant="body2"
+              fontWeight={500}
               color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 15px" }}
+              sx={{ m: "15px 0 5px 20px" }}
             >
             Files
             </Typography>
             <Item
               title="File Manager"
               to="/filemanager"
-              icon={<FolderOpenOutlined/>}
+              icon={<Folder/>}
               selected={selected}
               setSelected={setSelected}
             />
