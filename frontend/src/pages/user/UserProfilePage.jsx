@@ -60,7 +60,7 @@ const UserProfilePage = () => {
     }
 
     try {
-      await API.put(`/users/${user._id}`, formData, {
+      await API.put(`/auth/update/${user._id}`, formData, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',  // Ensure the content type is set to multipart/form-data

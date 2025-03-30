@@ -292,17 +292,14 @@ const updateUserImage = async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ message: "No image file provided" });
     }
-
     const updatedUser = await User.findByIdAndUpdate(
       id,
       { image: req.file.buffer },
       { new: true }
     );
-
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
-
     res.json({ message: "User image updated successfully", user: updatedUser });
   } catch (error) {
     res.status(500).json({ message: "Error updating user image", error: error.message });
