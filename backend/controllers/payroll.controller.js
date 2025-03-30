@@ -47,18 +47,11 @@ const createPayroll = async (req, res) => {
 };
 
 const getPayroll = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const payroll = await Payroll.findById(id);
-
-    if (!payroll) {
-      return res.status(404).json({ error: "Payroll record not found" });
+    try {
+      const payrolls = await Payroll.find();
+      res.status(200).json({payrolls});
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
-
-    res.status(200).json(payroll);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
 };
-
 export { createPayroll ,getPayroll};
