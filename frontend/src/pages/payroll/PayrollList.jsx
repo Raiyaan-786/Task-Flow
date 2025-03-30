@@ -4,7 +4,7 @@ import { Box, IconButton, Tooltip, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import { mockDataInvoiceList, mockDataPayrollList } from '../../data/mockData'; // Importing the mock data
 import CustomToolbar from '../../components/CustomToolbar';
-import { CurrencyRupeeRounded, Visibility, VisibilityOutlined } from '@mui/icons-material';
+import { CurrencyRupeeRounded, RequestQuoteRounded, Visibility, VisibilityOutlined } from '@mui/icons-material';
 
 const PayrollList = () => {
     const theme = useTheme();
@@ -89,13 +89,18 @@ const PayrollList = () => {
                     }}
                 >
                     <Tooltip title="View">
-                        <IconButton size='small' aria-label="view" onClick={() => handleView(row._id)}>
+                        <IconButton size='small'  aria-label="view" onClick={() => handleView(row._id)}>
                             <Visibility />
                         </IconButton>
                     </Tooltip>
                     <Tooltip title="Pay">
-                        <IconButton size='small' sx={{bgcolor:colors.greenAccent[500],color:'white'}} aria-label="pay" onClick={() => handleEditClick(row._id)}>
+                        <IconButton size='small' sx={{color:colors.greenAccent[400]}} aria-label="pay" onClick={() => handleEditClick(row._id)}>
                             <CurrencyRupeeRounded />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Payslip">
+                        <IconButton size='small' sx={{color:colors.greenAccent[400]}} aria-label="payslip" onClick={() => handleEditClick(row._id)}>
+                            <RequestQuoteRounded />
                         </IconButton>
                     </Tooltip>
                 </Box>

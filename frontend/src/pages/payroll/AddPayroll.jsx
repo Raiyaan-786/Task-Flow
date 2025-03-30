@@ -56,18 +56,24 @@ const AddPayroll = () => {
                 initialValues={{
                     employees: '',
                     basicSalary: '',
-                    deductions: '',
+                    HRA: '',
+                    TA: '',
                     bonuses: '',
+                    canteenDeductions:'',
+                    deductions: '',
                     netPay: '',
                     status: '',
                 }}
                 validationSchema={yup.object().shape({
                     employees: yup.string().required("Employees Name is required"),
                     basicSalary: yup.string().required("Basic salary is required"),
-                    deductions: yup.string().required("deductions is required"),
-                    bonuses: yup.string().required("bonuses is required"),
+                    HRA: yup.string(),
+                    TA: yup.string(),
+                    bonuses: yup.string(),
+                    canteenDeductions: yup.string(),
+                    deductions: yup.string(),
                     netPay: yup.string().required("Net pay is required"),
-                    status: yup.string().required("status is required"),
+                   
                 })}
                 onSubmit={handleFormSubmit}
             >
@@ -137,6 +143,114 @@ const AddPayroll = () => {
                                         }}
                                     />
                                 </Grid2>
+                                {/* HOUSE RENT ALLOWANCE */}
+                                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                                    <label>HOUSE RENT ALLOWANCE</label>
+                                </Grid2>
+                                <Grid2 size={6}>
+                                    <TextField
+                                        placeholder='ENTER HOUSE RENT ALLOWANCE'
+                                        size="small"
+                                        fullWidth
+                                        variant="filled"
+                                        onBlur={handleBlur}
+                                        onChange={handleChange}
+                                        value={values.HRA}
+                                        name="HRA"
+                                        error={!!touched.HRA && !!errors.HRA}
+                                        helperText={touched.HRA && errors.HRA}
+                                        type="number"
+                                        sx={{
+                                            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                                                display: 'none'
+                                            },
+                                            '& input[type=number]': {
+                                                MozAppearance: 'textfield'
+                                            },
+                                        }}
+                                    />
+                                </Grid2>
+                                {/* TRANSPORT ALLOWANCE */}
+                                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                                    <label>TRANSPORT ALLOWANCE</label>
+                                </Grid2>
+                                <Grid2 size={6}>
+                                    <TextField
+                                        placeholder='ENTER TRANSPORT ALLOWANCE'
+                                        size="small"
+                                        fullWidth
+                                        variant="filled"
+                                        onBlur={handleBlur}
+                                        onChange={handleChange}
+                                        value={values.TA}
+                                        name="TA"
+                                        error={!!touched.TA && !!errors.TA}
+                                        helperText={touched.TA && errors.TA}
+                                        type="number"
+                                        sx={{
+                                            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                                                display: 'none'
+                                            },
+                                            '& input[type=number]': {
+                                                MozAppearance: 'textfield'
+                                            },
+                                        }}
+                                    />
+                                </Grid2>
+                                 {/* BONUSES */}
+                                 <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                                    <label>BONUS</label>
+                                </Grid2>
+                                <Grid2 size={6}>
+                                    <TextField
+                                        placeholder='ENTER BONUS'
+                                        size="small"
+                                        fullWidth
+                                        variant="filled"
+                                        onBlur={handleBlur}
+                                        onChange={handleChange}
+                                        value={values.bonuses}
+                                        name="bonuses"
+                                        error={!!touched.bonuses && !!errors.bonuses}
+                                        helperText={touched.bonuses && errors.bonuses}
+                                        type="number"
+                                        sx={{
+                                            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                                                display: 'none'
+                                            },
+                                            '& input[type=number]': {
+                                                MozAppearance: 'textfield'
+                                            },
+                                        }}
+                                    />
+                                </Grid2>
+                                {/* CANTEEN DEDUCTIONS */}
+                                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                                    <label>CANTEEN DEDUCTIONS</label>
+                                </Grid2>
+                                <Grid2 size={6}>
+                                    <TextField
+                                        placeholder='ENTER CANTEEN DEDUCTIONS'
+                                        size="small"
+                                        fullWidth
+                                        variant="filled"
+                                        onBlur={handleBlur}
+                                        onChange={handleChange}
+                                        value={values.canteenDeductions}
+                                        name="canteenDeductions"
+                                        error={!!touched.canteenDeductions && !!errors.canteenDeductions}
+                                        helperText={touched.canteenDeductions && errors.canteenDeductions}
+                                        type="number"
+                                        sx={{
+                                            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                                                display: 'none'
+                                            },
+                                            '& input[type=number]': {
+                                                MozAppearance: 'textfield'
+                                            },
+                                        }}
+                                    />
+                                </Grid2>
                                 {/* DEDUCTIONS */}
                                 <Grid2 size={6} display={'flex'} alignItems={'center'}>
                                     <label>DEDUCTIONS</label>
@@ -164,33 +278,7 @@ const AddPayroll = () => {
                                         }}
                                     />
                                 </Grid2>
-                                {/* BONUSES */}
-                                <Grid2 size={6} display={'flex'} alignItems={'center'}>
-                                    <label>BONUSES</label>
-                                </Grid2>
-                                <Grid2 size={6}>
-                                    <TextField
-                                        placeholder='BONUSES'
-                                        size="small"
-                                        fullWidth
-                                        variant="filled"
-                                        onBlur={handleBlur}
-                                        onChange={handleChange}
-                                        value={values.bonuses}
-                                        name="bonuses"
-                                        error={!!touched.bonuses && !!errors.bonuses}
-                                        helperText={touched.bonuses && errors.bonuses}
-                                        type="number"
-                                        sx={{
-                                            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
-                                                display: 'none'
-                                            },
-                                            '& input[type=number]': {
-                                                MozAppearance: 'textfield'
-                                            },
-                                        }}
-                                    />
-                                </Grid2>
+                               
                                 {/* NET PAY */}
                                 <Grid2 size={6} display={'flex'} alignItems={'center'}>
                                     <label>NET PAY</label>
@@ -218,31 +306,7 @@ const AddPayroll = () => {
                                         }}
                                     />
                                 </Grid2>
-                                {/* STATUS */}
-                                <Grid2 size={6} display={'flex'} alignItems={'center'}>
-                                    <label>STATUS</label>
-                                </Grid2>
-                                <Grid2 size={6}>
-                                    <FormControl fullWidth variant="outlined" size="small">
-                                        <Select
-                                            inputProps={{ 'aria-label': 'Without label' }}
-                                            sx={{ bgcolor: colors.teal[300]}}
-                                            displayEmpty
-                                            name="status"
-                                            value={values.status}
-                                            onChange={handleChange}
-                                            error={!!touched.status && !!errors.status}
-                                        >
-                                            <MenuItem value="Pending">Pending</MenuItem>
-                                            <MenuItem value="Paid">Paid</MenuItem>
-                                        </Select>
-                                        {touched.status && errors.status && (
-                                            <FormHelperText error>{errors.status}</FormHelperText>
-                                        )}
-                                    </FormControl>
-                                </Grid2>
-
-
+                               
                                 
                                 {/* submit button */}
                                 <Grid2 size={2} mt={2}>

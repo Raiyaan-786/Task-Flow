@@ -5,9 +5,9 @@ import { useTheme } from '@emotion/react';
 import { tokens } from '../../theme';
 import AddPayroll from './AddPayroll';
 import PayrollList from './PayrollList';
-import Payslips from './Payslips';
 import Summary from './Summary';
 import PayrollCalculator from './PayrollCalculator';
+import TDSCalculator from './TDSCalculator';
 
 const RoundedTabs = styled(Tabs)({
     padding: '10px',
@@ -49,11 +49,10 @@ const Payroll = () => {
             case 1:
                 return <PayrollList/>;
             case 2:
-                return <Payslips/>;
-            case 3:
                 return <Summary/>;
-            case 4:
-                return <PayrollCalculator/>;
+            case 3:
+                // return <PayrollCalculator/>;
+                return <TDSCalculator/>;
             default:
                 return null;
         }
@@ -74,9 +73,8 @@ const Payroll = () => {
                 <RoundedTabs value={selectedTab} onChange={handleTabChange}>
                     <RoundedTab label="Add Payroll Record" />
                     <RoundedTab label="View Employee Payroll" />
-                    <RoundedTab label="Payslips" />
                     <RoundedTab label="Summary" />
-                    <RoundedTab label="Calculator" />
+                    <RoundedTab label="TDS Calculator"/>
                 </RoundedTabs>
                 <Divider sx={{ borderColor: colors.bgc[100] }} />
                 {/* Render only the selected tab content */}

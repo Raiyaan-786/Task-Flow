@@ -52,16 +52,19 @@ const Sidebar = ({isCollapsed}) => {
           padding: "5px 35px 5px 20px !important",
         },
         "& .pro-icon": {
-          color: `${colors.pink[600]} !important`,
+          color: `${colors.teal[300]} !important`,
+          // color: `${colors.pink[600]} !important`,
         },
         // "& .pro-icon": {
         //   color: "#cb3cff !important",
         // },
         "& .pro-inner-item:hover": {
-          color: "#cb3cff !important",
+          // color: "#cb3cff !important",
+          color: `${colors.teal[300]} !important`,
         },
         "& .pro-menu-item.active": {
-          color: "#cb3cff !important",
+          // color: "#cb3cff !important",
+          color: `${colors.teal[300]} !important`,
         },
       }}
     >
