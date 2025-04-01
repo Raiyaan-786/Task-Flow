@@ -216,7 +216,7 @@ const getPAN = async (req, res) => {
 
 const createGroup = async (req, res) => {
   try {
-    console.log("Request Body:", req.body);
+    // console.log("Request Body:", req.body);
     const { groupName, customerIds, groupAdmin } = req.body;
     if (!groupName) {
       return res.status(400).json({ error: "Group name is required." });
@@ -283,6 +283,7 @@ const addCustomerToGroup = async (req, res) => {
     res.status(500).json({ error: "An error occurred while adding the customer to the group." });
   }
 };
+
 const removeCustomerFromGroup = async (req, res) => {
   try {
     const { groupId, customerId } = req.body;
@@ -304,6 +305,105 @@ const removeCustomerFromGroup = async (req, res) => {
     res.status(200).json({ message: "Customer removed from group successfully", group });
   } catch (error) {
     res.status(500).json({ error: "An error occurred while removing the customer from the group." });
+  }
+};
+
+// const updateGroup= async (req, res) => {
+//   try {
+//     const { id } = req.params; // Group ID from the URL
+//     const { groupName, groupAdmin } = req.body; // Group name and admin from the request body
+//     if (!mongoose.Types.ObjectId.isValid(id)) {
+//       return res.status(400).json({ error: "Invalid group ID format." });
+//     }
+//     if (!groupName) {
+//       return res.status(400).json({ error: "Group name is required." });
+//     }
+//     if (groupAdmin) {
+//       if (!mongoose.Types.ObjectId.isValid(groupAdmin)) {
+//         return res.status(400).json({ error: "Invalid group admin ID format." });
+//       }
+//       const adminExists = await Customer.findById(groupAdmin);
+//       if (!adminExists) {
+//         return res.status(400).json({ error: "Group admin does not exist." });
+//       }
+//     }
+//     const updatedGroup = await CustomerGroup.findByIdAndUpdate(
+//       id,
+//       { groupName, ...(groupAdmin && { groupAdmin }) }, // Update groupAdmin only if it's provided
+//       { new: true, runValidators: true } // Return the updated document and run validations
+//     );
+
+//     if (!updatedGroup) {
+//       return res.status(404).json({ error: "Group not found." });
+//     }
+//     res.status(200).json({
+//       message: "Group updated successfully",
+//       group: updatedGroup,
+//     });
+//   } catch (error) {
+//     console.error("Error updating group:", error);
+//     res.status(500).json({ error: "An error occurred while updating the group." });
+//   }
+// };
+
+
+const updateGroup = async (req, res) => {
+  try {
+    const { id } = req.params; // Group ID from the URL
+    const { groupName, groupAdmin, customerIds } = req.body; // Group name, admin, and customers
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid group ID format." });
+    }
+    if (!groupName) {
+      return res.status(400).json({ error: "Group name is required." });
+    }
+
+    if (groupAdmin) {
+      if (!mongoose.Types.ObjectId.isValid(groupAdmin)) {
+        return res.status(400).json({ error: "Invalid group admin ID format." });
+      }
+      const adminExists = await Customer.findById(groupAdmin);
+      if (!adminExists) {
+        return res.status(400).json({ error: "Group admin does not exist." });
+      }
+    }
+
+    const group = await CustomerGroup.findById(id);
+    if (!group) {
+      return res.status(404).json({ error: "Group not found." });
+    }
+
+    // Validate customers
+    if (!Array.isArray(customerIds)) {
+      return res.status(400).json({ error: "Invalid customers list." });
+    }
+    const validCustomers = await Customer.find({ _id: { $in: customerIds } });
+    if (validCustomers.length !== customerIds.length) {
+      return res.status(400).json({ error: "Some customers do not exist." });
+    }
+
+    // Update the group details
+    group.groupName = groupName;
+    if (groupAdmin) group.groupAdmin = groupAdmin;
+
+    // Update the customers in the group
+    group.customers = customerIds;
+    await group.save();
+
+    // Update each customer's groupName field
+    await Customer.updateMany(
+      { _id: { $in: customerIds } },
+      { groupName: id }
+    );
+
+    res.status(200).json({
+      message: "Group updated successfully",
+      group,
+    });
+  } catch (error) {
+    console.error("Error updating group:", error);
+    res.status(500).json({ error: "An error occurred while updating the group." });
   }
 };
 
@@ -347,96 +447,6 @@ const deleteGroup = async (req, res) => {
   }
 };
 
-// const updateGroup = async (req, res) => {
-//   try {
-//     const { groupName, groupAdmin, newMembers } = req.body;
-//     const { id } = req.params; 
-//     if (!mongoose.Types.ObjectId.isValid(id)) {
-//       return res.status(400).json({ error: "Invalid group ID format." });
-//     }
-//     const group = await CustomerGroup.findById(id);
-//     if (!group) {
-//       return res.status(404).json({ error: "Group not found." });
-//     }
-//     if (newMembers && !Array.isArray(newMembers)) {
-//       return res.status(400).json({ error: "New members must be an array of customer IDs." });
-//     }
-//     if (groupAdmin) {
-//       if (!mongoose.Types.ObjectId.isValid(groupAdmin)) {
-//         return res.status(400).json({ error: "Invalid group admin ID format." });
-//       }
-
-//       const adminExists = await Customer.findById(groupAdmin);
-//       if (!adminExists) {
-//         return res.status(400).json({ error: "Group admin does not exist." });
-//       }
-//     }
-//     const updatedGroup = await CustomerGroup.findByIdAndUpdate(
-//       id,
-//       { groupName, ...(groupAdmin && { groupAdmin }) },
-//       { new: true, runValidators: true } // Return updated group and run validations
-//     );
-
-//     if (!updatedGroup) {
-//       return res.status(404).json({ error: "Group not found." });
-//     }
-//     if (newMembers) {
-//       updatedGroup.customers = newMembers;
-//       await Customer.updateMany(
-//         { _id: { $in: newMembers } },
-//         { $set: { groupName: id } }
-//       );
-
-//       await updatedGroup.save();
-//     }
-
-//     res.status(200).json({
-//       message: "Group updated successfully",
-//       group: updatedGroup,
-//     });
-//   } catch (error) {
-//     console.error("Error updating group:", error);
-//     res.status(500).json({ error: "An error occurred while updating the group." });
-//   }
-// };
-
-const updateGroup= async (req, res) => {
-  try {
-    const { id } = req.params; // Group ID from the URL
-    const { groupName, groupAdmin } = req.body; // Group name and admin from the request body
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ error: "Invalid group ID format." });
-    }
-    if (!groupName) {
-      return res.status(400).json({ error: "Group name is required." });
-    }
-    if (groupAdmin) {
-      if (!mongoose.Types.ObjectId.isValid(groupAdmin)) {
-        return res.status(400).json({ error: "Invalid group admin ID format." });
-      }
-      const adminExists = await Customer.findById(groupAdmin);
-      if (!adminExists) {
-        return res.status(400).json({ error: "Group admin does not exist." });
-      }
-    }
-    const updatedGroup = await CustomerGroup.findByIdAndUpdate(
-      id,
-      { groupName, ...(groupAdmin && { groupAdmin }) }, // Update groupAdmin only if it's provided
-      { new: true, runValidators: true } // Return the updated document and run validations
-    );
-
-    if (!updatedGroup) {
-      return res.status(404).json({ error: "Group not found." });
-    }
-    res.status(200).json({
-      message: "Group updated successfully",
-      group: updatedGroup,
-    });
-  } catch (error) {
-    console.error("Error updating group:", error);
-    res.status(500).json({ error: "An error occurred while updating the group." });
-  }
-};
 
 const getTotalWorks = async (req, res) => {
   try {
