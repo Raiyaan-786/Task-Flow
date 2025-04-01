@@ -57,7 +57,8 @@ const userSchema = new mongoose.Schema(
       enum: ["Active", "Block","Inactive" ,"Mute"],
     },
     image: {
-      type: Buffer,  // Store image as binary data (Buffer)
+      type: String, 
+      default: ''
     },
   },
   { timestamps: true }

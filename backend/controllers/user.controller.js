@@ -1,3 +1,4 @@
+import cloudinary from "../lib/cloudinary.js";
 import { User } from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
@@ -71,8 +72,8 @@ const loginUser = async (req, res) => {
       .json({ error: "Server error. Please try again later." });
   }
 };
+
 const createUser = async (req, res) => {
-  
   try {
     const {
       name,
@@ -234,6 +235,59 @@ const deleteUser = async (req, res) => {
   }
 };
 
+// const updateUser = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const {
+//       name,
+//       username,
+//       department,
+//       postname,
+//       email,
+//       mobile,
+//       address,
+//       salary,
+//       dateofjoining,
+//       dateofleaving,
+//       role,
+//       status,
+//       image
+//     } = req.body;
+
+//     let updateData = {
+//       name,
+//       username,
+//       department,
+//       postname,
+//       email,
+//       mobile,
+//       address,
+//       salary,
+//       dateofjoining,
+//       dateofleaving,
+//       role,
+//       status,
+//     };
+//     if (req.file) {
+//       updateData.image = req.file.buffer;
+//     }
+//     const uploadResponse = await cloudinary.uploader.upload(profilePic);
+//     const updatedUser = await User.findByIdAndUpdate(id, updateData, {
+//       new: true,
+//     });
+
+//     if (!updatedUser) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     res.json({ message: "User updated successfully", user: updatedUser });
+//   } catch (error) {
+//     res
+//       .status(500)
+//       .json({ message: "Error updating user", error: error.message });
+//   }
+// };
+
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -266,40 +320,57 @@ const updateUser = async (req, res) => {
       role,
       status,
     };
-    if (req.file) {
-      updateData.image = req.file.buffer;
-    }
-    const updatedUser = await User.findByIdAndUpdate(id, updateData, {
-      new: true,
-    });
 
-    if (!updatedUser) {
+    // Find existing user
+    const user = await User.findById(id);
+    if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // If a new image is uploaded, replace the old one on Cloudinary
+    if (req.file) {
+      const uploadResult = cloudinary.uploader.upload_stream(
+        { folder: "profile_pictures" }, // Save in Cloudinary folder
+        async (error, result) => {
+          if (error) {
+            return res.status(500).json({ message: "Image upload failed", error });
+          }
+
+          updateData.image = result.secure_url; // Save Cloudinary URL
+
+          // Update user data in MongoDB
+          const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true });
+
+          res.json({ message: "User updated successfully", user: updatedUser });
+        }
+      ).end(req.file.buffer);
+      return;
+    }
+
+    // Update user details if no new image
+    const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true });
+
     res.json({ message: "User updated successfully", user: updatedUser });
+
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error updating user", error: error.message });
+    res.status(500).json({ message: "Error updating user", error: error.message });
   }
 };
 
 const updateUserImage = async (req, res) => {
   try {
     const { id } = req.params;
-
-    if (!req.file) {
-      return res.status(400).json({ message: "No image file provided" });
+    const { image } = req.body;
+    if (!image) {
+      return res.status(400).json({ message: "No image provided" });
     }
+    const uploadResponse = await cloudinary.uploader.upload(profilePic);
+
     const updatedUser = await User.findByIdAndUpdate(
       id,
-      { image: req.file.buffer },
+      { image: uploadResponse.secure_url },
       { new: true }
     );
-    if (!updatedUser) {
-      return res.status(404).json({ message: "User not found" });
-    }
     res.json({ message: "User image updated successfully", user: updatedUser });
   } catch (error) {
     res.status(500).json({ message: "Error updating user image", error: error.message });
