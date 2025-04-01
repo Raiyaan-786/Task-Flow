@@ -3,12 +3,17 @@ import { User } from "../models/user.model.js";
 import { Customer } from "../models/customer.model.js";
 import canSendMessage from "../middlewares/message.middleware.js";
 import { getRecieverSocketId, io } from "../app.js";
+import mongoose from "mongoose";
 
 
 export const getUserMessages = async (req, res) => {
   try {
     const { id: usertoChatId } = req.params;
     const myId = req.user.id;
+
+    if (!mongoose.isValidObjectId(usertoChatId)) {
+      return res.status(400).json({ error: "Invalid user ID format" });
+    }
 
     let receiverId = await User.findById(usertoChatId) || await Customer.findById(usertoChatId);
 
@@ -21,7 +26,7 @@ export const getUserMessages = async (req, res) => {
         { sender: myId, receiver: usertoChatId },
         { sender: usertoChatId, receiver: myId },
       ],
-    });
+    }).sort({ createdAt: 1 });;
     res.status(200).json(messages);
     } catch (error) {
       console.error("Error fetching messages:", error);
@@ -32,15 +37,17 @@ export const getUserMessages = async (req, res) => {
 
 export const sendMessage = async (req, res) => {
   try {
-    const { receiverId, text } = req.body;
+    const recieverId = req.params.id ;
+    const { text } = req.body;
     const sender = await User.findById(req.user.id); 
-    let receiver = await User.findById(receiverId) || await Customer.findById(receiverId);
+    let receiver = await User.findById(recieverId) || await Customer.findById(recieverId);
 
     if (!receiver) {
       return res.status(404).json({ error: "Receiver not found" });
     }
 
     const allowed = await canSendMessage(sender, receiver);
+
     if (!allowed) {
       return res.status(403).json({ error: "You are not allowed to message this user" });
     }
@@ -54,6 +61,7 @@ export const sendMessage = async (req, res) => {
     });
 
     const receiverSocketId = getRecieverSocketId(receiver.id);
+
     console.log("Receiver Socket ID:", receiverSocketId); 
 
     if (receiverSocketId) {

@@ -3,93 +3,101 @@ import { useSelector, useDispatch } from "react-redux";
 import { Box, Typography, Paper, TextField, IconButton } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import CloseIcon from "@mui/icons-material/Close";
-import { clearSelectedContact, fetchMessages, sendMessage } from "../../features/chatSlice";
+import { setMessages } from "../../features/chatSlice";
 import { useTheme } from "@emotion/react";
 import { tokens } from "../../theme";
-import { io } from "socket.io-client";
-
+import API from "../../api/api";
+import { setSelectedUser } from "../../features/authSlice";
 
 const ChatContainer = () => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const selectedContact = useSelector((state) => state.chat.selectedContact);
-  const messages = useSelector((state) => state.chat.messages);
-  const currentUser = useSelector((state) => state.auth.user);
-  const [newMessage, setNewMessage] = useState("");
+  const { user, selectedUser } = useSelector((store) => store.auth);
+  const { onlineUsers, messages } = useSelector((store) => store.chat);
+  const { socket } = useSelector((store) => store.socketio);
+  const [textMessage, setTextMessage] = useState("");
   const messageEndRef = useRef(null);
 
-  const socket = io("http://localhost:4000", {
-  query: { userId: currentUser._id },
-  withCredentials: true, // Allow cross-origin requests with authentication
-  transports: ["websocket", "polling"],
-});
-
+  // Auto-scroll to bottom when messages change
   useEffect(() => {
-    if (currentUser) {
-      socket.emit("joinChat", { userId: currentUser._id });
-    }
-  }, [currentUser]);
-
-  useEffect(() => {
-    if (selectedContact) {
-      dispatch(fetchMessages(selectedContact._id));
-      socket.emit("joinChat", { userId: currentUser._id, contactId: selectedContact._id });
-    }
-  }, [selectedContact, dispatch]);
-
-  useEffect(() => {
-    socket.on("connect", () => {
-      console.log("Client connected with socket id:", socket.id);
-    });
-    socket.on("disconnect", () => {
-      console.log("Client disconnected");
-    });
-  
-    return () => {
-      socket.off("connect");
-      socket.off("disconnect");
-    };
-  }, []);
-  
-  useEffect(() => {
-    if (messageEndRef.current && messages) {
-      messageEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Load messages when selected user changes
   useEffect(() => {
-    if (!selectedContact) return;
-    socket.emit("joinChat", { userId: currentUser._id, contactId: selectedContact._id });
-  
-    socket.on("newMessage", (newMessage) => {
-      if (newMessage.sender === selectedContact._id || newMessage.receiver === selectedContact._id) {
-        dispatch(fetchMessages(selectedContact._id));
+    const fetchMessages = async () => {
+      if (!selectedUser?._id) return;
+      
+      try {
+        const response = await API.get(`/message/get/${selectedUser._id}`, {
+          withCredentials: true
+        });
+        dispatch(setMessages(response.data));
+      } catch (error) {
+        console.error("Error fetching messages:", error);
       }
-    });
-  
-    return () => {
-      socket.off("newMessage");
     };
-  }, [dispatch, selectedContact, currentUser]);
 
-  const handleSendMessage = (e) => {
-    e.preventDefault();
-    if (!newMessage.trim() || !selectedContact) return;
+    fetchMessages();
+  }, [selectedUser, dispatch]);
 
-    dispatch(
-      sendMessage({
-        senderId: currentUser._id,
-        receiverId: selectedContact._id,
-        text: newMessage,
-        socket,
-      })
-    );
-    setNewMessage("");
+  // Socket.IO setup
+  useEffect(() => {
+    if (!socket) return;
 
+    const handleNewMessage = (newMessage) => {
+      // Verify the message is relevant to current chat
+      if ([newMessage.sender, newMessage.receiver].includes(selectedUser?._id)) {
+        dispatch(setMessages([...messages, newMessage]));
+      }
+    };
+
+    socket.on("newMessage", handleNewMessage);
+    
+    return () => {
+      socket.off("newMessage", handleNewMessage);
+    };
+  }, [socket, selectedUser, messages, dispatch]);
+
+  const sendMessageHandler = async () => {
+    if (!textMessage.trim() || !selectedUser?._id) return;
+    
+    // Create temporary message object
+    const tempMessage = {
+      _id: Date.now().toString(), // Temporary ID
+      sender: user._id,
+      receiver: selectedUser._id,
+      text: textMessage,
+      createdAt: new Date().toISOString(),
+      isOptimistic: true // Flag for optimistic update
+    };
+  
+    // Optimistically update UI immediately
+    dispatch(setMessages([...messages, tempMessage]));
+    setTextMessage("");
+  
+    try {
+      const response = await API.post(
+        `/message/send/${selectedUser._id}`,
+        { text: textMessage },
+        { withCredentials: true }
+      );
+  
+      if (response.data.success) {
+        // Replace optimistic message with real one from server
+        dispatch(setMessages([
+          ...messages.filter(m => m._id !== tempMessage._id),
+          response.data.newMessage
+        ]));
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+      // Roll back optimistic update on error
+      dispatch(setMessages(messages.filter(m => m._id !== tempMessage._id)));
+    }
   };
-
-  if (!selectedContact) {
+  if (!selectedUser) {
     return (
       <Box flexGrow={1} display="flex" alignItems="center" justifyContent="center">
         <Typography variant="h6" color="gray">
@@ -101,43 +109,48 @@ const ChatContainer = () => {
 
   return (
     <Box display="flex" flexDirection="column" flexGrow={1} p={2} bgcolor={colors.primary[900]} borderRadius="10px">
-      {/* 🔹 Fixed Chat Header */}
-      <Paper
-        elevation={3}
-        sx={{
-          p: 2,
-          mb: 2,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          borderRadius: "10px",
-          flexShrink: 0,
-        }}
-      >
+      {/* Chat Header */}
+      <Paper elevation={3} sx={{ 
+        p: 2, 
+        mb: 2, 
+        display: "flex", 
+        alignItems: "center", 
+        justifyContent: "space-between", 
+        borderRadius: "10px" 
+      }}>
         <Box>
           <Typography variant="h6">
-            {selectedContact.name} ({selectedContact.role})
+            {selectedUser.name} ({selectedUser.role})
+            {onlineUsers.includes(selectedUser._id) && (
+              <span style={{ color: 'green', marginLeft: '8px' }}>• Online</span>
+            )}
           </Typography>
           <Typography variant="body2" color="textSecondary">
-            {selectedContact.email}
+            {selectedUser.email}
           </Typography>
         </Box>
-        <IconButton onClick={() => dispatch(clearSelectedContact())} color="error">
+        <IconButton onClick={() => dispatch(setSelectedUser(null))} color="error">
           <CloseIcon />
         </IconButton>
       </Paper>
 
-      {/* 🔹 Scrollable Chat Messages */}
-      <Box
-        flexGrow={1}
-        overflow="auto"
-        p={2}
-        bgcolor={colors.bgc[100]}
-        borderRadius="10px"
-        sx={{ maxHeight: "53vh", display: "flex", flexDirection: "column" }}
+      {/* Messages Container */}
+      <Box 
+        flexGrow={1} 
+        overflow="auto" 
+        p={2} 
+        bgcolor={colors.bgc[100]} 
+        borderRadius="10px" 
+        sx={{ 
+          maxHeight: "53vh",
+          display: "flex",
+          flexDirection: "column"
+        }}
       >
         {messages.map((msg, index) => {
-          const isMyMessage = msg.sender === currentUser._id;
+          const isMyMessage = msg.sender === user._id;
+          const messageDate = msg.createdAt ? new Date(msg.createdAt) : new Date();
+          
           return (
             <Box
               key={index}
@@ -145,15 +158,27 @@ const ChatContainer = () => {
                 mb: 1.5,
                 p: 1.5,
                 borderRadius: "8px",
-                bgcolor: isMyMessage ? "#007499" : "#e0e0e0",
+                bgcolor: isMyMessage ? colors.teal[300] : colors.grey[800],
                 color: isMyMessage ? "white" : "black",
                 alignSelf: isMyMessage ? "flex-end" : "flex-start",
+                marginLeft: isMyMessage ? "auto" : 0,
+                marginRight: isMyMessage ? 0 : "auto",
                 maxWidth: "60%",
+                wordBreak: "break-word"
               }}
             >
               <Typography variant="body1">{msg.text}</Typography>
-              <Typography variant="caption" display="block" textAlign="right">
-                {new Date(msg.createdAt).toLocaleTimeString()}
+              <Typography 
+                variant="caption" 
+                display="block"
+                sx={{
+                  textAlign: isMyMessage ? "right" : "left",
+                  color: isMyMessage ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.6)"
+                }}
+              >
+                {messageDate.toString() !== 'Invalid Date' 
+                  ? messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                  : 'Just now'}
               </Typography>
             </Box>
           );
@@ -161,24 +186,29 @@ const ChatContainer = () => {
         <div ref={messageEndRef} />
       </Box>
 
-      {/* 🔹 Fixed Message Input */}
-      <Box
-        display="flex"
-        mt={2}
-        alignItems="center"
-        flexShrink={0}
-        bgcolor="white"
-        p={1}
+      {/* Message Input */}
+      <Box 
+        display="flex" 
+        mt={2} 
+        alignItems="center" 
+        bgcolor="white" 
+        p={1} 
         borderRadius="10px"
       >
         <TextField
           fullWidth
           variant="outlined"
           placeholder="Type a message..."
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
+          value={textMessage}
+          onChange={(e) => setTextMessage(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && sendMessageHandler()}
         />
-        <IconButton onClick={handleSendMessage} color="primary" sx={{ ml: 1 }}>
+        <IconButton 
+          onClick={sendMessageHandler} 
+          color="primary" 
+          sx={{ ml: 1 }}
+          disabled={!textMessage.trim()}
+        >
           <SendIcon />
         </IconButton>
       </Box>

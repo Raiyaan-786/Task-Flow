@@ -5,7 +5,7 @@ import { getUserMessages, sendMessage } from '../controllers/message.controller.
 const router = Router();
 
 
-router.route('/send').post(verifyJWT,sendMessage);
+router.route('/send/:id').post(verifyJWT,sendMessage);
 router.route('/get/:id').get(verifyJWT,getUserMessages);
 
 

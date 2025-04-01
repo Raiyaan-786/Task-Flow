@@ -6,7 +6,7 @@ let socket;
 export const initiateSocket = (userId) => {
   if (!socket) {
     socket = io("http://localhost:4000", {
-      query: { userId }, // Pass the userId here
+      query: { userId }, 
       withCredentials: true,
       transports: ["websocket", "polling"],
     });

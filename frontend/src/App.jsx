@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom'
 import { ColorModeContext, useMode, } from './theme'
 import { ThemeProvider } from '@emotion/react';
@@ -24,10 +24,48 @@ import UserProfilePage from './pages/user/UserProfilePage';
 import Settings from './pages/user/Settings';
 import Chat from './pages/chat';
 import Payroll from './pages/payroll';
+import { useDispatch, useSelector } from 'react-redux';
+import { io } from "socket.io-client";
+import { setSocket } from './features/socketSlice';
+import { setOnlineUsers } from './features/chatSlice';
 
 
 
 function App() {
+
+  const { user } = useSelector(store => store.auth);
+  const { socket } = useSelector(store => store.socketio)
+  const dispatch = useDispatch();
+
+
+  useEffect(() => {
+    if (user) {
+      const socketio = io("http://localhost:4000", {
+        query: {
+          userId: user?._id,
+        },
+        transports: ['websocket'],
+      });
+      dispatch(setSocket(socketio));
+
+      socketio.on("getOnlineUsers", (onlineUsers) => {
+        dispatch(setOnlineUsers(onlineUsers));
+      });
+
+
+      return () => {
+        socketio.close();
+        dispatch(setSocket(null));
+      };
+
+    } else if (socket){
+      socket?.close();
+      dispatch(setSocket(null));
+    }
+  }, [user, dispatch]);
+
+
+
   const [theme, colorMode] = useMode();
   const [isCollapsed, setIsCollapsed] = useState(false);
   return (

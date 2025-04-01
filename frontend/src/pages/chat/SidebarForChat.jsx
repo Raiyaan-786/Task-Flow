@@ -6,15 +6,17 @@ import {
   ListItemText,
   Collapse,
   Typography,
+  Avatar,
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { setSelectedContact } from "../../features/chatSlice";
+import { setSelectedUser } from "../../features/authSlice";
 import API from "../../api/api";
 
 const SidebarForChat = () => {
   const dispatch = useDispatch();
-  const selectedContact = useSelector((state) => state.chat.selectedContact);
+  const selectedUser = useSelector((state) => state.auth.selectedUser);
+  const { onlineUsers } = useSelector((state) => state.chat);
 
   const [openSections, setOpenSections] = useState({
     admins: true,
@@ -24,72 +26,81 @@ const SidebarForChat = () => {
     others: false,
   });
 
-  const [customers, setCustomers] = useState([]);
-  const [admins, setAdmins] = useState([]);
-  const [managers, setManagers] = useState([]);
-  const [employees, setEmployees] = useState([]);
-  const [others, setOthers] = useState([]);
+  const [users, setUsers] = useState({
+    admins: [],
+    managers: [],
+    employees: [],
+    customers: [],
+    others: []
+  });
 
-  const loggedInUser = JSON.parse(localStorage.getItem("user"));
-  const loggedInUserId = loggedInUser?._id;
-
-  useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-
-        const response = await API.get("/getallcustomers", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        // Exclude the logged-in user from the customers list
-        setCustomers(response.data.customers.filter((customer) => customer._id !== loggedInUserId));
-      } catch (err) {
-        console.log("Error fetching customers:", err);
-      }
-    };
-
-    fetchCustomers();
-  }, [loggedInUserId]);
+  const loggedInUser = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem("token");
-        if (!token) return;
+        if (!token || !loggedInUser) return;
 
-        const response = await API.get("/auth/allusers", {
+        // Fetch customers
+        const customersRes = await API.get("/getallcustomers", {
           headers: { Authorization: `Bearer ${token}` },
         });
-
-        const allUsers = response.data.users.filter((user) => user._id !== loggedInUserId); // Exclude logged-in user
-
-        setAdmins(allUsers.filter((user) => user.role === "Admin"));
-        setManagers(allUsers.filter((user) => user.role === "Manager"));
-        setEmployees(allUsers.filter((user) => user.role === "Employee"));
-        setOthers(
-          allUsers.filter(
-            (user) =>
-              user.role !== "Admin" &&
-              user.role !== "Manager" &&
-              user.role !== "Employee"
-          )
+        const filteredCustomers = customersRes.data.customers.filter(
+          (customer) => customer._id !== loggedInUser._id
         );
+
+        // Fetch other users
+        const usersRes = await API.get("/auth/allusers", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const filteredUsers = usersRes.data.users.filter(
+          (user) => user._id !== loggedInUser._id
+        );
+
+        setUsers({
+          customers: filteredCustomers,
+          admins: filteredUsers.filter((user) => user.role === "Admin"),
+          managers: filteredUsers.filter((user) => user.role === "Manager"),
+          employees: filteredUsers.filter((user) => user.role === "Employee"),
+          others: filteredUsers.filter(
+            (user) =>
+              !["Admin", "Manager", "Employee"].includes(user.role)
+          ),
+        });
       } catch (err) {
-        console.log("Error fetching users:", err);
+        console.error("Error fetching users:", err);
       }
     };
 
     fetchUsers();
-  }, [loggedInUserId]);
+  }, [loggedInUser]);
 
   const toggleSection = (section) => {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const handleSelectContact = (contact) => {
-    dispatch(setSelectedContact(contact));
+  const handleSelectContact = (user) => {
+    dispatch(setSelectedUser(user));
+  };
+
+  const renderUserList = (users, isCustomer = false) => {
+    return users.map((user) => (
+      <ListItemButton
+        key={user._id}
+        sx={{ pl: 4 }}
+        onClick={() => handleSelectContact(user)}
+        selected={selectedUser?._id === user._id}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <Avatar src={user.avatar} sx={{ width: 32, height: 32 }} />
+          <ListItemText 
+            primary={isCustomer ? user.customerName : user.name} 
+            secondary={onlineUsers.includes(user._id) ? "Online" : "Offline"}
+          />
+        </Box>
+      </ListItemButton>
+    ));
   };
 
   return (
@@ -101,104 +112,63 @@ const SidebarForChat = () => {
         overflowY: "auto",
       }}
     >
+      <Typography variant="h6" sx={{ p: 2, fontWeight: "bold" }}>
+        Contacts
+      </Typography>
+      
       <List>
         {/* Admins Section */}
         <ListItemButton onClick={() => toggleSection("admins")}>
-          <ListItemText primary="Admins" />
+          <ListItemText primary={`Admins (${users.admins.length})`} />
           {openSections.admins ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
         <Collapse in={openSections.admins} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            {admins.map((admin) => (
-              <ListItemButton
-                key={admin._id}
-                sx={{ pl: 4 }}
-                onClick={() => handleSelectContact(admin)}
-                selected={selectedContact?._id === admin._id}
-              >
-                <ListItemText primary={admin.name} />
-              </ListItemButton>
-            ))}
+            {renderUserList(users.admins)}
           </List>
         </Collapse>
 
         {/* Managers Section */}
         <ListItemButton onClick={() => toggleSection("managers")}>
-          <ListItemText primary="Managers" />
+          <ListItemText primary={`Managers (${users.managers.length})`} />
           {openSections.managers ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
         <Collapse in={openSections.managers} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            {managers.map((manager) => (
-              <ListItemButton
-                key={manager._id}
-                sx={{ pl: 4 }}
-                onClick={() => handleSelectContact(manager)}
-                selected={selectedContact?._id === manager._id}
-              >
-                <ListItemText primary={manager.name} />
-              </ListItemButton>
-            ))}
+            {renderUserList(users.managers)}
           </List>
         </Collapse>
 
         {/* Employees Section */}
         <ListItemButton onClick={() => toggleSection("employees")}>
-          <ListItemText primary="Employees" />
+          <ListItemText primary={`Employees (${users.employees.length})`} />
           {openSections.employees ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
         <Collapse in={openSections.employees} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            {employees.map((employee) => (
-              <ListItemButton
-                key={employee._id}
-                sx={{ pl: 4 }}
-                onClick={() => handleSelectContact(employee)}
-                selected={selectedContact?._id === employee._id}
-              >
-                <ListItemText primary={employee.name} />
-              </ListItemButton>
-            ))}
+            {renderUserList(users.employees)}
           </List>
         </Collapse>
 
         {/* Customers Section */}
         <ListItemButton onClick={() => toggleSection("customers")}>
-          <ListItemText primary="Customers" />
+          <ListItemText primary={`Customers (${users.customers.length})`} />
           {openSections.customers ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
         <Collapse in={openSections.customers} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            {customers.map((customer) => (
-              <ListItemButton
-                key={customer._id}
-                sx={{ pl: 4 }}
-                onClick={() => handleSelectContact(customer)}
-                selected={selectedContact?._id === customer._id}
-              >
-                <ListItemText primary={customer.customerName} />
-              </ListItemButton>
-            ))}
+            {renderUserList(users.customers, true)}
           </List>
         </Collapse>
 
         {/* Others Section */}
         <ListItemButton onClick={() => toggleSection("others")}>
-          <ListItemText primary="Others" />
+          <ListItemText primary={`Others (${users.others.length})`} />
           {openSections.others ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
         <Collapse in={openSections.others} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            {others.map((other) => (
-              <ListItemButton
-                key={other._id}
-                sx={{ pl: 4 }}
-                onClick={() => handleSelectContact(other)}
-                selected={selectedContact?._id === other._id}
-              >
-                <ListItemText primary={other.name} />
-              </ListItemButton>
-            ))}
+            {renderUserList(users.others)}
           </List>
         </Collapse>
       </List>

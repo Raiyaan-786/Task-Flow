@@ -5,8 +5,7 @@ const initialState = {
   user: JSON.parse(localStorage.getItem('user')) || null,  // Load user from localStorage
   token: localStorage.getItem('token') || null,  // Load token from localStorage
   isAuthenticated: !!localStorage.getItem('token'),  // Check if token exists
-  onlineUsers: [],
-  socket: null
+  selectedUser: null,
 };
 
 const authSlice = createSlice({
@@ -31,14 +30,11 @@ const authSlice = createSlice({
         state.socket = null;
       }
     },
-    setSocket: (state, action) => {
-      state.socket = action.payload;
-    },
-    setOnlineUsers: (state, action) => {
-      state.onlineUsers = action.payload;
+    setSelectedUser: (state,action) => {
+      state.selectedUser = action.payload;
     },
   },
 });
 
-export const { login, logout, setSocket, setOnlineUsers } = authSlice.actions;
+export const { login, logout ,setSelectedUser } = authSlice.actions;
 export default authSlice.reducer;
