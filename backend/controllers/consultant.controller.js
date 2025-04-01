@@ -1,38 +1,71 @@
 import { Consultant } from "../models/consultant.model.js";
+import cloudinary from "../lib/cloudinary.js";
 
 const createConsultant = async (req, res) => {
   try {
-      const {
-          consultantName,
-          email,
-          mobile,
-          address,
-          username,
-          bankAccountNumber,
-          bankIFSCCode,
-          accountHolderName,
-      } = req.body;
-      let signature = null; 
+    const {
+      consultantName,
+      email,
+      mobile,
+      address,
+      username,
+      bankAccountNumber,
+      bankIFSCCode,
+      accountHolderName,
+    } = req.body;
 
-      if (req.file) {
-        signature = req.file.buffer.toString('base64'); 
-      }
+    let signatureUrl = null;
+
+    // Check if a signature file is provided
+    if (req.file) {
+      // Upload the signature to Cloudinary
+      const uploadResult = cloudinary.uploader.upload_stream(
+        { folder: 'consultant_signatures' },  // Optional: Save in a specific folder
+        async (error, result) => {
+          if (error) {
+            return res.status(500).json({ message: 'Signature upload failed', error });
+          }
+
+          // Get the Cloudinary URL of the uploaded signature
+          signatureUrl = result.secure_url;
+
+          // Create the new Consultant with the signature URL
+          const newConsultant = new Consultant({
+            consultantName,
+            email,
+            mobile,
+            address,
+            username,
+            bankAccountNumber,
+            bankIFSCCode,
+            accountHolderName,
+            signature: signatureUrl,  // Store the Cloudinary URL instead of base64
+          });
+
+          await newConsultant.save();
+          res.status(201).json({ message: 'Consultant created successfully', consultant: newConsultant });
+        }
+      ).end(req.file.buffer);  // Ensure that the file buffer is passed to Cloudinary
+    } else {
+      // If no signature is uploaded, create the consultant without a signature
       const newConsultant = new Consultant({
-          consultantName,
-          email,
-          mobile,
-          address,
-          username,
-          bankAccountNumber,
-          bankIFSCCode,
-          accountHolderName,
-          signature,
+        consultantName,
+        email,
+        mobile,
+        address,
+        username,
+        bankAccountNumber,
+        bankIFSCCode,
+        accountHolderName,
+        signature: signatureUrl,  // Will be null if no file is uploaded
       });
 
       await newConsultant.save();
       res.status(201).json({ message: 'Consultant created successfully', consultant: newConsultant });
+    }
+
   } catch (err) {
-      res.status(400).json({ error: err.message });
+    res.status(400).json({ error: err.message });
   }
 };
 

@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import multer from 'multer';
 import { verifyJWT, roleAuthorization } from '../middlewares/auth.middleware.js';
 import {
   createConsultant,
@@ -9,13 +10,10 @@ import {
   updateConsultant
 } from '../controllers/consultant.controller.js';
 
-import multer from 'multer';
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
-
 const router = Router();
 
-// router.route('/createconsultant').post(verifyJWT, roleAuthorization('Admin'), createConsultant);
+const upload = multer({ storage: multer.memoryStorage() });
+
 router.route('/createconsultant').post(verifyJWT, roleAuthorization('Admin'), upload.single('signature'), createConsultant);
 router.route('/consultant/:id').get(verifyJWT, roleAuthorization('Admin'), getConsultant);
 router.route('/getallconsultants').get(verifyJWT, roleAuthorization('Admin'), getAllConsultants);

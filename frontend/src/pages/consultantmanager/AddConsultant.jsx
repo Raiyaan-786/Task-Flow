@@ -18,11 +18,27 @@ const AddConsultant = () => {
 
   const handleFormSubmit = async (values, { resetForm }) => {
     const token = localStorage.getItem('token');
+    
+    const formData = new FormData();
+    formData.append('consultantName', values.consultantName);
+    formData.append('email', values.email);
+    formData.append('mobile', values.mobile);
+    formData.append('address', values.address);
+    formData.append('username', values.username);
+    formData.append('bankAccountNumber', values.bankAccountNumber);
+    formData.append('bankIFSCCode', values.bankIFSCCode);
+    formData.append('accountHolderName', values.accountHolderName);
+    
+    if (values.signature) {
+      formData.append('signature', values.signature);
+    }
+
     try {
       setLoading(true);
-      const response = await API.post('/createconsultant', values, {
+      const response = await API.post('/createconsultant', formData, {
         headers: {
           Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data', // Ensure the correct content type is set
         },
       });
       setSuccess(response.data.message || "Consultant created successfully!");
