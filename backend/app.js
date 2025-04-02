@@ -29,23 +29,9 @@ io.on("connection", (socket) => {
       `User connection : UserId = ${userId} , socketId = ${socket.id}`
     );
   }
-  // console.log("User is connected",userId);
 
-  // if(userId) {
-  //     userSocketMap[userId] = socket.id;
-  // }
-
-  // io.emit() is used to send events to all the connected users
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
-  // socket.on("joinChat", ({ userId }) => {
-  //   if (userId) {
-  //     userSocketMap[userId] = socket.id;
-  //     console.log("User joined chat:", userId, "->", socket.id);
-  //   } else {
-  //     console.log("joinChat event received without a userId");
-  //   }
-  // });
 
   socket.on("disconnect", () => {
     if (userId) {

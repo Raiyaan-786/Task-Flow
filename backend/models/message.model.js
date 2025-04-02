@@ -20,14 +20,12 @@ const messageSchema = new mongoose.Schema(
     text: {
       type: String,
     },
-    // fileUrl: {
-    //   type: String, 
-    // },
-    // fileType: {
-    //   type: String,
-    //   enum: ["image", "pdf", "doc", "none"],
-    //   default: "none",
-    // },
+    file: {
+      url: String,       // Cloudinary URL (e.g., "https://res.cloudinary.com/.../sample.pdf")
+      publicId: String,   // Cloudinary public ID (for deletion/updates)
+      filename: String,   // Original file name (e.g., "document.pdf")
+      fileType: String,  // File type (e.g., "pdf", "image", "video")
+    },
   },
   { timestamps: true }
 );
