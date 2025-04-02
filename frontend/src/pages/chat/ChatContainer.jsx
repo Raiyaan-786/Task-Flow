@@ -6,7 +6,8 @@ import {
   Paper, 
   TextField, 
   IconButton,
-  Tooltip
+  Tooltip,
+  Button
 } from "@mui/material";
 import {
   Send as SendIcon,
@@ -14,7 +15,8 @@ import {
   AttachFile as AttachFileIcon,
   InsertDriveFile as InsertDriveFileIcon,
   Image as ImageIcon,
-  Cancel as CancelIcon
+  Cancel as CancelIcon,
+  GetApp as DownloadIcon
 } from "@mui/icons-material";
 import { setMessages } from "../../features/chatSlice";
 import { useTheme } from "@emotion/react";
@@ -191,26 +193,61 @@ const ChatContainer = () => {
     if (!msg) return null;
     
     if (msg.file) {
+      const isImage = msg.file.fileType === 'image' || 
+                     msg.file.filename?.match(/\.(jpg|jpeg|png|gif)$/i);
+
       return (
         <Box>
           {msg.isUploading ? (
             <Typography variant="body2">Uploading {msg.file.filename}...</Typography>
           ) : (
-            <a 
-              href={msg.file.url} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              style={{ color: 'inherit', textDecoration: 'none' }}
-            >
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <InsertDriveFileIcon sx={{ mr: 1 }} />
-                <Typography variant="body2">
-                  {msg.file.filename}
-                </Typography>
-              </Box>
-            </a>
+            <Box>
+              {isImage ? (
+                <Box sx={{ mb: 1 }}>
+                  <img 
+                    src={msg.file.url} 
+                    alt={msg.file.filename}
+                    style={{ 
+                      maxWidth: '100%', 
+                      maxHeight: '200px', 
+                      borderRadius: '8px',
+                      objectFit: 'contain'
+                    }}
+                  />
+                </Box>
+              ) : (
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                  <InsertDriveFileIcon sx={{ mr: 1 }} />
+                  <Typography variant="body2">
+                    {msg.file.filename}
+                  </Typography>
+                </Box>
+              )}
+              <Button
+                variant="contained"
+                size="small"
+                startIcon={<DownloadIcon />}
+                component="a"
+                href={msg.file.url}
+                download={msg.file.filename}
+                sx={{
+                  mt: 1,
+                  textTransform: 'none',
+                  bgcolor: colors.primary[500],
+                  '&:hover': {
+                    bgcolor: colors.primary[300]
+                  }
+                }}
+              >
+                Download
+              </Button>
+            </Box>
           )}
-          {msg.text && <Typography variant="body1">{msg.text}</Typography>}
+          {msg.text && (
+            <Typography variant="body1" sx={{ mt: 1 }}>
+              {msg.text}
+            </Typography>
+          )}
         </Box>
       );
     }
