@@ -30,7 +30,7 @@ io.on("connection", (socket) => {
     );
   }
 
-  // io.emit("getOnlineUsers", Object.keys(userSocketMap));
+  io.emit("getOnlineUsers", Object.keys(userSocketMap));
   
   socket.on("getInitialData", async () => {
     if (userId) {

@@ -5,6 +5,7 @@ import {
   Avatar,
   Badge,
   Box,
+  Button,
   IconButton,
   InputBase,
   List,
@@ -37,6 +38,13 @@ const Topbar = ({ isCollapsed, setIsCollapsed }) => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const { socket } = useSelector((store) => store.socketio);
+
+  // Utility function to get full image URL
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return "/default-avatar.png";
+    if (imagePath.startsWith("http")) return imagePath;
+    return `https://res.cloudinary.com/YOUR_CLOUD_NAME/${imagePath}`;
+  };
 
   // Fetch initial notifications
   useEffect(() => {
@@ -90,6 +98,7 @@ const Topbar = ({ isCollapsed, setIsCollapsed }) => {
         prev.map((n) => (n._id === notificationId ? { ...n, read: true } : n))
       );
       setUnreadCount((prev) => Math.max(0, prev - 1));
+      socket.emit("markNotificationAsRead", notificationId);
     } catch (error) {
       console.error("Error marking notification as read:", error);
     }
@@ -131,44 +140,74 @@ const Topbar = ({ isCollapsed, setIsCollapsed }) => {
     setAnchorElNotification(null);
   };
 
-  // Notification menu content
+  // Updated notification content
+  // Updated notification content with "Clear All" button
   const notificationContent = (
-    <List sx={{ width: 350, maxHeight: 400, overflow: "auto" }}>
-      {notifications.length === 0 ? (
-        <Typography variant="body2" sx={{ p: 2, textAlign: "center" }}>
-          No notifications
-        </Typography>
-      ) : (
-        notifications.map((notification) => (
-          <MenuItem
-            key={notification._id}
-            onClick={() => handleMarkAsRead(notification._id)}
+    <>
+      <List sx={{ width: 350, maxHeight: 400, overflow: "auto" }}>
+        {notifications.length === 0 ? (
+          <Typography variant="body2" sx={{ p: 2, textAlign: "center" }}>
+            No notifications
+          </Typography>
+        ) : (
+          notifications.map((notification) => (
+            <MenuItem
+              key={notification._id}
+              onClick={() => handleMarkAsRead(notification._id)}
+              sx={{
+                borderBottom: "1px solid rgba(0,0,0,0.1)",
+                bgcolor: notification.read ? "inherit" : "action.hover",
+              }}
+            >
+              <Box
+                sx={{ display: "flex", alignItems: "center", width: "100%" }}
+              >
+                <Avatar
+                  src={getImageUrl(notification.senderImage)}
+                  sx={{ width: 40, height: 40, mr: 2 }}
+                />
+                <Box sx={{ flexGrow: 1 }}>
+                  <Typography variant="subtitle2">
+                    {notification.senderName || "System"}
+                  </Typography>
+                  <Typography variant="body2">
+                    {notification.content}
+                  </Typography>
+                  <Typography variant="caption" color="textSecondary">
+                    {new Date(notification.createdAt).toLocaleString()}
+                  </Typography>
+                </Box>
+              </Box>
+            </MenuItem>
+          ))
+        )}
+      </List>
+      {notifications.length > 0 && (
+        <Box sx={{ p: 1, borderTop: "1px solid #eee", textAlign: "center" }}>
+          <Button
+            variant="text"
+            color="error"
+            size="small"
+            onClick={() => {
+              setNotifications([]); // Clear notifications from state
+              setUnreadCount(0); // Reset unread count
+              handleNotificationMenuClose(); // Close the menu
+            }}
             sx={{
-              borderBottom: "1px solid rgba(0,0,0,0.1)",
-              bgcolor: notification.read ? "inherit" : "action.hover",
+              textTransform: "none",
+              width: "100%",
+              color: colors.redAccent[500],
+              "&:hover": {
+                backgroundColor: colors.redAccent[100],
+              },
             }}
           >
-            <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
-              <Avatar
-                src={notification.sender?.avatar}
-                sx={{ width: 40, height: 40, mr: 2 }}
-              />
-              <Box sx={{ flexGrow: 1 }}>
-                <Typography variant="subtitle2">
-                  {notification.sender?.name || "System"}
-                </Typography>
-                <Typography variant="body2">{notification.content}</Typography>
-                <Typography variant="caption" color="textSecondary">
-                  {new Date(notification.createdAt).toLocaleString()}
-                </Typography>
-              </Box>
-            </Box>
-          </MenuItem>
-        ))
+            Clear All Notifications
+          </Button>
+        </Box>
       )}
-    </List>
+    </>
   );
-
   return (
     <Box
       display="flex"

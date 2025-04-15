@@ -17,6 +17,14 @@ const notificationSchema = new mongoose.Schema(
       ref: "User",
       required: true
     },
+    senderImage: {  // New field to store sender's profile image
+      type: String,
+      default: ""
+    },
+    senderName: {  // New field to store sender's name
+      type: String,
+      default: ""
+    },
     message: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Message"

@@ -147,6 +147,8 @@ export const sendMessage = async (req, res) => {
       recipient: receiver._id,
       recipientModel: receiver instanceof User ? "User" : "Customer",
       sender: sender._id,
+      senderImage: sender.image, // Store the image URL/path
+      senderName: sender.name || sender.username, // Store name
       message: newMessage._id,
       content: text || (fileData ? `Sent a ${fileData.fileType}` : "New message")
     });

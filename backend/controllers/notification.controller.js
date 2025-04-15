@@ -6,7 +6,10 @@ export const getNotifications = async (req, res) => {
       recipient: req.user._id
     })
     .sort({ createdAt: -1 })
-    .populate("sender", "username avatar")
+    .populate({
+      path: 'sender',
+      select: 'name username image role' // Include all fields you need
+    })
     .populate("message");
 
     res.status(200).json(notifications);
