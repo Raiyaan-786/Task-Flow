@@ -70,13 +70,33 @@ const ChatContainer = () => {
       
       if ([newMessage.sender, newMessage.receiver].includes(selectedUser?._id)) {
         dispatch(setMessages([...messages, newMessage]));
+        
+        // Mark notification as read if we're in the chat
+        if (newMessage.sender === selectedUser._id) {
+          dispatch(markNotificationAsRead({ chatId: newMessage.chatId }));
+        }
+      }
+    };
+
+    const handleNewNotification = (notification) => {
+      dispatch(addNotification(notification));
+      
+      // Show browser notification if not in this chat
+      if (notification.message?.chatId !== selectedUser?._id && 
+          document.visibilityState !== 'visible') {
+        new Notification('New message', {
+          body: notification.content,
+          icon: notification.sender?.avatar
+        });
       }
     };
 
     socket.on("newMessage", handleNewMessage);
+    socket.on("newNotification", handleNewNotification);
     
     return () => {
       socket.off("newMessage", handleNewMessage);
+      socket.off("newNotification", handleNewNotification);
     };
   }, [socket, selectedUser, messages, dispatch]);
 
