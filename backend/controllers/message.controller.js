@@ -5,6 +5,7 @@ import canSendMessage from "../middlewares/message.middleware.js";
 import { getRecieverSocketId, io } from "../app.js";
 import mongoose from "mongoose";
 import cloudinary from "../lib/cloudinary.js";
+import { Notification } from "../models/notification.model.js";
 
 // Helper function to upload files to Cloudinary
 const uploadToCloudinary = async (fileBuffer, filename) => {
@@ -52,46 +53,53 @@ export const getUserMessages = async (req, res) => {
 
 // export const sendMessage = async (req, res) => {
 //   try {
-//     const recieverId = req.params.id ;
+//     const { id: receiverId } = req.params;
 //     const { text } = req.body;
-//     const sender = await User.findById(req.user.id); 
-//     let receiver = await User.findById(recieverId) || await Customer.findById(recieverId);
+//     const sender = await User.findById(req.user.id);
+//     const receiver = await User.findById(receiverId) || await Customer.findById(receiverId);
 
-//     if (!receiver) {
-//       return res.status(404).json({ error: "Receiver not found" });
-//     }
+//     if (!receiver) return res.status(404).json({ error: "Receiver not found" });
 
 //     const allowed = await canSendMessage(sender, receiver);
+//     if (!allowed) return res.status(403).json({ error: "Messaging not allowed" });
 
-//     if (!allowed) {
-//       return res.status(403).json({ error: "You are not allowed to message this user" });
+//     // Handle file upload if present
+//     let fileData = null;
+//     if (req.file) {
+//       try {
+//         const result = await uploadToCloudinary(req.file.buffer, req.file.originalname);
+
+//         fileData = {
+//           url: result.secure_url,
+//           publicId: result.public_id,
+//           filename: req.file.originalname,
+//           fileType: result.resource_type, // 'image', 'video', 'raw' (for PDFs)
+//         };
+//       } catch (uploadError) {
+//         console.error("Cloudinary upload failed:", uploadError);
+//         return res.status(500).json({ error: "File upload failed" });
+//       }
 //     }
 
 //     const newMessage = new Message({
-//       sender: sender.id,
-//       receiver: receiver.id,
+//       sender: sender._id,
+//       receiver: receiver._id,
 //       receiverModel: receiver instanceof User ? "User" : "Customer",
 //       text,
-//     //   file: file ? { url: file.url, type: file.type } : null,
+//       file: fileData,
 //     });
 
-//     const receiverSocketId = getRecieverSocketId(receiver.id);
-
-//     console.log("Receiver Socket ID:", receiverSocketId); 
-
+//     // Real-time notification via Socket.io
+//     const receiverSocketId = getRecieverSocketId(receiver._id);
 //     if (receiverSocketId) {
-//       console.log("Emitting newMessage event to receiver:", newMessage);
 //       io.to(receiverSocketId).emit("newMessage", newMessage);
-//     } else {
-//       console.log("Receiver is not connected via Socket.io.");
 //     }
 
 //     await newMessage.save();
-
-//     res.status(201).json({ message: "Message sent successfully", newMessage });
+//     res.status(201).json({ message: "Message sent", data: newMessage });
 //   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Internal Server Error" });
+//     console.error("Error sending message:", error);
+//     res.status(500).json({ error: "Internal server error" });
 //   }
 // };
 
@@ -116,7 +124,7 @@ export const sendMessage = async (req, res) => {
           url: result.secure_url,
           publicId: result.public_id,
           filename: req.file.originalname,
-          fileType: result.resource_type, // 'image', 'video', 'raw' (for PDFs)
+          fileType: result.resource_type,
         };
       } catch (uploadError) {
         console.error("Cloudinary upload failed:", uploadError);
@@ -132,13 +140,25 @@ export const sendMessage = async (req, res) => {
       file: fileData,
     });
 
-    // Real-time notification via Socket.io
+    await newMessage.save();
+
+    // Create notification
+    const notification = new Notification({
+      recipient: receiver._id,
+      recipientModel: receiver instanceof User ? "User" : "Customer",
+      sender: sender._id,
+      message: newMessage._id,
+      content: text || (fileData ? `Sent a ${fileData.fileType}` : "New message")
+    });
+    await notification.save();
+
+    // Real-time updates
     const receiverSocketId = getRecieverSocketId(receiver._id);
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("newMessage", newMessage);
+      io.to(receiverSocketId).emit("newNotification", notification);
     }
 
-    await newMessage.save();
     res.status(201).json({ message: "Message sent", data: newMessage });
   } catch (error) {
     console.error("Error sending message:", error);

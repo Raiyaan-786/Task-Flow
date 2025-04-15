@@ -30,8 +30,18 @@ io.on("connection", (socket) => {
     );
   }
 
-  io.emit("getOnlineUsers", Object.keys(userSocketMap));
-
+  // io.emit("getOnlineUsers", Object.keys(userSocketMap));
+  
+  socket.on("getInitialData", async () => {
+    if (userId) {
+      const unreadCount = await Notification.countDocuments({
+        recipient: userId,
+        read: false
+      });
+      socket.emit("unreadNotificationsCount", unreadCount);
+    }
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
+  });
 
   socket.on("disconnect", () => {
     if (userId) {
