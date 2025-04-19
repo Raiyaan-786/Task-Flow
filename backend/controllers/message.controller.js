@@ -6,24 +6,9 @@ import { getRecieverSocketId, io } from "../app.js";
 import mongoose from "mongoose";
 import cloudinary from "../lib/cloudinary.js";
 import { Notification } from "../models/notification.model.js";
+import streamifier from 'streamifier'
+import path from "path";
 
-// Helper function to upload files to Cloudinary
-const uploadToCloudinary = async (fileBuffer, filename) => {
-  return new Promise((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload_stream(
-      {
-        resource_type: 'auto',
-        folder: 'message_attachments',
-        public_id: filename.replace(/\.[^/.]+$/, ""), // Remove file extension
-      },
-      (error, result) => {
-        if (error) reject(error);
-        else resolve(result);
-      }
-    );
-    uploadStream.end(fileBuffer);
-  });
-};
 
 export const getUserMessages = async (req, res) => {
   try {
@@ -51,6 +36,46 @@ export const getUserMessages = async (req, res) => {
   }
 };
 
+// Improved isImageFile function
+const isImageFile = (filename) => {
+  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
+  const ext = filename.substring(filename.lastIndexOf('.')).toLowerCase();
+  return imageExtensions.includes(ext);
+};
+
+
+const uploadToCloudinary = async (fileBuffer, filename) => {
+  return new Promise((resolve, reject) => {
+    const ext = path.extname(filename).toLowerCase();
+    const isImage = isImageFile(filename);
+    
+    // Determine resource type more precisely
+    let resource_type = 'auto';
+    if (isImage) resource_type = 'image';
+    else if (['.mp4', '.mov', '.avi'].includes(ext)) resource_type = 'video';
+    else if (['.pdf', '.doc', '.docx'].includes(ext)) resource_type = 'raw';
+
+    // Sanitize filename
+    const sanitizedFilename = filename.replace(/[^\w.-]/g, '_');
+
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        resource_type,
+        folder: 'message_attachments',
+        public_id: sanitizedFilename.replace(/\.[^/.]+$/, ""),
+        // Add size limits if needed
+        // max_bytes: 10 * 1024 * 1024 // 10MB
+      },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    );
+
+    streamifier.createReadStream(fileBuffer).pipe(uploadStream);
+  });
+};
+
 export const sendMessage = async (req, res) => {
   try {
     const { id: receiverId } = req.params;
@@ -66,6 +91,9 @@ export const sendMessage = async (req, res) => {
     // Handle file upload if present
     let fileData = null;
     if (req.file) {
+      if (req.file.size > 10 * 1024 * 1024) {
+        return res.status(400).json({ error: "File size exceeds 10MB limit" });
+      }
       try {
         const result = await uploadToCloudinary(req.file.buffer, req.file.originalname);
         fileData = {
@@ -76,9 +104,14 @@ export const sendMessage = async (req, res) => {
         };
       } catch (uploadError) {
         console.error("Cloudinary upload failed:", uploadError);
-        return res.status(500).json({ error: "File upload failed" });
+        return res.status(500).json({ 
+          error: uploadError.message.includes('File size limit') 
+            ? "File too large" 
+            : "File upload failed" 
+        });
       }
     }
+    console.log(fileData)
 
     const newMessage = new Message({
       sender: sender._id,
@@ -109,7 +142,7 @@ export const sendMessage = async (req, res) => {
       io.to(receiverSocketId).emit("newNotification", notification);
     }
 
-    res.status(201).json({ message: "Message sent", data: newMessage });
+    res.status(201).json({ message: "Message sent", newMessage });
   } catch (error) {
     console.error("Error sending message:", error);
     res.status(500).json({ error: "Internal server error" });
