@@ -8,6 +8,7 @@ import {
   IconButton,
   Tooltip,
   Button,
+  Modal,
 } from "@mui/material";
 import {
   Send as SendIcon,
@@ -35,6 +36,8 @@ const ChatContainer = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  const [openImageModal, setOpenImageModal] = useState(false);
+  const [selectedImageUrl, setSelectedImageUrl] = useState("");
   const messageEndRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -74,7 +77,6 @@ const ChatContainer = () => {
       ) {
         dispatch(setMessages([...messages, newMessage]));
 
-        // Mark notification as read if we're in the chat
         if (newMessage.sender === selectedUser._id) {
           dispatch(markNotificationAsRead({ chatId: newMessage.chatId }));
         }
@@ -84,7 +86,6 @@ const ChatContainer = () => {
     const handleNewNotification = (notification) => {
       dispatch(addNotification(notification));
 
-      // Show browser notification if not in this chat
       if (
         notification.message?.chatId !== selectedUser?._id &&
         document.visibilityState !== "visible"
@@ -109,7 +110,6 @@ const ChatContainer = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Validate file size (10MB limit)
     if (file.size > 10 * 1024 * 1024) {
       alert("File size too large (max 10MB)");
       return;
@@ -130,9 +130,14 @@ const ChatContainer = () => {
     setIsSending(true);
     const formData = new FormData();
     if (textMessage) formData.append("text", textMessage);
-    if (selectedFile) formData.append("file", selectedFile);
+    if (selectedFile) {
+      formData.append("file", selectedFile);
+      formData.append(
+        "resource_type",
+        selectedFile.type === "application/pdf" ? "raw" : "image"
+      );
+    }
 
-    // Create temporary message object
     const tempId = Date.now().toString();
     const tempMessage = {
       _id: tempId,
@@ -149,7 +154,6 @@ const ChatContainer = () => {
         : null,
     };
 
-    // Optimistic update
     dispatch(setMessages([...messages, tempMessage]));
     setTextMessage("");
     setSelectedFile(null);
@@ -166,7 +170,6 @@ const ChatContainer = () => {
         }
       );
 
-      // Replace optimistic message with server response
       if (response.data?.newMessage) {
         dispatch(
           setMessages([
@@ -177,7 +180,6 @@ const ChatContainer = () => {
       }
     } catch (error) {
       console.error("Error sending message:", error);
-      // Rollback optimistic update
       dispatch(setMessages(messages.filter((m) => m._id !== tempId)));
     } finally {
       setIsSending(false);
@@ -218,8 +220,72 @@ const ChatContainer = () => {
     );
   };
 
+  // MIME type mapping for common file types
+  const mimeTypeMap = {
+    pdf: "application/pdf",
+    doc: "application/msword",
+    docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    jpg: "image/jpeg",
+    jpeg: "image/jpeg",
+    png: "image/png",
+    gif: "image/gif",
+  };
 
-  // Updated renderMessageContent function
+  const handleDownload = async (fileUrl, fileName) => {
+    setIsDownloading(true);
+    try {
+      let correctedUrl = fileUrl;
+      if (fileName.endsWith(".pdf") && fileUrl.includes("/image/upload")) {
+        correctedUrl = fileUrl.replace("/image/upload", "/raw/upload");
+      }
+
+      const response = await fetch(correctedUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch file: ${response.statusText}`);
+      }
+
+      const contentType = response.headers.get("Content-Type") || "application/octet-stream";
+      const fileExtension = fileName?.split(".").pop()?.toLowerCase();
+      const mimeType = mimeTypeMap[fileExtension] || contentType;
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(new Blob([blob], { type: mimeType }));
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName || `download.${fileExtension || "file"}`;
+      document.body.appendChild(a);
+      a.click();
+
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("Download failed:", error);
+      alert("Download failed. Please try again.");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const handleOpenImage = (url) => {
+    setSelectedImageUrl(url);
+    setOpenImageModal(true);
+  };
+
+  const handleOpenFile = (url, fileName) => {
+    // For PDFs, use corrected URL if necessary
+    let correctedUrl = url;
+    if (fileName.endsWith(".pdf") && url.includes("/image/upload")) {
+      correctedUrl = url.replace("/image/upload", "/raw/upload");
+    }
+    window.open(correctedUrl, "_blank");
+  };
+
+  const handleCloseImageModal = () => {
+    setOpenImageModal(false);
+    setSelectedImageUrl("");
+  };
+
   const renderMessageContent = (msg) => {
     if (!msg) return null;
 
@@ -237,7 +303,14 @@ const ChatContainer = () => {
           ) : (
             <Box>
               {isImage ? (
-                <Box sx={{ mb: 1 }}>
+                <Box
+                  sx={{
+                    mb: 1,
+                    cursor: "pointer",
+                    "&:hover": { opacity: 0.9 },
+                  }}
+                  onClick={() => handleOpenImage(msg.file.url)}
+                >
                   <img
                     src={msg.file.url}
                     alt={msg.file.filename}
@@ -250,7 +323,16 @@ const ChatContainer = () => {
                   />
                 </Box>
               ) : (
-                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    mb: 1,
+                    cursor: "pointer",
+                    "&:hover": { bgcolor: colors.grey[700], borderRadius: "4px" },
+                  }}
+                  onClick={() => handleOpenFile(msg.file.url, msg.file.filename)}
+                >
                   <InsertDriveFileIcon sx={{ mr: 1 }} />
                   <Typography variant="body2">{msg.file.filename}</Typography>
                 </Box>
@@ -283,46 +365,6 @@ const ChatContainer = () => {
       );
     }
     return <Typography variant="body1">{msg.text || ""}</Typography>;
-  };
-
-  // Add this new function to handle downloads
-  const handleDownload = async (fileUrl, fileName) => {
-    setIsDownloading(true);
-    try {
-      // Fetch the file
-      const response = await fetch(fileUrl);
-      const reader = response.body.getReader();
-      const contentLength = +response.headers.get("Content-Length");
-      let receivedLength = 0;
-      const chunks = [];
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        chunks.push(value);
-        receivedLength += value.length;
-        console.log(`Received ${receivedLength} of ${contentLength}`);
-      }
-
-      const blob = new Blob(chunks);
-
-      // Create a download link
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = fileName || "download";
-      document.body.appendChild(a);
-      a.click();
-
-      // Clean up
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error("Download failed:", error);
-      alert("Download failed. Please try again.");
-    } finally {
-      setIsDownloading(false);
-    }
   };
 
   if (!selectedUser) {
@@ -491,6 +533,59 @@ const ChatContainer = () => {
           </IconButton>
         </Box>
       </Box>
+
+      {/* Image Preview Modal */}
+      <Modal
+        open={openImageModal}
+        onClose={handleCloseImageModal}
+        aria-labelledby="image-preview-modal"
+        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+      >
+        <Box
+          sx={{
+            position: "relative",
+            maxWidth: "90vw",
+            maxHeight: "90vh",
+            bgcolor: "black",
+            borderRadius: "8px",
+            overflow: "hidden",
+          }}
+        >
+          <img
+            src={selectedImageUrl}
+            alt="Preview"
+            style={{
+              maxWidth: "100%",
+              maxHeight: "90vh",
+              objectFit: "contain",
+            }}
+          />
+          <IconButton
+            onClick={handleCloseImageModal}
+            sx={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+              color: "white",
+              bgcolor: "rgba(0,0,0,0.5)",
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+          <IconButton
+            onClick={() => handleDownload(selectedImageUrl, "image.jpg")}
+            sx={{
+              position: "absolute",
+              top: 8,
+              right: 48,
+              color: "white",
+              bgcolor: "rgba(0,0,0,0.5)",
+            }}
+          >
+            <DownloadIcon />
+          </IconButton>
+        </Box>
+      </Modal>
     </Box>
   );
 };

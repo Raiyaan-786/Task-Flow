@@ -155,7 +155,7 @@ const AddWork = () => {
                 <Modal open={newEmployeeModal} onClose={handleNewEmployeeModalClose}
                   sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
                 >
-                  <Box sx={{ padding: 2, width: "600px", height: '500px', overflow: 'auto', margin: 'auto', bgcolor: 'white', borderRadius: 2, bgcolor: colors.bgc[100] }}>
+                  <Box sx={{ padding: 2, width: "600px", height: '500px', overflow: 'auto', margin: 'auto', borderRadius: 2, bgcolor: colors.bgc[100] }}>
                     <Header title={'Create New Employee'} />
                     <AddEmployee/>
                   </Box>
