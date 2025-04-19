@@ -79,6 +79,7 @@ import turnoverRoutes from "./routes/turnover.routes.js";
 import messageRoutes from "./routes/message.routes.js";
 import payrollRoutes from "./routes/payroll.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
+import customerDocumentRoutes from "./routes/customerDocument.routes.js";
 
 app.use("/api/auth", userRoutes);
 app.use("/api", taskRoutes);
@@ -90,5 +91,6 @@ app.use("/api", turnoverRoutes);
 app.use("/api/message", messageRoutes);
 app.use("/api/payroll", payrollRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/customer-documents", customerDocumentRoutes);
 
 export { app , server, io};

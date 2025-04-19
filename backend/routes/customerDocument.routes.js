@@ -1,36 +1,26 @@
+import { Router } from "express";
 import {
-  uploadAadharCard,
-  uploadPanCard,
-} from "../controllers/document.controller.js";
+  uploadDocument,
+  getSpecificDocument,
+  getCustomerDocuments,
+} from "../controllers/customerDocument.controller.js";
 import {
   verifyJWT,
   roleAuthorization,
 } from "../middlewares/auth.middleware.js";
-import upload from "../config/multer.config.js";
+import multer from "multer";
 
-router.post(
-  "/upload-aadhar/:userId",
-  verifyJWT,
-  roleAuthorization("Admin", "Manager"),
-  upload.single("aadharCard"), 
-  uploadAadharCard
-);
+const router = Router();
 
-router.post(
-  "/upload-pan/:userId",
-  verifyJWT,
-  roleAuthorization("Admin", "Manager"),
-  upload.single("panCard"), 
-  uploadPanCard
-);
+const upload = multer({ storage: multer.memoryStorage() });
 
-router.get(
-    '/:userId',
-    verifyJWT,
-    getUserDocuments
-  );
-router.get(
-    '/:userId/:docType',
-    verifyJWT,
-    getSpecificDocument
-  );
+
+router.route('/upload/:customerId/:documentType').post(upload.single("document"),verifyJWT,roleAuthorization("Admin", "Manager") , uploadDocument);
+
+// Get all documents for a customer
+router.route("/:customerId").get(verifyJWT ,roleAuthorization("Admin", "Manager"), getCustomerDocuments);
+// Get specified doucment
+router.route("/:customerId/:docType").get(verifyJWT, roleAuthorization("Admin", "Manager"), getSpecificDocument);
+
+
+export default router;

@@ -9,15 +9,29 @@ const customerDocumentSchema = new mongoose.Schema(
       unique: true
     },
     aadharCard: {
-      type: String ,
-      default: null
+      url: String,        // Cloudinary URL
+      publicId: String,   // Cloudinary public ID
+      filename: String,   // Original filename
+      fileType: String,   // e.g., "pdf", "image"
+      uploadedAt: Date,   // When it was uploaded
+      verified: {        // Verification status
+        type: Boolean,
+        default: false
+      }
     },
     panCard: {
-      type: String ,
-      default: null
+      url: String,        // Cloudinary URL
+      publicId: String,   // Cloudinary public ID
+      filename: String,   // Original filename
+      fileType: String,   // e.g., "pdf", "image"
+      uploadedAt: Date,   // When it was uploaded
+      verified: {        // Verification status
+        type: Boolean,
+        default: false
+      }
     }
   },
   { timestamps: true }
 );
 
-export const customerDocument = mongoose.model("CustomerDocument", customerDocumentSchema);
+export const CustomerDocument = mongoose.model("CustomerDocument", customerDocumentSchema);

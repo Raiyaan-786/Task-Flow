@@ -51,58 +51,6 @@ export const getUserMessages = async (req, res) => {
   }
 };
 
-// export const sendMessage = async (req, res) => {
-//   try {
-//     const { id: receiverId } = req.params;
-//     const { text } = req.body;
-//     const sender = await User.findById(req.user.id);
-//     const receiver = await User.findById(receiverId) || await Customer.findById(receiverId);
-
-//     if (!receiver) return res.status(404).json({ error: "Receiver not found" });
-
-//     const allowed = await canSendMessage(sender, receiver);
-//     if (!allowed) return res.status(403).json({ error: "Messaging not allowed" });
-
-//     // Handle file upload if present
-//     let fileData = null;
-//     if (req.file) {
-//       try {
-//         const result = await uploadToCloudinary(req.file.buffer, req.file.originalname);
-
-//         fileData = {
-//           url: result.secure_url,
-//           publicId: result.public_id,
-//           filename: req.file.originalname,
-//           fileType: result.resource_type, // 'image', 'video', 'raw' (for PDFs)
-//         };
-//       } catch (uploadError) {
-//         console.error("Cloudinary upload failed:", uploadError);
-//         return res.status(500).json({ error: "File upload failed" });
-//       }
-//     }
-
-//     const newMessage = new Message({
-//       sender: sender._id,
-//       receiver: receiver._id,
-//       receiverModel: receiver instanceof User ? "User" : "Customer",
-//       text,
-//       file: fileData,
-//     });
-
-//     // Real-time notification via Socket.io
-//     const receiverSocketId = getRecieverSocketId(receiver._id);
-//     if (receiverSocketId) {
-//       io.to(receiverSocketId).emit("newMessage", newMessage);
-//     }
-
-//     await newMessage.save();
-//     res.status(201).json({ message: "Message sent", data: newMessage });
-//   } catch (error) {
-//     console.error("Error sending message:", error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// };
-
 export const sendMessage = async (req, res) => {
   try {
     const { id: receiverId } = req.params;
