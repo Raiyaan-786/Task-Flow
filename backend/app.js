@@ -87,7 +87,7 @@ import tenantRoutes from "./routes/tenant.routes.js";
 
 
 app.use("/owner", ownerRoutes);
-app.use("/client", tenantRoutes);
+app.use("/tenant", tenantRoutes);
 app.use("/api/auth", userRoutes);
 app.use("/api", taskRoutes);
 app.use("/api", workRoutes);

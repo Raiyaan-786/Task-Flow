@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const tenantSchema = new mongoose.Schema({
-  companyName: { type: String, required: true },
+  companyName: { type: String, default: "CompanyName" },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   subscriptionPlan: {

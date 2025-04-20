@@ -1,23 +1,21 @@
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { Tenant } from "../models/Tenant.js";
+import { Tenant } from "../models/tenant.model.js";
 
 export const registerTenant = async (req, res) => {
   try {
-    const { companyName, email, password, subscriptionPlan } = req.body;
+    const { email, password } = req.body;
     const existingTenant = await Tenant.findOne({ email });
     if (existingTenant) return res.status(400).json({ error: "Email already registered" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newTenant = new Tenant({
-      companyName,
       email,
       password: hashedPassword,
-      subscriptionPlan
     });
     await newTenant.save();
 
-    return res.status(201).json({ message: "Tenant registered successfully" });
+    return res.status(201).json({newTenant, message: "Tenant registered successfully" });
   } catch (err) {
     return res.status(500).json({ error: "Server error" });
   }
@@ -38,7 +36,7 @@ export const loginTenant = async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    return res.status(200).json({ token });
+    return res.status(200).json({tenant, token });
   } catch (err) {
     return res.status(500).json({ error: "Server error" });
   }
