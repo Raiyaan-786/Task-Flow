@@ -106,6 +106,14 @@ const workSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    chatwithEmployee: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Chat",
+    },
+    chatwithCustomer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Chat",
+    }
   },
   { timestamps: true }
 );

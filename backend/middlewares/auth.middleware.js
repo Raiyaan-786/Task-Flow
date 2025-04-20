@@ -1,4 +1,3 @@
-import { User } from '../models/user.model.js';
 import jwt from "jsonwebtoken"
 
 export const verifyJWT = async (req, res, next) => {
@@ -7,7 +6,6 @@ export const verifyJWT = async (req, res, next) => {
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Access denied, no token provided or incorrect format' });
   }
-
   const token = authHeader.split(' ')[1];
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);

@@ -80,7 +80,14 @@ import messageRoutes from "./routes/message.routes.js";
 import payrollRoutes from "./routes/payroll.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
 import customerDocumentRoutes from "./routes/customerDocument.routes.js";
+import ownerRoutes from "./routes/owner.routes.js";
+import tenantRoutes from "./routes/tenant.routes.js";
 
+
+
+
+app.use("/owner", ownerRoutes);
+app.use("/client", tenantRoutes);
 app.use("/api/auth", userRoutes);
 app.use("/api", taskRoutes);
 app.use("/api", workRoutes);

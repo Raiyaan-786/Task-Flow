@@ -111,7 +111,7 @@ export const sendMessage = async (req, res) => {
         });
       }
     }
-    console.log(fileData)
+    // console.log(fileData)
 
     const newMessage = new Message({
       sender: sender._id,
