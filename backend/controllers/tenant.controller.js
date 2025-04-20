@@ -41,3 +41,28 @@ export const loginTenant = async (req, res) => {
     return res.status(500).json({ error: "Server error" });
   }
 };
+
+export const updateTenant = async (req, res) => {
+  try {
+    const { tenantId } = req.params;
+    const updateData = req.body;
+
+    const updatedTenant = await Tenant.findByIdAndUpdate(
+      tenantId,
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedTenant) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    return res.status(200).json({
+      message: "Tenant updated successfully",
+      tenant: updatedTenant
+    });
+  } catch (error) {
+    console.error("Error updating tenant:", error);
+    return res.status(500).json({ message: "Server Error", error });
+  }
+};
