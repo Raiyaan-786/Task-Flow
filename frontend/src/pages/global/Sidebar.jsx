@@ -1,31 +1,251 @@
+// import { useEffect, useState } from "react";
+// import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
+// import { Box, Divider, Typography, useTheme } from "@mui/material";
+// import { Link } from "react-router-dom";
+// import "react-pro-sidebar/dist/css/styles.css";
+// import { tokens } from "../../theme";
+// import { AssessmentOutlined, ChatBubble, Badge, ChatBubbleOutline, DashboardOutlined, FolderOpenOutlined, Group, GroupOutlined, LinkOutlined, Receipt, ReceiptLongOutlined, ReceiptOutlined, SupervisorAccount, SupervisorAccountOutlined, WhatsApp, Work, WorkOutlineOutlined, Dashboard, ReceiptLong, Assessment, Folder, Home, HomeOutlined, WorkOutline, GroupsOutlined, BadgeOutlined, ChatBubbleOutlined, ChatBubbleOutlineOutlined, FolderOutlined } from "@mui/icons-material";
+// import { useSelector } from "react-redux";
+
+// const Item = ({ title, to, icon, selected, setSelected }) => {
+//   const theme = useTheme();
+//   const colors = tokens(theme.palette.mode);
+//   return (
+//     <MenuItem
+//       active={selected === title}
+//       style={{
+//         color: colors.grey[100],
+//         borderRadius: "10px", // Rounded corners for the highlight
+//       }}
+//       onClick={() => setSelected(title)}
+//       icon={icon}
+//       className={selected === title ? "active-item" : ""}
+//     >
+//       <Typography>{title}</Typography>
+//       <Link to={to} />
+//     </MenuItem>
+//   );
+// };
+
+// const Sidebar = ({ isCollapsed }) => {
+//   const theme = useTheme();
+//   const colors = tokens(theme.palette.mode);
+//   const [selected, setSelected] = useState("Dashboard");
+//   const { user } = useSelector((state) => state.auth);
+
+//   useEffect(() => {
+//     if (!user) {
+//       console.log("User is not logged in!");
+//     }
+//   }, [user]);
+
+//   return (
+//     <Box
+//       boxShadow={1}
+//       height={'100vh'}
+//       sx={{
+//         "& .pro-sidebar-inner": {
+//           background: `${colors.foreground[100]} !important`,
+//         },
+//         "& .pro-icon-wrapper": {
+//           backgroundColor: "transparent !important",
+//         },
+//         "& .pro-inner-item:hover:not(.active-item)": {
+//           borderRadius: '10px',
+//           backgroundColor: `${colors.blueHighlight[100]} !important`, // Hover for non-active items
+//           color: `${colors.grey[100]} !important`, // Keep text grey on hover
+//         },
+//         "& .active-item": {
+//           backgroundColor: `${colors.blueHighlight[900]} !important`, // Blue highlight for active item
+//           borderRadius: "10px", // Matches the rounded look
+//           color: `${colors.foreground[100]} !important`, // White text for active item
+//         },
+//         // Prevent hover effect on active item with higher specificity
+//         "& .pro-inner-item.active-item:hover": {
+//           backgroundColor: `${colors.blueHighlight[900]} !important`, // Force same background
+//           color: `${colors.foreground[100]} !important`, // Force same text color
+//         },
+//       }}
+//     >
+//       <ProSidebar collapsed={isCollapsed}>
+//         <Menu iconShape="square">
+//           {/* LOGO AND MENU ICON */}
+//           <MenuItem
+//             icon={isCollapsed ? <img height={'28px'} width={'32px'} src="logoicon.svg"/> : undefined}
+//             style={{
+//               margin: "10px 0 20px 0",
+//               color: colors.grey[100],
+//             }}
+//           >
+//             {!isCollapsed && (
+//               <Box
+//                 display="flex"
+//                 justifyContent='center'
+//                 alignItems="center"
+//                 ml="15px"
+//               >
+//                 <img height={'28px'} width={'32px'} src="/logoicon.svg" alt="brandlogo" />
+//                 <Typography ml={1} variant="h3" color={colors.grey[100]} fontWeight={'bold'}>
+//                   TASK-FLOW
+//                 </Typography>
+//               </Box>
+//             )}
+//           </MenuItem>
+
+//           {!isCollapsed && (
+//             <Box mb="25px">
+//               <Box display="flex" justifyContent="center" alignItems="center">
+//                 <img
+//                   alt="profile-user"
+//                   width="100px"
+//                   height="100px"
+//                   src="/profileimg1.jpg"
+//                   style={{ cursor: "pointer", borderRadius: "50%" }}
+//                 />
+//               </Box>
+//               <Box textAlign="center">
+//                 <Typography
+//                   variant="h3"
+//                   color={colors.grey[100]}
+//                   fontWeight="bold"
+//                   sx={{ m: "10px 0 0 0" }}
+//                 >
+//                   {user.name}
+//                 </Typography>
+//                 <Typography variant="h6" color={colors.blueHighlight[900]}>
+//                   {user.role}
+//                 </Typography>
+//               </Box>
+//             </Box>
+//           )}
+
+//           <Box
+//             paddingLeft={isCollapsed ? undefined : "10%"}
+//             paddingRight={isCollapsed ? undefined : "10%"}
+//           >
+//             <Item
+//               title="Dashboard"
+//               to="/"
+//               icon={<HomeOutlined/>}
+//               selected={selected}
+//               setSelected={setSelected}
+//             />
+//             <Item
+//               title="Work"
+//               to="/workmanager"
+//               icon={<WorkOutline/>}
+//               selected={selected}
+//               setSelected={setSelected}
+//             />
+//             <Item
+//               title="Customer"
+//               to="/customermanager"
+//               icon={<GroupsOutlined/>}
+//               selected={selected}
+//               setSelected={setSelected}
+//             />
+//             <Item
+//               title="Consultant"
+//               to="/consultantmanager"
+//               icon={<SupervisorAccountOutlined />}
+//               selected={selected}
+//               setSelected={setSelected}
+//             />
+//             <Item
+//               title="HR Section"
+//               to="/employee"
+//               icon={<BadgeOutlined/>}
+//               selected={selected}
+//               setSelected={setSelected}
+//             />
+//             <Item
+//               title="Chat"
+//               to="/chat"
+//               icon={<ChatBubbleOutlineOutlined/>}
+//               selected={selected}
+//               setSelected={setSelected}
+//             />
+//             <Divider sx={{ padding: '5px 0px' }} />
+//             <Item
+//               title="Payroll"
+//               to="/payroll"
+//               icon={<ReceiptOutlined/>}
+//               selected={selected}
+//               setSelected={setSelected}
+//             />
+//             <Item
+//               title="Invoices"
+//               to="/invoices"
+//               icon={<ReceiptLongOutlined />}
+//               selected={selected}
+//               setSelected={setSelected}
+//             />
+//             <Item
+//               title="Report"
+//               to="/report"
+//               icon={<AssessmentOutlined />}
+//               selected={selected}
+//               setSelected={setSelected}
+//             />
+//             <Divider sx={{ padding: '5px 0px' }} />
+//             <Item
+//               title="File Manager"
+//               to="/filemanager"
+//               icon={<FolderOutlined/>}
+//               selected={selected}
+//               setSelected={setSelected}
+//             />
+//             <Item
+//               title="Useful Links"
+//               to="/usefullinks"
+//               icon={<LinkOutlined />}
+//               selected={selected}
+//               setSelected={setSelected}
+//             />
+//           </Box>
+//         </Menu>
+//       </ProSidebar>
+//     </Box>
+//   );
+// };
+
+// export default Sidebar;
+
+import React from "react";
 import { useEffect, useState } from "react";
-import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
-import {  Box, Typography, useTheme } from "@mui/material";
+import { Box, Divider, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
-import "react-pro-sidebar/dist/css/styles.css";
+import { color, motion } from "framer-motion";
 import { tokens } from "../../theme";
-import { AssessmentOutlined,  ChatBubble,Badge, ChatBubbleOutline, DashboardOutlined, FolderOpenOutlined, Group, GroupOutlined, LinkOutlined, Receipt, ReceiptLongOutlined, ReceiptOutlined, SupervisorAccount, SupervisorAccountOutlined, WhatsApp, Work, WorkOutlineOutlined, Dashboard, ReceiptLong, Assessment, FolderOpen, Folder } from "@mui/icons-material";
+const user = JSON.parse(localStorage.getItem('user'));
+import {
+  AssessmentOutlined,
+  ChatBubbleOutlineOutlined,
+  FolderOutlined,
+  GroupsOutlined,
+  HomeOutlined,
+  LinkOutlined,
+  ReceiptOutlined,
+  SupervisorAccountOutlined,
+  WorkOutline,
+  BadgeOutlined,
+  ReceiptLongOutlined,
+} from "@mui/icons-material";
 import { useSelector } from "react-redux";
 
-const Item = ({ title, to, icon, selected, setSelected }) => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
-  return (
-    <MenuItem
-      active={selected === title}
-      style={{
-        color: colors.grey[100],
-      }}
-      onClick={() => setSelected(title)}
-      icon={icon}
-    >
-      <Typography>{title}</Typography>
-      <Link to={to} />
-    </MenuItem>
-  );
-};
+// Define the shaking animation
+const shakeAnimation = `
+  @keyframes shake {
+    0% { transform: rotate(0deg) translateX(0); }
+    20% { transform: rotate(10deg) translateX(2px); }
+    40% { transform: rotate(-10deg) translateX(-2px); }
+    60% { transform: rotate(6deg) translateX(1px); }
+    80% { transform: rotate(-6deg) translateX(-1px); }
+    100% { transform: rotate(0deg) translateX(0); }
+  }
+`;
 
-const Sidebar = ({isCollapsed}) => {
+const Sidebar = ({ isCollapsed }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [selected, setSelected] = useState("Dashboard");
@@ -37,195 +257,399 @@ const Sidebar = ({isCollapsed}) => {
     }
   }, [user]);
 
-  // console.log(user)
+  const menuItems = [
+    { title: "Dashboard", to: "/", icon: <HomeOutlined /> },
+    { title: "Work", to: "/workmanager", icon: <WorkOutline /> },
+    { title: "Customer", to: "/customermanager", icon: <GroupsOutlined /> },
+    {
+      title: "Consultant",
+      to: "/consultantmanager",
+      icon: <SupervisorAccountOutlined />,
+    },
+    { title: "HR Section", to: "/employee", icon: <BadgeOutlined /> },
+    { title: "Chat", to: "/chat", icon: <ChatBubbleOutlineOutlined /> },
+    { title: "Payroll", to: "/payroll", icon: <ReceiptOutlined /> },
+    { title: "Invoices", to: "/invoices", icon: <ReceiptLongOutlined /> },
+    { title: "Report", to: "/report", icon: <AssessmentOutlined /> },
+    { title: "File Manager", to: "/filemanager", icon: <FolderOutlined /> },
+    { title: "Useful Links", to: "/usefullinks", icon: <LinkOutlined /> },
+  ];
+
   return (
-    <Box
-      height={'100vh'}
+    <motion.div
+      animate={{ width: isCollapsed ? 80 : 320 }}
+      transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
       sx={{
-        "& .pro-sidebar-inner": {
-          background: `${colors.primary[900]} !important`,
-        },
-        "& .pro-icon-wrapper": {
-          backgroundColor: "transparent !important",
-        },
-        "& .pro-inner-item": {
-          padding: "5px 35px 5px 20px !important",
-        },
-        "& .pro-icon": {
-          color: `${colors.teal[300]} !important`,
-          // color: `${colors.pink[600]} !important`,
-        },
-        // "& .pro-icon": {
-        //   color: "#cb3cff !important",
-        // },
-        "& .pro-inner-item:hover": {
-          // color: "#cb3cff !important",
-          color: `${colors.teal[300]} !important`,
-        },
-        "& .pro-menu-item.active": {
-          // color: "#cb3cff !important",
-          color: `${colors.teal[300]} !important`,
-        },
+        height: "100vh",
+        position: "relative",
+        transition: "width 0.4s ease-in-out",
+        backgroundColor: `${colors.foreground[100]} !important`,
+        overflow: "hidden",
       }}
     >
-      <ProSidebar collapsed={isCollapsed}>
-        <Menu iconShape="square">
-          {/* LOGO AND MENU ICON */}
-          <MenuItem
-            icon={isCollapsed ? <img height={'28px'} width={'32px'} src="logoicon.svg"/> : undefined}
-            style={{
-              margin: "10px 0 20px 0",
-              color: colors.grey[100],
+      <style>{shakeAnimation}</style>
+      <Box
+        sx={{
+          padding: isCollapsed ? "10px" : "10px 20px",
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+          overflowY: "auto",
+          bgcolor:colors.foreground[100]
+        }}
+      >
+        {/* Logo */}
+        <Box
+          sx={{
+            margin: "10px 0 25px 0",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: isCollapsed ? "center" : "flex-start",
+            transition: "all 0.3s ease-in-out",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              transition: "all 0.3s ease-in-out",
+              overflow: "hidden",
+              ml: isCollapsed ? "0px" : "15px",
             }}
           >
+            <img
+              height="28px"
+              width="32px"
+              src="logoicon.svg"
+              alt="brandlogo"
+              style={{ transition: "transform 0.3s ease-in-out" }}
+            />
             {!isCollapsed && (
-              <Box
-                display="flex"
-                justifyContent='center'
-                alignItems="center"
-                ml="15px"
+              <motion.div
+                animate={{ opacity: isCollapsed ? 0 : 1 }}
+                transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
               >
-                <img height={'28px'} width={'32px'} src="/logoicon.svg" alt="brandlogo" />
-                <Typography ml={1} variant="h3" color={colors.grey[100]} fontWeight={'bold'}>
+                <Typography
+                  ml={1}
+                  variant="h3"
+                  color={colors.grey[100]}
+                  fontWeight="bold"
+                  sx={{
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    transition: "opacity 0.3s ease-in-out",
+                    opacity: isCollapsed ? 0 : 1,
+                  }}
+                >
                   TASK-FLOW
                 </Typography>
-              </Box>
+              </motion.div>
             )}
-          </MenuItem>
+          </Box>
+        </Box>
 
-          {!isCollapsed && (
-            <Box mb="25px">
-              <Box display="flex" justifyContent="center" alignItems="center">
-                <img
-                  alt="profile-user"
-                  width="100px"
-                  height="100px"
-                  src="/profileimg1.jpg"
-                  style={{ cursor: "pointer", borderRadius: "50%" }}
-                />
-              </Box>
-              <Box textAlign="center">
+        {/* User Profile */}
+        {!isCollapsed && (
+          <motion.div
+            animate={{ opacity: isCollapsed ? 0 : 1, height: isCollapsed ? 0 : "auto" }}
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+            sx={{ mb: "25px", overflow: "hidden" }}
+          >
+            <Box display="flex" justifyContent="center" alignItems="center" >
+              <img
+                alt="profile-user"
+                width="100px"
+                height="100px"
+                src={user.image}
+                style={{ cursor: "pointer", borderRadius: "50%" }}
+              />
+            </Box>
+            <Box textAlign="center">
+              <motion.div
+                animate={{ opacity: isCollapsed ? 0 : 1, x: isCollapsed ? -10 : 0 }}
+                transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+              >
                 <Typography
                   variant="h3"
                   color={colors.grey[100]}
                   fontWeight="bold"
-                  sx={{ m: "10px 0 0 0" }}
+                  sx={{
+                    m: "10px 0 0 0",
+                    opacity: isCollapsed ? 0 : 1,
+                    transform: isCollapsed ? "translateX(-10px)" : "translateX(0)",
+                    transition: "all 0.3s ease",
+                  }}
                 >
                   {user.name}
                 </Typography>
-                <Typography variant="h6" color={colors.teal[500]}>
+              </motion.div>
+              <motion.div
+                animate={{ opacity: isCollapsed ? 0 : 1, x: isCollapsed ? -10 : 0 }}
+                transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+              >
+                <Typography
+                  variant="h6"
+                  color={colors.blueHighlight[900]}
+                  sx={{
+                    opacity: isCollapsed ? 0 : 1,
+                    transform: isCollapsed ? "translateX(-10px)" : "translateX(0)",
+                    transition: "all 0.3s ease",
+                  }}
+                >
                   {user.role}
                 </Typography>
-              </Box>
+              </motion.div>
             </Box>
-          )}
+          </motion.div>
+        )}
 
-          <Box paddingLeft={isCollapsed ? undefined : "10%"} >
-            <Item
-              title="Dashboard"
-              to="/"
-              icon={<Dashboard/>}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Typography
-              variant="body2"
-              fontWeight={500}
-              color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
+        {/* Menu Items with Scroll */}
+        <Box sx={{ flexGrow: 1,mt:2 }} >
+          {menuItems.slice(0, 6).map((item) => (
+            <Link
+              to={item.to}
+              key={item.title}
+              style={{ textDecoration: "none", width: "100%" }}
+              onClick={() => setSelected(item.title)}
             >
-              Manage
-            </Typography>
-            <Item
-              title="Work"
-              to="/workmanager"
-              icon={<Work/>}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Customer"
-              to="/customermanager"
-              icon={<Group/>}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Consultant"
-              to="/consultantmanager"
-              icon={<SupervisorAccount/>}
-              selected={selected}
-              setSelected={setSelected}
-            />
-              <Item
-              title="HR Section"
-              to="/employee"
-              icon={<Badge/>}
-              selected={selected}
-              setSelected={setSelected}
-            />
-              <Item
-              title="Chat "
-              to="/chat"
-              icon={<ChatBubble/>}
-              selected={selected}
-              setSelected={setSelected}
-            />
-               <Typography
-              variant="body2"
-              fontWeight={500}
-              color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
+              <Box
+                sx={{
+                  width: isCollapsed ? "60px" : "100%",
+                  justifyContent: isCollapsed ? "center" : "flex-start",
+                  padding: "11px 16px",
+                  borderRadius: "10px",
+                  marginBottom: "8px",
+                  backgroundColor:
+                    selected === item.title
+                      ? `${colors.blueHighlight[900]} !important`
+                      : "transparent",
+                  color:
+                    selected === item.title
+                      ? colors.foreground[100]
+                      : colors.grey[100],
+                  "&:hover": {
+                    backgroundColor:
+                      selected === item.title
+                        ? `${colors.blueHighlight[900]} !important`
+                        : `${colors.blueHighlight[100]} !important`,
+                    color:
+                      selected === item.title
+                        ? colors.foreground[100]
+                        : colors.grey[100],
+                  },
+                  display: "flex",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  transition: "background-color 0.3s ease",
+                  "&:hover svg": {
+                    animation: "shake 0.5s",
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    "& svg": {
+                      fontSize: "20px",
+                      marginRight: isCollapsed ? 0 : "8px",
+                      transition: "transform 0.2s ease-in-out",
+                    },
+                    "&:hover svg": {
+                      animation: "shake 0.5s",
+                    },
+                  }}
+                >
+                  {item.icon}
+                </Box>
+                {!isCollapsed && (
+                  <motion.div
+                    animate={{ opacity: isCollapsed ? 0 : 1, x: isCollapsed ? -20 : 0 }}
+                    transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                  >
+                    <Typography
+                      ml={1}
+                      variant="body1"
+                      sx={{
+                        color: "inherit",
+                        opacity: isCollapsed ? 0 : 1,
+                        transform: isCollapsed ? "translateX(-20px)" : "translateX(0)",
+                        transition: "all 0.3s ease",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {item.title}
+                    </Typography>
+                  </motion.div>
+                )}
+              </Box>
+            </Link>
+          ))}
+          <Divider sx={{ marginTop: 1, marginBottom: 1 }} />
+          {menuItems.slice(6, 9).map((item) => (
+            <Link
+              to={item.to}
+              key={item.title}
+              style={{ textDecoration: "none", width: "100%" }}
+              onClick={() => setSelected(item.title)}
             >
-            Finance
-            </Typography>
-            <Item
-              title="Payroll"
-              to="/payroll"
-              icon={<Receipt/>}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Invoices"
-              to="/invoices"
-              icon={< ReceiptLong/>}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Report"
-              to="/report"
-              icon={<Assessment/>}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Typography
-              variant="body2"
-              fontWeight={500}
-              color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
+              <Box
+                sx={{
+                  width: isCollapsed ? "60px" : "100%",
+                  justifyContent: isCollapsed ? "center" : "flex-start",
+                  padding: "11px 16px",
+                  borderRadius: "10px",
+                  marginBottom: "8px",
+                  backgroundColor:
+                    selected === item.title
+                      ? `${colors.blueHighlight[900]} !important`
+                      : "transparent",
+                  color:
+                    selected === item.title
+                      ? colors.foreground[100]
+                      : colors.grey[100],
+                  "&:hover": {
+                    backgroundColor:
+                      selected === item.title
+                        ? `${colors.blueHighlight[900]} !important`
+                        : `${colors.blueHighlight[100]} !important`,
+                    color:
+                      selected === item.title
+                        ? colors.foreground[100]
+                        : colors.grey[100],
+                  },
+                  display: "flex",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  transition: "background-color 0.3s ease",
+                  "&:hover svg": {
+                    animation: "shake 0.5s",
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    "& svg": {
+                      fontSize: "20px",
+                      marginRight: isCollapsed ? 0 : "8px",
+                      transition: "transform 0.2s ease-in-out",
+                    },
+                    "&:hover svg": {
+                      animation: "shake 0.5s",
+                    },
+                  }}
+                >
+                  {item.icon}
+                </Box>
+                {!isCollapsed && (
+                  <motion.div
+                    animate={{ opacity: isCollapsed ? 0 : 1, x: isCollapsed ? -20 : 0 }}
+                    transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                  >
+                    <Typography
+                      ml={1}
+                      variant="body1"
+                      sx={{
+                        color: "inherit",
+                        opacity: isCollapsed ? 0 : 1,
+                        transform: isCollapsed ? "translateX(-20px)" : "translateX(0)",
+                        transition: "all 0.3s ease",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {item.title}
+                    </Typography>
+                  </motion.div>
+                )}
+              </Box>
+            </Link>
+          ))}
+          <Divider sx={{ marginTop: 1, marginBottom: 1 }} />
+          {menuItems.slice(9).map((item) => (
+            <Link
+              to={item.to}
+              key={item.title}
+              style={{ textDecoration: "none", width: "100%" }}
+              onClick={() => setSelected(item.title)}
             >
-            Files
-            </Typography>
-            <Item
-              title="File Manager"
-              to="/filemanager"
-              icon={<Folder/>}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Useful Links"
-              to="/usefullinks"
-              icon={<LinkOutlined/>}
-              selected={selected}
-              setSelected={setSelected}
-            />
-          </Box>
-        </Menu>
-      </ProSidebar>
-    </Box>
+              <Box
+                sx={{
+                  width: isCollapsed ? "60px" : "100%",
+                  justifyContent: isCollapsed ? "center" : "flex-start",
+                  padding: "11px 16px",
+                  borderRadius: "10px",
+                  marginBottom: "8px",
+                  backgroundColor:
+                    selected === item.title
+                      ? `${colors.blueHighlight[900]} !important`
+                      : "transparent",
+                  color:
+                    selected === item.title
+                      ? colors.foreground[100]
+                      : colors.grey[100],
+                  "&:hover": {
+                    backgroundColor:
+                      selected === item.title
+                        ? `${colors.blueHighlight[900]} !important`
+                        : `${colors.blueHighlight[100]} !important`,
+                    color:
+                      selected === item.title
+                        ? colors.foreground[100]
+                        : colors.grey[100],
+                  },
+                  display: "flex",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  transition: "background-color 0.3s ease",
+                  "&:hover svg": {
+                    animation: "shake 0.5s",
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    "& svg": {
+                      fontSize: "20px",
+                      marginRight: isCollapsed ? 0 : "8px",
+                      transition: "transform 0.2s ease-in-out",
+                    },
+                    "&:hover svg": {
+                      animation: "shake 0.5s",
+                    },
+                  }}
+                >
+                  {item.icon}
+                </Box>
+                {!isCollapsed && (
+                  <motion.div
+                    animate={{ opacity: isCollapsed ? 0 : 1, x: isCollapsed ? -20 : 0 }}
+                    transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                  >
+                    <Typography
+                      ml={1}
+                      variant="body1"
+                      sx={{
+                        color: "inherit",
+                        opacity: isCollapsed ? 0 : 1,
+                        transform: isCollapsed ? "translateX(-20px)" : "translateX(0)",
+                        transition: "all 0.3s ease",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {item.title}
+                    </Typography>
+                  </motion.div>
+                )}
+              </Box>
+            </Link>
+          ))}
+        </Box>
+      </Box>
+    </motion.div>
   );
 };
 

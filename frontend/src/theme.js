@@ -1,6 +1,7 @@
 import { createContext, useState, useMemo } from "react";
 import { createTheme } from "@mui/material/styles";
 
+// #0065e2
 //new color palette start
 // teal: {
 //     100: "#ccf3ff",
@@ -25,6 +26,8 @@ import { createTheme } from "@mui/material/styles";
 //     900: "#290c33"
 // },
 //new color palette end
+
+// #007aff
 
 //color design tokens
 export const tokens =(mode)=>({
@@ -106,9 +109,35 @@ export const tokens =(mode)=>({
           800: "#511866",
           900: "#290c33"
       },
+      // blueHighlight: {
+      //   100: "#e6f0ff", // Very light, near-white blue for subtle highlights
+      //   200: "#ccdeff", // Light blue, soft highlight for backgrounds
+      //   300: "#b2ccff", // Slightly more vibrant, for hover states
+      //   400: "#99baff", // Bright highlight for interactive elements
+      //   500: "#7fa8ff", // Mid-tone, strong highlight color
+      //   600: "#6696ff", // Bold blue for prominent highlights
+      //   700: "#4c84ff", // Deeper blue for contrast in highlights
+      //   800: "#3372ff", // Darker, intense highlight for focus states
+      //   900: "#1960ff"  // Darkest, vivid blue for strong emphasis
+      // },
+      blueHighlight: {
+        100: "#e6efff", // Very light, near-white blue for subtle highlights
+        200: "#cce0ff", // Light blue, soft highlight for backgrounds
+        300: "#b2d1ff", // Slightly more vibrant, for hover states
+        400: "#99c2ff", // Bright highlight for interactive elements
+        500: "#7fb3ff", // Mid-tone, strong highlight color
+        600: "#66a4ff", // Bold blue for prominent highlights
+        700: "#4c95ff", // Deeper blue for contrast in highlights
+        800: "#3386ff", // Darker, intense highlight for focus states
+        900: "#0065e2"  // Darkest, vivid blue (base color) for strong emphasis
+      },
       bgc:{
-        100:"#101624"
-      }
+        100:"#121212",
+        200:"#121212",
+      },
+      foreground:{
+         100:"#1d1d1d"
+      },
       }:{
             grey: {
                 100: "#141414",
@@ -187,9 +216,27 @@ export const tokens =(mode)=>({
             800: "#eab1ff",
             900: "#f5d8ff",
           },
+          blueHighlight: {
+            100: "#e6efff", // Very light, near-white blue for subtle highlights
+            200: "#cce0ff", // Light blue, soft highlight for backgrounds
+            300: "#b2d1ff", // Slightly more vibrant, for hover states
+            400: "#99c2ff", // Bright highlight for interactive elements
+            500: "#7fb3ff", // Mid-tone, strong highlight color
+            600: "#66a4ff", // Bold blue for prominent highlights
+            700: "#4c95ff", // Deeper blue for contrast in highlights
+            800: "#3386ff", // Darker, intense highlight for focus states
+            900: "#0065e2"  // Darkest, vivid blue (base color) for strong emphasis
+          },
           bgc:{
-            100:"#fcfcfc"
-          }
+            100:"#f0f0f0",
+            200:"#ececec"
+
+            // 100:"#f9f8f8"
+          },
+          foreground:{
+             100:"#FAF9F6"
+            //  100:"#ffff"
+          },
         }
     )
 })
@@ -215,7 +262,7 @@ export const themeSettings = (mode) => {
                 light: colors.grey[100],
               },
               background: {
-                default: colors.primary[600],
+                default: colors.bgc[100],
               },
             }
           : {
@@ -232,7 +279,7 @@ export const themeSettings = (mode) => {
                 light: colors.grey[100],
               },
               background: {
-                default: "#fcfcfc",
+                default: colors.bgc[100],
               },
             }),
       },

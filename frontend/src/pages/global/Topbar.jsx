@@ -213,7 +213,8 @@ const Topbar = ({ isCollapsed, setIsCollapsed }) => {
       display="flex"
       justifyContent="space-between"
       p={2}
-      bgcolor={colors.primary[900]}
+      bgcolor={colors.foreground[100]}
+      boxShadow={1}
     >
       {/* Search bar */}
       <Box display="flex" gap={2} alignItems="center">
