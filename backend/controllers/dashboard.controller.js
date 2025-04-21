@@ -24,6 +24,7 @@ export const getWorkSummary = async (req, res) => {
         $project: {
           name: 1,
           role: 1,
+          image: 1,
           "workCounts.total": { $size: "$works" },
           "workCounts.done": {
             $size: {
@@ -179,6 +180,7 @@ export const getCustomerSummary = async (req, res) => {
         $project: {
           customerName: 1,
           customerCode: 1,
+          customerImage: 1,
           works: 1,  // Project the raw works array to check if it's being populated correctly
           "workCounts.total": { $size: "$works" },
           "workCounts.done": {
@@ -271,18 +273,18 @@ export const getCustomerGroupSummary = async (req, res) => {
     const customerGroupSummary = await CustomerGroup.aggregate([
       {
         $lookup: {
-          from: 'customers', // Ensure this is the correct collection name
+          from: 'customers', 
           localField: 'customers',
           foreignField: '_id',
           as: 'groupCustomers',
         },
       },
       {
-        $unwind: '$groupCustomers', // Unwind customers array to access each customer
+        $unwind: '$groupCustomers', 
       },
       {
         $lookup: {
-          from: 'works', // Ensure this is the correct collection name
+          from: 'works', 
           localField: 'groupCustomers._id',
           foreignField: 'customer',
           as: 'works',
@@ -441,7 +443,7 @@ export const getEmployeeWorks = async (req, res) => {
     if (!employee) {
       return res.status(404).json({ error: 'Employee not found.' });
     }
-
+    console.log(employee)
     let works;
     if (status === 'Total Works') {
       works = await Work.find({ assignedEmployee: employeeId });

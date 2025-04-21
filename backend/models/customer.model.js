@@ -6,6 +6,10 @@ const customerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    customerImage:{
+      type: String,
+      default: '',
+    },
     customerCode: {
       type: String,
     },
@@ -55,7 +59,6 @@ const customerSchema = new mongoose.Schema(
     groupName: {
       type: mongoose.Schema.Types.ObjectId, 
       ref: "CustomerGroup",
-      // type: String, 
       required: false, 
     },
   },
