@@ -1,8 +1,9 @@
 import React from 'react'
+import OfficeHome from '../components/OfficeHome'
 
 const Tenant = () => {
   return (
-    <div>Tenant page</div>
+    <OfficeHome />
   )
 }
 

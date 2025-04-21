@@ -36,9 +36,9 @@ const TenantLogin = () => {
         email,
         password,
       });
-
-      const { token, user } = data;
-      dispatch(tenantLogin({ user, token }));
+      console.log(data);
+      const { token, tenant } = data;
+      dispatch(tenantLogin({ tenant, token }));
       setShowLoadingScreen(true);
       setTimeout(() => {
         navigate("/tenant");
