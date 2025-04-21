@@ -32,6 +32,9 @@ import { setOnlineUsers } from './features/chatSlice';
 import Home from './landing/Home';
 import Tenant from './landing/Tenant';
 import TenantLogin from './landing/TenantLogin';
+import TenantProfile from './components/TenantProfile';
+import TenantPlan from './components/TenantPlan';
+import TenantSettings from './components/TenantSettings';
 
 
 
@@ -84,6 +87,9 @@ function App() {
 
             <Route path='/home' element={<Home/>}/>
             <Route path='/tenant' element={<Tenant/>}/>
+            <Route path='/tenant/profile' element={<TenantProfile/>}/>
+            <Route path='/tenant/plan' element={<TenantPlan/>}/>
+            <Route path='/tenant/settings' element={<TenantSettings/>}/>
 
 
             {/* Private routes only accessed after successful login */}

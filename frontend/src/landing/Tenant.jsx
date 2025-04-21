@@ -1,10 +1,13 @@
-import React from 'react'
-import OfficeHome from '../components/OfficeHome'
+import React from 'react';
+import TenantHome from '../components/TenantHome';
+import TenantLayout from '../components/TenantLayout';
 
 const Tenant = () => {
   return (
-    <OfficeHome />
-  )
-}
+    <TenantLayout>
+      <TenantHome />
+    </TenantLayout>
+  );
+};
 
-export default Tenant
+export default Tenant;

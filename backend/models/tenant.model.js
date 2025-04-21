@@ -10,6 +10,10 @@ const tenantSchema = new mongoose.Schema({
     required: true, 
     unique: true 
   },
+  image: {
+    type: String,
+    default: '',
+  },
   companyName: { 
     type: String, 
     default: "CompanyName" 
