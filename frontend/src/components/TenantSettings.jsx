@@ -10,10 +10,15 @@ import {
   Switch,
   FormControlLabel,
   Button,
+  Divider,
 } from "@mui/material";
+import { useTheme } from '@emotion/react';
+import { tokens } from '../theme';
 import TenantLayout from "./TenantLayout";
 
 const TenantSettings = () => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { tenant } = useSelector((state) => state.tenantAuth);
@@ -44,7 +49,7 @@ const TenantSettings = () => {
 
   return (
     <TenantLayout>
-      <Box>
+      <Box sx={{ p: 3 }}>
         <Typography variant="h4" gutterBottom>
           Account Settings
         </Typography>
@@ -52,15 +57,20 @@ const TenantSettings = () => {
           Manage your account preferences and settings
         </Typography>
 
-        <Paper sx={{ p: 3, mt: 3, borderRadius: 2, boxShadow: 2 }}>
-          <Typography variant="h6" color="text.primary" gutterBottom>
-            Preferences
+        <Paper
+          sx={{
+            p: 3,
+            mt: 3,
+            borderRadius: 2,
+            boxShadow: 2,
+            bgcolor: colors.primary[900],
+          }}
+        >
+          {/* Notification Settings Section */}
+          <Typography variant="h5" gutterBottom>
+            Notification Settings
           </Typography>
-
           <Box sx={{ mb: 3 }}>
-            <Typography variant="subtitle1" color="text.secondary" gutterBottom>
-              Notification Settings
-            </Typography>
             <FormControlLabel
               control={
                 <Switch
@@ -83,10 +93,13 @@ const TenantSettings = () => {
             />
           </Box>
 
+          <Divider sx={{ my: 3 }} />
+
+          {/* Email Preferences Section */}
+          <Typography variant="h5" gutterBottom>
+            Email Preferences
+          </Typography>
           <Box sx={{ mb: 3 }}>
-            <Typography variant="subtitle1" color="text.secondary" gutterBottom>
-              Email Preferences
-            </Typography>
             <FormControlLabel
               control={
                 <Switch
@@ -119,20 +132,36 @@ const TenantSettings = () => {
             />
           </Box>
 
-          <Button
-            variant="contained"
-            startIcon={<FaSave />}
-            onClick={handleSave}
-            sx={{
-              backgroundColor: "#4CAF50",
-              "&:hover": { backgroundColor: "#45a049" },
-              px: 3,
-              py: 1,
-              borderRadius: 1,
-            }}
-          >
-            Save Settings
-          </Button>
+          <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
+            <Button
+              variant="contained"
+              startIcon={<FaSave />}
+              onClick={handleSave}
+              sx={{
+                backgroundColor: "#4CAF50",
+                "&:hover": { backgroundColor: "#45a049" },
+                px: 3,
+                py: 1,
+                borderRadius: 1,
+              }}
+            >
+              Save Settings
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={handleLogout}
+              sx={{
+                borderColor: colors.redAccent[500],
+                color: colors.redAccent[500],
+                "&:hover": { borderColor: colors.redAccent[700], color: colors.redAccent[700] },
+                px: 3,
+                py: 1,
+                borderRadius: 1,
+              }}
+            >
+              Logout
+            </Button>
+          </Box>
         </Paper>
       </Box>
     </TenantLayout>
