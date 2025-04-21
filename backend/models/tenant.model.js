@@ -67,6 +67,16 @@ const tenantSchema = new mongoose.Schema({
     prioritySupport: { type: Boolean, default: false },
     customDomain: { type: Boolean, default: false }
   },
+  loginCredentials: {
+    username: {
+      type: String,
+      default: null
+    },
+    password: {
+      type: String,
+      default: null
+    }
+  },
   notes: { type: String },
   referralSource: { type: String },
   trialEndsAt: { type: Date },

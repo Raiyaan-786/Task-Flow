@@ -45,7 +45,12 @@ export const loginTenant = async (req, res) => {
 export const updateTenant = async (req, res) => {
   try {
     const { tenantId } = req.params;
-    const updateData = req.body;
+    const updateData = { ...req.body };
+
+    // Remove restricted fields
+    delete updateData.plan;
+    delete updateData.billing;
+    delete updateData.loginCredentials;
 
     const updatedTenant = await Tenant.findByIdAndUpdate(
       tenantId,
@@ -63,6 +68,40 @@ export const updateTenant = async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating tenant:", error);
+    return res.status(500).json({ message: "Server Error", error });
+  }
+};
+export const updateTenantPlanDetails = async (req, res) => {
+  try {
+    const { tenantId } = req.params;
+    const { plan, billing, loginCredentials } = req.body;
+
+    const updateFields = {};
+
+    if (plan) updateFields.plan = plan;
+    if (billing) updateFields.billing = billing;
+    if (loginCredentials) updateFields.loginCredentials = loginCredentials;
+
+    if (Object.keys(updateFields).length === 0) {
+      return res.status(400).json({ message: "No valid fields provided to update" });
+    }
+
+    const updatedTenant = await Tenant.findByIdAndUpdate(
+      tenantId,
+      updateFields,
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedTenant) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    return res.status(200).json({
+      message: "Tenant plan, billing, or login credentials updated successfully",
+      tenant: updatedTenant
+    });
+  } catch (error) {
+    console.error("Error updating tenant plan details:", error);
     return res.status(500).json({ message: "Server Error", error });
   }
 };
