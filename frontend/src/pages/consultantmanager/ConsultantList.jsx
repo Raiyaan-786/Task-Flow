@@ -222,7 +222,7 @@ const ConsultantList = () => {
       <Modal open={openEditModal} onClose={() => setOpenEditModal(false)}
                 sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
             >
-                <Box sx={{ padding: 2, width: "600px", height: '500px', overflow: 'auto', margin: 'auto', bgcolor: 'white', borderRadius: 2, bgcolor: colors.bgc[100] }}>
+                <Box sx={{ padding: 2, width: "600px", height: '500px', overflow: 'auto', margin: 'auto', borderRadius: 2, bgcolor: colors.bgc[100] }}>
                     <Header title={'Edit Customer'} />
                     {editConsultantData && (
                         <Grid2 container spacing={2} gap={2} padding={"10px 20px"} color={colors.grey[200]}>

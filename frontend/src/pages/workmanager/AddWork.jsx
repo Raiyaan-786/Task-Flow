@@ -1,19 +1,41 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Button, TextField, Checkbox, FormControlLabel, Grid2, Typography, Autocomplete, Modal, Alert, Tooltip, } from "@mui/material";
-import { Formik } from 'formik';
-import * as yup from 'yup';
-import API from '../../api/api';
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Button,
+  TextField,
+  Checkbox,
+  FormControlLabel,
+  Grid2,
+  Typography,
+  Autocomplete,
+  Modal,
+  Alert,
+  Tooltip,
+} from "@mui/material";
+import { Formik } from "formik";
+import * as yup from "yup";
+import API from "../../api/api";
 import { useTheme } from "@emotion/react";
 import { tokens } from "../../theme";
-import { CheckCircle, Cancel, Delete, Add } from '@mui/icons-material';
-import Header from '../../components/Header';
-import AddCustomer from '../customermanager/AddCustomer';
-import AddEmployee from '../employee/AddEmployee';
+import { CheckCircle, Cancel, Delete, Add } from "@mui/icons-material";
+import Header from "../../components/Header";
+import AddCustomer from "../customermanager/AddCustomer";
+import AddEmployee from "../employee/AddEmployee";
 
 const AddWork = () => {
   const [months, setMonths] = useState([
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ]);
   const currentYear = new Date().getFullYear();
   const [years, setYears] = useState([]);
@@ -28,10 +50,14 @@ const AddWork = () => {
   }, []);
 
   const [services] = useState([
-    "Consulting", "Audit", "Taxation" // 3 predefined services
+    "Consulting",
+    "Audit",
+    "Taxation", // 3 predefined services
   ]);
   const [workTypes] = useState([
-    "Internal Audit", "External Audit", "Tax Filing" // 3 predefined work types
+    "Internal Audit",
+    "External Audit",
+    "Tax Filing", // 3 predefined work types
   ]);
 
   const theme = useTheme();
@@ -39,34 +65,32 @@ const AddWork = () => {
   const [open, setOpen] = useState(false); //for modal opening and closing
   const [customers, setCustomers] = useState([]);
   const [employees, setEmployees] = useState([]);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
   const [newCustomerModal, setNewCustomerModal] = useState(false);
   const [newEmployeeModal, setNewEmployeeModal] = useState(false);
 
-
-  
-    const fetchCustomersAndEmployees = async () => {
-      try {
-        const customerResponse = await API.get('/getallcustomers');
-        setCustomers(customerResponse.data.customers);
-        const employeeResponse = await API.get('/auth/allusers');
-        setEmployees(employeeResponse.data.users);
-      } catch (err) {
-        setError('Failed to load customers or employees');
-      }
-    };
-    useEffect(() => {
+  const fetchCustomersAndEmployees = async () => {
+    try {
+      const customerResponse = await API.get("/getallcustomers");
+      setCustomers(customerResponse.data.customers);
+      const employeeResponse = await API.get("/auth/allusers");
+      setEmployees(employeeResponse.data.users);
+    } catch (err) {
+      setError("Failed to load customers or employees");
+    }
+  };
+  useEffect(() => {
     fetchCustomersAndEmployees();
   }, []);
 
   const handleFormSubmit = async (values, { resetForm }) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     try {
-      setLoading(true);  // Add loading state if needed
-      const response = await API.post('/addwork', values, {
+      setLoading(true); // Add loading state if needed
+      const response = await API.post("/addwork", values, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -75,58 +99,67 @@ const AddWork = () => {
       setError("");
       resetForm();
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to create work');
+      setError(err.response?.data?.error || "Failed to create work");
       setSuccess("");
     }
     setOpen(true);
-    setLoading(false);  // Reset loading state
+    setLoading(false); // Reset loading state
   };
 
-  const handleNewCustomerModalClose =()=>{
+  const handleNewCustomerModalClose = () => {
     fetchCustomersAndEmployees();
     setNewCustomerModal(false);
-  }
-  const handleNewEmployeeModalClose =()=>{
+  };
+  const handleNewEmployeeModalClose = () => {
     fetchCustomersAndEmployees();
     setNewEmployeeModal(false);
-  }
+  };
 
   return (
     <Box p={2} m="20px" height="67vh" overflow="auto">
       <Formik
         initialValues={{
-          customer: '',
-          billingName: '',
-          email: '',
-          mobile: '',
-          pan: '',
-          address: '',
-          service: '',
-          workType: '',
+          customer: "",
+          billingName: "",
+          email: "",
+          mobile: "",
+          pan: "",
+          address: "",
+          service: "",
+          workType: "",
           assignedEmployee: "",
-          month: '',
-          quarter: '',
-          financialYear: '',
-          price: '',
-          quantity: '',
-          discount: '',
+          month: "",
+          quarter: "",
+          financialYear: "",
+          price: "",
+          quantity: "",
+          discount: "",
         }}
         validationSchema={yup.object().shape({
-          customer: yup.string().required('Customer is required'),
-          billingName: yup.string().required('Billing Name is required'),
-          email: yup.string().email('Invalid email format').required('Email is required'),
-          mobile: yup.string().required('Mobile number is required'),
-          pan: yup.string().required('PAN is required'),
-          address: yup.string().required('Address is required'),
-          service: yup.string().required('Service is required'),
-          workType: yup.string().required('Work Type is required'),
-          assignedEmployee: yup.string().required('Assigned Employee is required'),
-          month: yup.string().required('Month is required'),
-          quarter: yup.string().required('Quarter is required'),
-          financialYear: yup.string().required('Financial Year is required'),
-          price: yup.number().required('Price is required').positive(),
-          quantity: yup.number().required('Quantity is required').positive().integer(),
-          discount: yup.number().required('Discount is required').min(0),
+          customer: yup.string().required("Customer is required"),
+          billingName: yup.string().required("Billing Name is required"),
+          email: yup
+            .string()
+            .email("Invalid email format")
+            .required("Email is required"),
+          mobile: yup.string().required("Mobile number is required"),
+          pan: yup.string().required("PAN is required"),
+          address: yup.string().required("Address is required"),
+          service: yup.string().required("Service is required"),
+          workType: yup.string().required("Work Type is required"),
+          assignedEmployee: yup
+            .string()
+            .required("Assigned Employee is required"),
+          month: yup.string().required("Month is required"),
+          quarter: yup.string().required("Quarter is required"),
+          financialYear: yup.string().required("Financial Year is required"),
+          price: yup.number().required("Price is required").positive(),
+          quantity: yup
+            .number()
+            .required("Quantity is required")
+            .positive()
+            .integer(),
+          discount: yup.number().required("Discount is required").min(0),
         })}
         onSubmit={handleFormSubmit}
       >
@@ -138,41 +171,81 @@ const AddWork = () => {
           handleChange,
           handleSubmit,
           setFieldValue,
-          resetForm
+          resetForm,
         }) => (
           <form onSubmit={handleSubmit}>
             <Box pb={2}>
-              <Grid2 container spacing={2} gap={2} padding={"10px 20px"} color={colors.grey[200]}>
+              <Grid2
+                container
+                spacing={2}
+                gap={2}
+                padding={"10px 20px"}
+                color={colors.grey[200]}
+              >
                 {/* modal for customer creation */}
-                <Modal open={newCustomerModal} onClose={handleNewCustomerModalClose}
-                  sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                <Modal
+                  open={newCustomerModal}
+                  onClose={handleNewCustomerModalClose}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
                 >
-                  <Box sx={{ padding: 2, width: "600px", height: '500px', overflow: 'auto', margin: 'auto', bgcolor: 'white', borderRadius: 2, bgcolor: colors.bgc[100] }}>
-                    <Header title={'Create New Customer'} />
-                     <AddCustomer/>
+                  <Box
+                    sx={{
+                      padding: 2,
+                      width: "600px",
+                      height: "500px",
+                      overflow: "auto",
+                      margin: "auto",
+                      borderRadius: 2,
+                      bgcolor: colors.bgc[100],
+                    }}
+                  >
+                    <Header title={"Create New Customer"} />
+                    <AddCustomer />
                   </Box>
                 </Modal>
-                <Modal open={newEmployeeModal} onClose={handleNewEmployeeModalClose}
-                  sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                <Modal
+                  open={newEmployeeModal}
+                  onClose={handleNewEmployeeModalClose}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
                 >
-                  <Box sx={{ padding: 2, width: "600px", height: '500px', overflow: 'auto', margin: 'auto', borderRadius: 2, bgcolor: colors.bgc[100] }}>
-                    <Header title={'Create New Employee'} />
-                    <AddEmployee/>
+                  <Box
+                    sx={{
+                      padding: 2,
+                      width: "600px",
+                      height: "500px",
+                      overflow: "auto",
+                      margin: "auto",
+                      borderRadius: 2,
+                      bgcolor: colors.bgc[100],
+                    }}
+                  >
+                    <Header title={"Create New Employee"} />
+                    <AddEmployee />
                   </Box>
                 </Modal>
 
                 {/* select customer */}
-                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                <Grid2 size={6} display={"flex"} alignItems={"center"}>
                   <label>CUSTOMER</label>
                 </Grid2>
                 <Grid2 size={5}>
                   <Autocomplete
                     options={customers}
                     getOptionLabel={(option) => option?.customerName || ""}
-                    isOptionEqualToValue={(option, value) => option._id === value?._id}  // Match by _id
+                    isOptionEqualToValue={(option, value) =>
+                      option._id === value?._id
+                    } // Match by _id
                     onChange={(event, value) => {
                       // Store the customer ID in the "customer" field
-                      setFieldValue("customer", value?._id || "");  // Update customer field with _id
+                      setFieldValue("customer", value?._id || ""); // Update customer field with _id
                       if (value) {
                         // Populate other fields when a customer is selected
                         setFieldValue("billingName", value.billingName || "");
@@ -189,7 +262,10 @@ const AddWork = () => {
                         setFieldValue("pan", "");
                       }
                     }}
-                    value={customers.find((cust) => cust._id === values.customer) || null}  // Use _id to find the selected customer
+                    value={
+                      customers.find((cust) => cust._id === values.customer) ||
+                      null
+                    } // Use _id to find the selected customer
                     renderInput={(params) => (
                       <TextField
                         {...params}
@@ -197,7 +273,6 @@ const AddWork = () => {
                         placeholder="SELECT CUSTOMER"
                         error={touched.customer && !!errors.customer}
                         helperText={touched.customer && errors.customer}
-                        
                       />
                     )}
                     fullWidth
@@ -206,16 +281,29 @@ const AddWork = () => {
                 </Grid2>
 
                 {/* button of new customer creation */}
-                <Grid2 size={1} alignItems={'center'} justifyContent={'center'} display={'flex'}>
+                <Grid2
+                  size={1}
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                  display={"flex"}
+                >
                   <Tooltip title="Create New Customer">
-                    <Button onClick={()=>setNewCustomerModal(true)} variant="outlined" sx={{ height: '100%', color: colors.grey[500], bgcolor: '#dbdbdd' }}>
+                    <Button
+                      onClick={() => setNewCustomerModal(true)}
+                      variant="outlined"
+                      sx={{
+                        height: "100%",
+                        color: colors.grey[500],
+                        bgcolor: "#dbdbdd",
+                      }}
+                    >
                       <Add />
                     </Button>
                   </Tooltip>
                 </Grid2>
 
                 {/* Billing Name */}
-                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                <Grid2 size={6} display={"flex"} alignItems={"center"}>
                   <label>BILLING NAME</label>
                 </Grid2>
                 <Grid2 size={6}>
@@ -235,12 +323,12 @@ const AddWork = () => {
                 </Grid2>
 
                 {/* Email */}
-                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                <Grid2 size={6} display={"flex"} alignItems={"center"}>
                   <label>EMAIL</label>
                 </Grid2>
                 <Grid2 size={6}>
                   <TextField
-                    placeholder='ENTER EMAIL ID'
+                    placeholder="ENTER EMAIL ID"
                     size="small"
                     fullWidth
                     variant="filled"
@@ -255,12 +343,12 @@ const AddWork = () => {
                 </Grid2>
 
                 {/* Mobile */}
-                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                <Grid2 size={6} display={"flex"} alignItems={"center"}>
                   <label>MOBILE</label>
                 </Grid2>
                 <Grid2 size={6}>
                   <TextField
-                    placeholder='ENTER MOBILE NUMBER'
+                    placeholder="ENTER MOBILE NUMBER"
                     size="small"
                     fullWidth
                     variant="filled"
@@ -272,11 +360,12 @@ const AddWork = () => {
                     helperText={touched.mobile && errors.mobile}
                     type="number"
                     sx={{
-                      '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
-                        display: 'none'
-                      },
-                      '& input[type=number]': {
-                        MozAppearance: 'textfield'
+                      "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
+                        {
+                          display: "none",
+                        },
+                      "& input[type=number]": {
+                        MozAppearance: "textfield",
                       },
                     }}
                     disabled
@@ -284,7 +373,7 @@ const AddWork = () => {
                 </Grid2>
 
                 {/* PAN */}
-                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                <Grid2 size={6} display={"flex"} alignItems={"center"}>
                   <label>PAN NUMBER</label>
                 </Grid2>
                 <Grid2 size={6}>
@@ -302,7 +391,7 @@ const AddWork = () => {
                     slotProps={{
                       htmlInput: {
                         style: {
-                          textTransform: 'uppercase', // Capitalize all letters
+                          textTransform: "uppercase", // Capitalize all letters
                         },
                         maxLength: 10, // Setting the maximum number of characters to 10
                       },
@@ -312,7 +401,7 @@ const AddWork = () => {
                 </Grid2>
 
                 {/* Address */}
-                <Grid2 size={6} >
+                <Grid2 size={6}>
                   <label>ADDRESS</label>
                 </Grid2>
                 <Grid2 size={6}>
@@ -336,18 +425,25 @@ const AddWork = () => {
                 {/* fields that will be filled */}
 
                 {/* select SERVICE */}
-                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                <Grid2 size={6} display={"flex"} alignItems={"center"}>
                   <label>SELECT SERVICE</label>
                 </Grid2>
                 <Grid2 size={6}>
                   <Autocomplete
                     options={services}
                     value={values.service}
-                    onChange={(event, newValue) => setFieldValue('service', newValue)}
-                    renderInput={(params) => <TextField variant="filled" {...params} placeholder="SELECT SERVICE"
-                      error={touched.service && !!errors.service}
-                      helperText={touched.service && errors.service}
-                    />}
+                    onChange={(event, newValue) =>
+                      setFieldValue("service", newValue)
+                    }
+                    renderInput={(params) => (
+                      <TextField
+                        variant="filled"
+                        {...params}
+                        placeholder="SELECT SERVICE"
+                        error={touched.service && !!errors.service}
+                        helperText={touched.service && errors.service}
+                      />
+                    )}
                     fullWidth
                     size="small"
                     onBlur={handleBlur}
@@ -355,18 +451,25 @@ const AddWork = () => {
                 </Grid2>
 
                 {/* select WORK */}
-                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                <Grid2 size={6} display={"flex"} alignItems={"center"}>
                   <label>SELECT WORK</label>
                 </Grid2>
                 <Grid2 size={6}>
                   <Autocomplete
                     options={workTypes}
                     value={values.workType}
-                    onChange={(event, newValue) => setFieldValue('workType', newValue)}
-                    renderInput={(params) => <TextField variant="filled" {...params} placeholder="SELECT WORK TYPE"
-                      error={touched.workType && !!errors.workType}
-                      helperText={touched.workType && errors.workType}
-                    />}
+                    onChange={(event, newValue) =>
+                      setFieldValue("workType", newValue)
+                    }
+                    renderInput={(params) => (
+                      <TextField
+                        variant="filled"
+                        {...params}
+                        placeholder="SELECT WORK TYPE"
+                        error={touched.workType && !!errors.workType}
+                        helperText={touched.workType && errors.workType}
+                      />
+                    )}
                     fullWidth
                     size="small"
                     onBlur={handleBlur}
@@ -374,52 +477,83 @@ const AddWork = () => {
                 </Grid2>
 
                 {/* Assign employee */}
-                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                <Grid2 size={6} display={"flex"} alignItems={"center"}>
                   <label>ASSIGN EMPLOYEE</label>
                 </Grid2>
                 <Grid2 size={5}>
                   <Autocomplete
                     options={employees}
-                    value={employees.find(emp => emp._id === values.assignedEmployee) || null} // Make sure you select the employee based on _id
-                    getOptionLabel={(option) => option.name || ''} // Show the employee's name
+                    value={
+                      employees.find(
+                        (emp) => emp._id === values.assignedEmployee
+                      ) || null
+                    } // Make sure you select the employee based on _id
+                    getOptionLabel={(option) => option.name || ""} // Show the employee's name
                     onChange={(event, newValue) => {
-                      setFieldValue('assignedEmployee', newValue ? newValue._id : ''); // Store only the _id in the field
+                      setFieldValue(
+                        "assignedEmployee",
+                        newValue ? newValue._id : ""
+                      ); // Store only the _id in the field
                     }}
                     renderInput={(params) => (
                       <TextField
                         {...params}
                         variant="filled"
                         placeholder="SELECT EMPLOYEE"
-                        error={touched.assignedEmployee && !!errors.assignedEmployee}
-                        helperText={touched.assignedEmployee && errors.assignedEmployee}
+                        error={
+                          touched.assignedEmployee && !!errors.assignedEmployee
+                        }
+                        helperText={
+                          touched.assignedEmployee && errors.assignedEmployee
+                        }
                       />
                     )}
                     fullWidth
                     size="small"
                   />
                 </Grid2>
-                  {/* button of new employee creation */}
-                  <Grid2 size={1} alignItems={'center'} justifyContent={'center'} display={'flex'}>
+                {/* button of new employee creation */}
+                <Grid2
+                  size={1}
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                  display={"flex"}
+                >
                   <Tooltip title="Create New Employee">
-                    <Button onClick={()=>setNewEmployeeModal(true)} variant="outlined" sx={{ height: '100%', color: colors.grey[500], bgcolor: '#dbdbdd' }}>
+                    <Button
+                      onClick={() => setNewEmployeeModal(true)}
+                      variant="outlined"
+                      sx={{
+                        height: "100%",
+                        color: colors.grey[500],
+                        bgcolor: "#dbdbdd",
+                      }}
+                    >
                       <Add />
                     </Button>
                   </Tooltip>
                 </Grid2>
 
                 {/* select month */}
-                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                <Grid2 size={6} display={"flex"} alignItems={"center"}>
                   <label>MONTH</label>
                 </Grid2>
                 <Grid2 size={6}>
                   <Autocomplete
                     options={months}
                     value={values.month}
-                    onChange={(event, newValue) => setFieldValue('month', newValue)}
-                    renderInput={(params) => <TextField variant="filled" {...params} placeholder="SELECT MONTH"
-                      error={touched.month && !!errors.month}
-                      helperText={touched.month && errors.month}
-                    />}
+                    onChange={(event, newValue) =>
+                      setFieldValue("month", newValue)
+                    }
+                    renderInput={(params) => (
+                      <TextField
+                        variant="filled"
+                        {...params}
+                        placeholder="SELECT MONTH"
+                        error={touched.month && !!errors.month}
+                        helperText={touched.month && errors.month}
+                      />
+                    )}
                     fullWidth
                     size="small"
                     onBlur={handleBlur}
@@ -427,36 +561,57 @@ const AddWork = () => {
                 </Grid2>
 
                 {/* select quarter */}
-                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                <Grid2 size={6} display={"flex"} alignItems={"center"}>
                   <label>QUARTER</label>
                 </Grid2>
                 <Grid2 size={6}>
                   <Autocomplete
                     disablePortal
-                    options={["Q1 (Jan-Mar)", "Q2 (Apr-Jun)", "Q3 (Jul-Sep)", "Q4 (Oct-Dec)"]}
+                    options={[
+                      "Q1 (Jan-Mar)",
+                      "Q2 (Apr-Jun)",
+                      "Q3 (Jul-Sep)",
+                      "Q4 (Oct-Dec)",
+                    ]}
                     size="small"
                     value={values.quarter}
-                    onChange={(event, newValue) => setFieldValue('quarter', newValue)}
-                    renderInput={(params) => <TextField variant="filled" {...params} placeholder="SELECT QUARTER"
-                      error={touched.quarter && !!errors.quarter}
-                      helperText={touched.quarter && errors.quarter}
-                    />}
+                    onChange={(event, newValue) =>
+                      setFieldValue("quarter", newValue)
+                    }
+                    renderInput={(params) => (
+                      <TextField
+                        variant="filled"
+                        {...params}
+                        placeholder="SELECT QUARTER"
+                        error={touched.quarter && !!errors.quarter}
+                        helperText={touched.quarter && errors.quarter}
+                      />
+                    )}
                   />
                 </Grid2>
 
                 {/* select year */}
-                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                <Grid2 size={6} display={"flex"} alignItems={"center"}>
                   <label>YEAR</label>
                 </Grid2>
                 <Grid2 size={6}>
                   <Autocomplete
                     options={years}
                     value={values.financialYear}
-                    onChange={(event, newValue) => setFieldValue('financialYear', newValue)}
-                    renderInput={(params) => <TextField variant="filled" {...params} placeholder="SELECT YEAR"
-                      error={touched.financialYear && !!errors.financialYear}
-                      helperText={touched.financialYear && errors.financialYear}
-                    />}
+                    onChange={(event, newValue) =>
+                      setFieldValue("financialYear", newValue)
+                    }
+                    renderInput={(params) => (
+                      <TextField
+                        variant="filled"
+                        {...params}
+                        placeholder="SELECT YEAR"
+                        error={touched.financialYear && !!errors.financialYear}
+                        helperText={
+                          touched.financialYear && errors.financialYear
+                        }
+                      />
+                    )}
                     fullWidth
                     size="small"
                     onBlur={handleBlur}
@@ -464,7 +619,7 @@ const AddWork = () => {
                 </Grid2>
 
                 {/* price */}
-                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                <Grid2 size={6} display={"flex"} alignItems={"center"}>
                   <label>PRICE</label>
                 </Grid2>
                 <Grid2 size={6}>
@@ -480,16 +635,18 @@ const AddWork = () => {
                     helperText={touched.price && errors.price}
                     type="number"
                     sx={{
-                      '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
-                        display: 'none'
-                      },
-                      '& input[type=number]': {
-                        MozAppearance: 'textfield'
+                      "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
+                        {
+                          display: "none",
+                        },
+                      "& input[type=number]": {
+                        MozAppearance: "textfield",
                       },
                     }}
                   />
-                </Grid2>{/* quantity */}
-                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                </Grid2>
+                {/* quantity */}
+                <Grid2 size={6} display={"flex"} alignItems={"center"}>
                   <label>QUANTITY</label>
                 </Grid2>
                 <Grid2 size={6}>
@@ -505,8 +662,9 @@ const AddWork = () => {
                     helperText={touched.quantity && errors.quantity}
                     type="number"
                   />
-                </Grid2>{/* discount */}
-                <Grid2 size={6} display={'flex'} alignItems={'center'}>
+                </Grid2>
+                {/* discount */}
+                <Grid2 size={6} display={"flex"} alignItems={"center"}>
                   <label>DISCOUNT</label>
                 </Grid2>
                 <Grid2 size={6}>
@@ -522,11 +680,12 @@ const AddWork = () => {
                     helperText={touched.discount && errors.discount}
                     type="number"
                     sx={{
-                      '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
-                        display: 'none'
-                      },
-                      '& input[type=number]': {
-                        MozAppearance: 'textfield'
+                      "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
+                        {
+                          display: "none",
+                        },
+                      "& input[type=number]": {
+                        MozAppearance: "textfield",
                       },
                     }}
                   />
@@ -539,7 +698,7 @@ const AddWork = () => {
                     sx={{ bgcolor: colors.teal[300] }}
                     fullWidth
                     type="submit"
-                  // disabled={loading}
+                    // disabled={loading}
                   >
                     {loading ? "Submitting..." : "Submit"}
                   </Button>
@@ -547,33 +706,79 @@ const AddWork = () => {
                 <Modal
                   disableAutoFocus
                   open={open}
-                  onClose={() => { setOpen(false) }}
+                  onClose={() => {
+                    setOpen(false);
+                  }}
                   aria-labelledby="modal-modal-title"
                   aria-describedby="modal-modal-description"
-                  sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
                 >
-                  <Box sx={{
-                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                    height: '220px', width: '300px', bgcolor: 'white', borderRadius: '15px', padding: '25px'
-                  }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      height: "220px",
+                      width: "300px",
+                      bgcolor: "white",
+                      borderRadius: "15px",
+                      padding: "25px",
+                    }}
+                  >
                     {error ? (
                       <>
-                        <Cancel color="error" sx={{ height: '80px', width: '80px' }} />
-                        <Typography variant="h2" fontWeight={500} color="error">Error!</Typography>
-                        <Typography variant="h5" mb={1} color={colors.grey[500]}>{error}</Typography>
+                        <Cancel
+                          color="error"
+                          sx={{ height: "80px", width: "80px" }}
+                        />
+                        <Typography variant="h2" fontWeight={500} color="error">
+                          Error!
+                        </Typography>
+                        <Typography
+                          variant="h5"
+                          mb={1}
+                          color={colors.grey[500]}
+                        >
+                          {error}
+                        </Typography>
                       </>
                     ) : (
                       <>
-                        <CheckCircle color="success" sx={{ height: '80px', width: '80px' }} />
-                        <Typography variant="h2" fontWeight={500} color="initial">Success</Typography>
-                        <Typography variant="h5" mb={1} color={colors.grey[500]}>{success}</Typography>
+                        <CheckCircle
+                          color="success"
+                          sx={{ height: "80px", width: "80px" }}
+                        />
+                        <Typography
+                          variant="h2"
+                          fontWeight={500}
+                          color="initial"
+                        >
+                          Success
+                        </Typography>
+                        <Typography
+                          variant="h5"
+                          mb={1}
+                          color={colors.grey[500]}
+                        >
+                          {success}
+                        </Typography>
                       </>
                     )}
 
-                    <Button sx={{ borderRadius: 5 }} color={error ? "error" : "success"} variant="contained" fullWidth onClick={() => setOpen(false)}>
+                    <Button
+                      sx={{ borderRadius: 5 }}
+                      color={error ? "error" : "success"}
+                      variant="contained"
+                      fullWidth
+                      onClick={() => setOpen(false)}
+                    >
                       OK
                     </Button>
-
                   </Box>
                 </Modal>
               </Grid2>

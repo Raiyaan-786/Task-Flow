@@ -4,7 +4,8 @@ import { ColorModeContext, useMode, } from './theme'
 import { ThemeProvider } from '@emotion/react';
 import { CssBaseline } from '@mui/material';
 import Signup from './pages/authentication/Signup'
-import Login from './pages/authentication/Login'
+// import Login from './pages/authentication/Login'
+import Login from './landing/Login'
 import PrivateRoute from './pages/authentication/PrivateRoute'
 import PrivateLayout from './layout/PrivateLayout'
 
@@ -28,6 +29,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { io } from "socket.io-client";
 import { setSocket } from './features/socketSlice';
 import { setOnlineUsers } from './features/chatSlice';
+import Home from './landing/Home';
+import Tenant from './landing/Tenant';
 
 
 
@@ -76,6 +79,10 @@ function App() {
             {/* Public routes */}
             <Route path='/signup' element={<Signup/>}/>
             <Route path='/login' element={<Login/>}/>
+            <Route path='/home' element={<Home/>}/>
+            <Route path='/tenant' element={<Tenant/>}/>
+
+
             {/* Private routes only accessed after successful login */}
             <Route element={<PrivateRoute><PrivateLayout isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed}/></PrivateRoute>} >
               <Route path='/' element={ <PrivateRoute><Dashboard/></PrivateRoute>}/>

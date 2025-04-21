@@ -3,6 +3,7 @@ import { Box, Divider, styled, Tab, Tabs, Typography } from '@mui/material'
 import Header from '../../components/Header'
 import { useTheme } from '@emotion/react';
 import { tokens } from '../../theme';
+import CustomerFileManager from './CustomerFileManager';
 // import DuplicateCustomer from './DuplicateCustomer';
 
 
@@ -64,7 +65,7 @@ const FileManager = () => {
                 {/* Render All Tab Panels Once */}
                 <Box p='0 1px' flexGrow={1} position="relative" display="flex" flexDirection="column" height={'90%'}>
                     <Box display={selectedTab === 0 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
-                       {/* <AddConsultant/> */}hello
+                       {/* <CustomerFileManager/> */}
                     </Box>
 
                     <Box display={selectedTab === 1 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
