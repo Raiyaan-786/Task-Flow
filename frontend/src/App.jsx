@@ -4,8 +4,8 @@ import { ColorModeContext, useMode, } from './theme'
 import { ThemeProvider } from '@emotion/react';
 import { CssBaseline } from '@mui/material';
 import Signup from './pages/authentication/Signup'
-// import Login from './pages/authentication/Login'
-import Login from './landing/Login'
+import Login from './pages/authentication/Login'
+
 import PrivateRoute from './pages/authentication/PrivateRoute'
 import PrivateLayout from './layout/PrivateLayout'
 
@@ -31,6 +31,7 @@ import { setSocket } from './features/socketSlice';
 import { setOnlineUsers } from './features/chatSlice';
 import Home from './landing/Home';
 import Tenant from './landing/Tenant';
+import TenantLogin from './landing/TenantLogin';
 
 
 
@@ -79,6 +80,8 @@ function App() {
             {/* Public routes */}
             <Route path='/signup' element={<Signup/>}/>
             <Route path='/login' element={<Login/>}/>
+            <Route path='/tenantlogin' element={<TenantLogin/>}/>
+
             <Route path='/home' element={<Home/>}/>
             <Route path='/tenant' element={<Tenant/>}/>
 

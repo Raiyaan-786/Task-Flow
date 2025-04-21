@@ -17,7 +17,7 @@ import API from "../api/api";
 import Preloader from '../components/Preloader'
 import { tenantLogin } from "../features/tenantAuthSlice";
 
-const Login = () => {
+const TenantLogin = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -162,4 +162,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default TenantLogin;
