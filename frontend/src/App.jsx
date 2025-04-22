@@ -82,7 +82,7 @@ function App() {
   }, [user, dispatch]);
 
   const [theme, colorMode] = useMode();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>

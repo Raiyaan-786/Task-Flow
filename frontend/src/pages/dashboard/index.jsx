@@ -208,6 +208,7 @@ const Dashboard = () => {
           borderRadius={"10px"}
           boxShadow={1}
         >
+         {/* individual boxe start */}
           <Box
             display={individualWorksTab === 0 ? "block" : "none"}
             flexGrow={1}
@@ -241,10 +242,12 @@ const Dashboard = () => {
             </Box>
             <TotalWorks />
           </Box>
+            {/* individual boxe start */}
+         {/* individual boxe start */}
           <Box
             display={individualWorksTab === 1 ? "block" : "none"}
             flexGrow={1}
-            height={"100%"}
+            height={"67vh"}
           >
             <Box
               p={1}
@@ -256,23 +259,30 @@ const Dashboard = () => {
               <IconButton
                 onClick={() => setIndividualWorks(false)}
                 size="small"
-                sx={{ bgcolor: "#007499", color: "white", ":hover": "black" }}
+                sx={{
+                  bgcolor: colors.blueHighlight[800],
+                  color: "white",
+                  transition: "transform 0.3s ease, background-color 0.3s ease", // Smooth transition for animation
+                  "&:hover": {
+                    transform: "scale(1.1)", // Scales up the button by 10% on hover
+                    bgcolor: colors.blueHighlight[900], // Slightly lighter shade on hover
+                  },
+                }}
               >
                 <ArrowBack />
               </IconButton>
               <Typography variant="h4" fontWeight={"bold"}>
-                Completed Works
+              Completed Works
               </Typography>
             </Box>
-            <CompletedWorks />
+            <CompletedWorks/>
           </Box>
-          {/* <Box display={individualWorksTab === 2 ? 'block' : 'none'} flexGrow={1} height={'100%'} >
-                        hello 2
-                    </Box> */}
+            {/* individual boxe start */}
+         {/* individual boxe start */}
           <Box
             display={individualWorksTab === 3 ? "block" : "none"}
             flexGrow={1}
-            height={"100%"}
+            height={"67vh"}
           >
             <Box
               p={1}
@@ -284,20 +294,30 @@ const Dashboard = () => {
               <IconButton
                 onClick={() => setIndividualWorks(false)}
                 size="small"
-                sx={{ bgcolor: "#007499", color: "white", ":hover": "black" }}
+                sx={{
+                  bgcolor: colors.blueHighlight[800],
+                  color: "white",
+                  transition: "transform 0.3s ease, background-color 0.3s ease", // Smooth transition for animation
+                  "&:hover": {
+                    transform: "scale(1.1)", // Scales up the button by 10% on hover
+                    bgcolor: colors.blueHighlight[900], // Slightly lighter shade on hover
+                  },
+                }}
               >
                 <ArrowBack />
               </IconButton>
               <Typography variant="h4" fontWeight={"bold"}>
-                Assigned Works
+              Assigned Works
               </Typography>
             </Box>
-            <AssignedWorks />
+            <AssignedWorks/>
           </Box>
+            {/* individual boxe start */}
+         {/* individual boxe start */}
           <Box
             display={individualWorksTab === 4 ? "block" : "none"}
             flexGrow={1}
-            height={"100%"}
+            height={"67vh"}
           >
             <Box
               p={1}
@@ -309,20 +329,30 @@ const Dashboard = () => {
               <IconButton
                 onClick={() => setIndividualWorks(false)}
                 size="small"
-                sx={{ bgcolor: "#007499", color: "white", ":hover": "black" }}
+                sx={{
+                  bgcolor: colors.blueHighlight[800],
+                  color: "white",
+                  transition: "transform 0.3s ease, background-color 0.3s ease", // Smooth transition for animation
+                  "&:hover": {
+                    transform: "scale(1.1)", // Scales up the button by 10% on hover
+                    bgcolor: colors.blueHighlight[900], // Slightly lighter shade on hover
+                  },
+                }}
               >
                 <ArrowBack />
               </IconButton>
               <Typography variant="h4" fontWeight={"bold"}>
-                Unassigned Works
+              Unassigned Works
               </Typography>
             </Box>
             <UnassignedWorks />
           </Box>
+            {/* individual boxe start */}
+         {/* individual boxe start */}
           <Box
             display={individualWorksTab === 5 ? "block" : "none"}
             flexGrow={1}
-            height={"100%"}
+            height={"67vh"}
           >
             <Box
               p={1}
@@ -334,20 +364,30 @@ const Dashboard = () => {
               <IconButton
                 onClick={() => setIndividualWorks(false)}
                 size="small"
-                sx={{ bgcolor: "#007499", color: "white", ":hover": "black" }}
+                sx={{
+                  bgcolor: colors.blueHighlight[800],
+                  color: "white",
+                  transition: "transform 0.3s ease, background-color 0.3s ease", // Smooth transition for animation
+                  "&:hover": {
+                    transform: "scale(1.1)", // Scales up the button by 10% on hover
+                    bgcolor: colors.blueHighlight[900], // Slightly lighter shade on hover
+                  },
+                }}
               >
                 <ArrowBack />
               </IconButton>
               <Typography variant="h4" fontWeight={"bold"}>
-                Hold Works
+              Hold Works
               </Typography>
             </Box>
             <HoldWorks />
           </Box>
+            {/* individual boxe start */}
+         {/* individual boxe start */}
           <Box
             display={individualWorksTab === 6 ? "block" : "none"}
             flexGrow={1}
-            height={"100%"}
+            height={"67vh"}
           >
             <Box
               p={1}
@@ -359,20 +399,30 @@ const Dashboard = () => {
               <IconButton
                 onClick={() => setIndividualWorks(false)}
                 size="small"
-                sx={{ bgcolor: "#007499", color: "white", ":hover": "black" }}
+                sx={{
+                  bgcolor: colors.blueHighlight[800],
+                  color: "white",
+                  transition: "transform 0.3s ease, background-color 0.3s ease", // Smooth transition for animation
+                  "&:hover": {
+                    transform: "scale(1.1)", // Scales up the button by 10% on hover
+                    bgcolor: colors.blueHighlight[900], // Slightly lighter shade on hover
+                  },
+                }}
               >
                 <ArrowBack />
               </IconButton>
               <Typography variant="h4" fontWeight={"bold"}>
-                Cancelled Works
+              Cancelled Works
               </Typography>
             </Box>
             <CancelledWorks />
           </Box>
+            {/* individual boxe start */}
+         {/* individual boxe start */}
           <Box
             display={individualWorksTab === 7 ? "block" : "none"}
             flexGrow={1}
-            height={"100%"}
+            height={"67vh"}
           >
             <Box
               p={1}
@@ -384,16 +434,25 @@ const Dashboard = () => {
               <IconButton
                 onClick={() => setIndividualWorks(false)}
                 size="small"
-                sx={{ bgcolor: "#007499", color: "white", ":hover": "black" }}
+                sx={{
+                  bgcolor: colors.blueHighlight[800],
+                  color: "white",
+                  transition: "transform 0.3s ease, background-color 0.3s ease", // Smooth transition for animation
+                  "&:hover": {
+                    transform: "scale(1.1)", // Scales up the button by 10% on hover
+                    bgcolor: colors.blueHighlight[900], // Slightly lighter shade on hover
+                  },
+                }}
               >
                 <ArrowBack />
               </IconButton>
               <Typography variant="h4" fontWeight={"bold"}>
-                Muted Work
+              Muted Work
               </Typography>
             </Box>
             <MutedWorks />
           </Box>
+            {/* individual boxe start */}
         </Box>
       ) : (
         <Box
