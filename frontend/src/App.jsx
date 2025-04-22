@@ -39,6 +39,12 @@ import TenantPlanConfirm from './components/TenantPlanConfirm';
 import TenantPayment from './components/TenantPayment';
 import TenantReciept from './components/TenantReciept';
 import OwnerLogin from './landing/OwnerLogin';
+import Owner from './landing/Owner';
+import OwnerHome from './components/OwnerHome';
+import OwnerPayments from './components/OwnerPayments';
+import OwnerRequests from './components/OwnerRequests';
+import OwnerClients from './components/OwnerClients';
+import OwnerClientDetails from './components/OwnerClientDetails';
 
 
 
@@ -87,6 +93,15 @@ function App() {
             <Route path='/login' element={<Login/>}/>
             <Route path='/tenantlogin' element={<TenantLogin/>}/>
             <Route path='/ownerlogin' element={<OwnerLogin/>}/>
+
+
+            <Route path='/owner' element={<Owner/>}/>
+            <Route path='/owner/dashboard' element={<OwnerHome/>}/>
+            <Route path='/owner/payment' element={<OwnerPayments/>}/>
+            <Route path='/owner/request' element={<OwnerRequests/>}/>
+            <Route path='/owner/client' element={<OwnerClients/>}/>
+            <Route path='/owner/client/:id' element={<OwnerClientDetails/>}/>
+
 
             <Route path='/home' element={<Home/>}/>
             <Route path='/tenant' element={<Tenant/>}/>

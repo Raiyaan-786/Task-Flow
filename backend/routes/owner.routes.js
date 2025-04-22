@@ -5,7 +5,7 @@ import { authorizeRole, verifyOwnerJWT } from "../middlewares/ownerAuth.middlewa
 const router = Router();
 
 router.route("/login").post(loginOwner);
-router.route("/tenants").get(verifyOwnerJWT ,authorizeRole("Owner"), getAllClients)
-router.route('/tenants/:id').get(verifyOwnerJWT, authorizeRole('Owner'), getSingleClient);
+router.route("/getallclients").get(verifyOwnerJWT ,authorizeRole("Owner"), getAllClients)
+router.route('/getclient/:id').get(verifyOwnerJWT, authorizeRole('Owner'), getSingleClient);
 
 export default router;

@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import API from "../api/api";
 import Preloader from '../components/Preloader'
+import { ownerLogin } from "../features/ownerAuthSlice";
 
 const OwnerLogin = () => {
   const dispatch = useDispatch();
@@ -35,12 +36,11 @@ const OwnerLogin = () => {
         email,
         password,
       });
-
       const { token } = data;
-      dispatch(login({ token }));
+      dispatch(ownerLogin({ token }));
       setShowLoadingScreen(true);
       setTimeout(() => {
-        navigate("/");
+        navigate("/owner");
       }, 5000);
     } catch (err) {
       setErrorMessage("Login failed. Please check your credentials.");
