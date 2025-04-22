@@ -9,6 +9,7 @@ import {
   CardActions,
   Chip,
   Box,
+  Alert,
 } from "@mui/material";
 import TenantLayout from "./TenantLayout";
 import API from "../api/api";
@@ -16,6 +17,7 @@ import API from "../api/api";
 const TenantPlan = () => {
   const [plans, setPlans] = useState([]);
   const [tenantPlan, setTenantPlan] = useState(null);
+  const [error, setError] = useState(null); // State for error message
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,22 +29,41 @@ const TenantPlan = () => {
         setTenantPlan(parsedTenantData.plan); // Extract tenant's plan
       } catch (error) {
         console.error("Error parsing tenant data:", error);
+        setError("Failed to load tenant data.");
       }
     }
 
     // Fetch plans from backend
     const fetchPlans = async () => {
       try {
-        const token = localStorage.getItem("token"); // Adjust based on how you store the token
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("No authentication token found. Please log in.");
+        }
+
         const response = await API.get("/tenant/getAllPlans", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setPlans(response.data.plans); // Access the plans array from response.data.plans
+
+        if (!response.data.plans) {
+          throw new Error("Invalid response format: No plans found.");
+        }
+
+        setPlans(response.data.plans);
+        setError(null); // Clear any previous errors
       } catch (error) {
-        console.error("Error fetching plans:", error);
-        alert("Error fetching subscription plans");
+        console.error("Error fetching plans:", {
+          message: error.message,
+          status: error.response?.status,
+          data: error.response?.data,
+        });
+        setError(
+          error.response?.data?.error ||
+            error.message ||
+            "Failed to fetch subscription plans."
+        );
       }
     };
     fetchPlans();
@@ -80,6 +101,18 @@ const TenantPlan = () => {
           </Typography>
         )}
 
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+
+        {plans.length === 0 && !error && (
+          <Typography variant="body2" color="text.secondary">
+            Loading plans...
+          </Typography>
+        )}
+
         <Box sx={{ display: "flex", gap: 3, mt: 4, flexWrap: "wrap" }}>
           {plans.map((plan) => (
             <Card
@@ -90,9 +123,9 @@ const TenantPlan = () => {
                 borderRadius: 2,
                 boxShadow: 2,
                 border: isCurrentPlan(plan)
-                  ? "2px solid #FF9800" // Orange for current plan
+                  ? "2px solid #FF9800"
                   : plan.recommended
-                  ? "2px solid #4CAF50" // Green for recommended
+                  ? "2px solid #4CAF50"
                   : "1px solid #ddd",
                 position: "relative",
               }}

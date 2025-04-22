@@ -38,6 +38,7 @@ import TenantSettings from './components/TenantSettings';
 import TenantPlanConfirm from './components/TenantPlanConfirm';
 import TenantPayment from './components/TenantPayment';
 import TenantReciept from './components/TenantReciept';
+import OwnerLogin from './landing/OwnerLogin';
 
 
 
@@ -74,8 +75,6 @@ function App() {
     }
   }, [user, dispatch]);
 
-
-
   const [theme, colorMode] = useMode();
   const [isCollapsed, setIsCollapsed] = useState(false);
   return (
@@ -87,6 +86,7 @@ function App() {
             <Route path='/signup' element={<Signup/>}/>
             <Route path='/login' element={<Login/>}/>
             <Route path='/tenantlogin' element={<TenantLogin/>}/>
+            <Route path='/ownerlogin' element={<OwnerLogin/>}/>
 
             <Route path='/home' element={<Home/>}/>
             <Route path='/tenant' element={<Tenant/>}/>

@@ -31,13 +31,13 @@ const OwnerLogin = () => {
     setIsLoading(true);
 
     try {
-      const { data } = await API.post("/tenant/login", {
+      const { data } = await API.post("/owner/login", {
         email,
         password,
       });
 
-      const { token, user } = data;
-      dispatch(login({ user, token }));
+      const { token } = data;
+      dispatch(login({ token }));
       setShowLoadingScreen(true);
       setTimeout(() => {
         navigate("/");
