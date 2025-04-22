@@ -58,9 +58,9 @@ const GroupDashboard = () => {
       flex: 1.5,
       renderCell: (params) => (
         <Box sx={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Typography variant="h6" bgcolor={colors.teal[700]} sx={{
+          <Typography variant="h6" bgcolor={colors.blueHighlight[800]} sx={{
             width: '100%', textAlign: 'center', height: '80%',
-            borderRadius: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: colors.grey[100]
+            borderRadius: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white'
           }}>
             {params.row.groupName}
           </Typography>
@@ -82,21 +82,39 @@ const GroupDashboard = () => {
 
   return (
     <Box display={'flex'}
-      sx={{
-        height: '67vh',
-        "& .MuiDataGrid-root": { border: "none" },
-        "& .MuiDataGrid-cell": { borderBottom: "none" },
-        "& .name-column--cell": { color: colors.teal[300] },
-        "& .MuiDataGrid-columnHeader": { backgroundColor: colors.primary[900], borderBottom: "none" },
-        "& .MuiDataGrid-virtualScroller": { backgroundColor: colors.bgc[100] },
-        "& .MuiDataGrid-footerContainer": { borderTop: "none", backgroundColor: colors.primary[900] },
-        "& .MuiCheckbox-root": { color: `${colors.teal[200]} !important` },
-      }}
+    sx={{
+      height: "98%",
+      "& .MuiDataGrid-root": { border: "none" },
+      "& .MuiDataGrid-cell": { borderBottom: "none" },
+      // '& .name-column--cell': { color: colors.blueHighlight[900] },
+      "& .MuiDataGrid-columnHeader": {
+        backgroundColor: colors.foreground[100],
+      },
+      "& .MuiDataGrid-virtualScroller": { backgroundColor: colors.bgc[100] },
+      "& .MuiDataGrid-footerContainer": {
+        backgroundColor: colors.foreground[100],
+      },
+      "& .MuiCheckbox-root": {
+        color: `${colors.blueAccent[900]} !important`,
+      },
+    }}
     >
       <DataGrid
         loading={loading}
         slotProps={{ loadingOverlay: { variant: 'skeleton', noRowsVariant: 'skeleton' } }}
-        disableColumnMenu slots={{ toolbar: CustomToolbar }} rows={customerSummary} columns={columns} />
+        disableColumnMenu slots={{ toolbar: CustomToolbar }} rows={customerSummary} columns={columns} 
+        getRowClassName={(params) =>
+          params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
+        }
+        sx={{
+          "& .even-row": {
+            backgroundColor: colors.bgc[100], // Light shade (#e6f0ff)
+          },
+          "& .odd-row": {
+            backgroundColor: colors.foreground[100], // Darker shade (#99baff)
+          },
+        }}
+        />
     </Box>
   );
 };

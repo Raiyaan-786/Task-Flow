@@ -7,7 +7,7 @@ const Home = () => {
     const navigate = useNavigate();
 
     const handleLoginClick = () => {
-      navigate('/login');
+      navigate('/tenantlogin');
     };
   return (
     <div className="home">

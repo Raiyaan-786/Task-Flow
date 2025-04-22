@@ -20,6 +20,7 @@
     "axios": "^1.7.7",
     "cors": "^2.8.5",
     "formik": "^2.4.6",
+    "framer-motion": "^12.7.4",
     "jspdf": "^3.0.1",
     "lottie-react": "^2.4.1",
     "mime": "^4.0.7",
