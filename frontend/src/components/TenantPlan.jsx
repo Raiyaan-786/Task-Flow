@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import {
   Typography,
@@ -10,10 +11,12 @@ import {
   Box,
 } from "@mui/material";
 import TenantLayout from "./TenantLayout";
+import API from "../api/api";
 
 const TenantPlan = () => {
   const [plans, setPlans] = useState([]);
   const [tenantPlan, setTenantPlan] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch tenant data from localStorage
@@ -27,65 +30,37 @@ const TenantPlan = () => {
       }
     }
 
-    // Define static plans
-    const staticPlans = [
-      {
-        name: "Free",
-        price: 0,
-        billingCycle: "monthly",
-        features: {
-          users: 1,
-          storage: "1GB",
-          support: "Community only",
-          apiAccess: false,
-          analytics: false,
-        },
-      },
-      {
-        name: "Basic",
-        price: 19.99,
-        billingCycle: "monthly",
-        features: {
-          users: 5,
-          storage: "10GB",
-          support: "Email only",
-          apiAccess: false,
-          analytics: false,
-        },
-      },
-      {
-        name: "Pro",
-        price: 49.99,
-        billingCycle: "monthly",
-        features: {
-          users: 15,
-          storage: "50GB",
-          support: "Priority email",
-          apiAccess: true,
-          analytics: true,
-        },
-        recommended: true,
-      },
-      {
-        name: "Enterprise",
-        price: 99.99,
-        billingCycle: "monthly",
-        features: {
-          users: "Unlimited",
-          storage: "1TB",
-          support: "24/7 phone",
-          apiAccess: true,
-          analytics: true,
-        },
-      },
-    ];
-    setPlans(staticPlans);
+    // Fetch plans from backend
+    const fetchPlans = async () => {
+      try {
+        const token = localStorage.getItem("token"); // Adjust based on how you store the token
+        const response = await API.get("/tenant/getAllPlans", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setPlans(response.data.plans); // Access the plans array from response.data.plans
+      } catch (error) {
+        console.error("Error fetching plans:", error);
+        alert("Error fetching subscription plans");
+      }
+    };
+    fetchPlans();
   }, []);
 
   // Function to check if the plan is the tenant's current plan
   const isCurrentPlan = (plan) => {
     if (!tenantPlan) return false;
-    return plan.name.toLowerCase() === tenantPlan.tier.toLowerCase();
+    return plan.tier.toLowerCase() === tenantPlan.tier.toLowerCase();
+  };
+
+  // Handle plan selection
+  const handlePlanSelect = (plan) => {
+    if (isCurrentPlan(plan)) {
+      alert(`You are already on the ${plan.tier} plan`);
+    } else {
+      navigate("/tenant/plan-confirmation", { state: { plan } });
+    }
   };
 
   return (
@@ -106,9 +81,9 @@ const TenantPlan = () => {
         )}
 
         <Box sx={{ display: "flex", gap: 3, mt: 4, flexWrap: "wrap" }}>
-          {plans.map((plan, index) => (
+          {plans.map((plan) => (
             <Card
-              key={index}
+              key={plan._id}
               sx={{
                 flex: 1,
                 minWidth: 250,
@@ -130,7 +105,7 @@ const TenantPlan = () => {
                     top: -10,
                     right: 10,
                     fontWeight: "bold",
-                    backgroundColor: isCurrentPlan(plan) ? "#FF9800" : "#4CAF50", // Orange for current, green for recommended
+                    backgroundColor: isCurrentPlan(plan) ? "#FF9800" : "#4CAF50",
                     color: "#fff",
                   }}
                 />
@@ -142,10 +117,10 @@ const TenantPlan = () => {
                   color="text.primary"
                   gutterBottom
                 >
-                  {plan.name}
+                  {plan.tier}
                 </Typography>
                 <Typography variant="h4" color="primary">
-                  ${plan.price}
+                  ${parseFloat(plan.price).toFixed(2)}
                   <span style={{ fontSize: "1rem", color: "#666" }}>
                     /{plan.billingCycle}
                   </span>
@@ -193,22 +168,18 @@ const TenantPlan = () => {
                 <Button
                   fullWidth
                   variant="contained"
-                  onClick={() =>
-                    isCurrentPlan(plan)
-                      ? alert(`You are already on the ${plan.name} plan`)
-                      : alert(`Selected ${plan.name} plan`)
-                  }
+                  onClick={() => handlePlanSelect(plan)}
                   sx={{
                     backgroundColor: isCurrentPlan(plan)
-                      ? "#FF9800" // Orange for current plan
+                      ? "#FF9800"
                       : plan.recommended
-                      ? "#4CAF50" // Green for recommended
+                      ? "#4CAF50"
                       : "#2e3b4e",
                     "&:hover": {
                       backgroundColor: isCurrentPlan(plan)
-                        ? "#F57C00" // Darker orange on hover
+                        ? "#F57C00"
                         : plan.recommended
-                        ? "#45a049" // Darker green on hover
+                        ? "#45a049"
                         : "#1a252f",
                     },
                     borderRadius: 1,

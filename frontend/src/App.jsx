@@ -35,6 +35,9 @@ import TenantLogin from './landing/TenantLogin';
 import TenantProfile from './components/TenantProfile';
 import TenantPlan from './components/TenantPlan';
 import TenantSettings from './components/TenantSettings';
+import TenantPlanConfirm from './components/TenantPlanConfirm';
+import TenantPayment from './components/TenantPayment';
+import TenantReciept from './components/TenantReciept';
 
 
 
@@ -90,6 +93,10 @@ function App() {
             <Route path='/tenant/profile' element={<TenantProfile/>}/>
             <Route path='/tenant/plan' element={<TenantPlan/>}/>
             <Route path='/tenant/settings' element={<TenantSettings/>}/>
+            <Route path='/tenant/transactions' element={<TenantSettings/>}/>
+            <Route path='/tenant/plan-confirmation' element={<TenantPlanConfirm/>}/>
+            <Route path='/tenant/payment' element={<TenantPayment/>}/>
+            <Route path='/tenant/receipt' element={<TenantReciept/>}/>
 
 
             {/* Private routes only accessed after successful login */}

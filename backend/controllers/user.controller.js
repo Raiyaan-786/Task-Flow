@@ -9,12 +9,8 @@ const registerUser = async (req, res) => {
     const {
       name,
       username,
-      department,
-      postname,
       email,
       password,
-      mobile,
-      address,
       role,
     } = req.body;
     if (!name || !username || !email || !password || !mobile || !address) {

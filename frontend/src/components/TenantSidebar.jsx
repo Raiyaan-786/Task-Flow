@@ -2,6 +2,7 @@ import React from 'react';
 import { ProSidebar as Sidebar, Menu, MenuItem } from 'react-pro-sidebar';
 import 'react-pro-sidebar/dist/css/styles.css';
 import { FaUser, FaRegListAlt, FaCog, FaSignOutAlt, FaHome } from 'react-icons/fa';
+import { MdAttachMoney } from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { tenantLogout } from '../features/tenantAuthSlice';
@@ -37,6 +38,9 @@ const TenantSidebar = () => {
         </MenuItem>
         <MenuItem icon={<FaRegListAlt />} style={{ color: 'white' }} onClick={() => navigate('/tenant/plan')}>
           Plan
+        </MenuItem>
+        <MenuItem icon={<MdAttachMoney />} style={{ color: 'white' }} onClick={() => navigate('/tenant/transactions')}>
+          Transactions
         </MenuItem>
         <MenuItem icon={<FaCog />} style={{ color: 'white' }} onClick={() => navigate('/tenant/settings')}>
           Settings
