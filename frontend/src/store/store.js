@@ -4,6 +4,8 @@ import chatSlice from '../features/chatSlice'
 import socketSlice from '../features/socketSlice'
 import notificationSlice from '../features/notificationSlice'
 import tenantAuthSlice from '../features/tenantAuthSlice'
+import ownerAuthSlice from '../features/ownerAuthSlice'
+
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +13,7 @@ export const store = configureStore({
     tenantAuth:tenantAuthSlice,
     chat: chatSlice,
     socketio: socketSlice,
-    notifications: notificationSlice
+    notifications: notificationSlice,
+    ownerAuth:ownerAuthSlice
   },
 })
