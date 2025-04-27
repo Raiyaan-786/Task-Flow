@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
+    companyName: {
+      type: String,
+      required: true,
+    },
     name: {
       type: String,
       required: true,

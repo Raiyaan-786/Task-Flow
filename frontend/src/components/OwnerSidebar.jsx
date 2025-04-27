@@ -31,9 +31,9 @@ const OwnerSidebar = () => {
       }}
     >
       <Menu iconShape="circle">
-        <MenuItem icon={<FaHome />} style={{ color: 'white' }} onClick={() => navigate('/owner/dashboard')}>
+        {/* <MenuItem icon={<FaHome />} style={{ color: 'white' }} onClick={() => navigate('/owner/dashboard')}>
           Dashboard
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem icon={<FaHome />} style={{ color: 'white' }} onClick={() => navigate('/owner/client')}>
           Clients
         </MenuItem>

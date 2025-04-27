@@ -72,6 +72,7 @@ const loginUser = async (req, res) => {
 const createUser = async (req, res) => {
   try {
     const {
+      companyName,
       name,
       username,
       department,
@@ -104,6 +105,7 @@ const createUser = async (req, res) => {
     }
 
     const newUser = new User({
+      companyName,
       name,
       username,
       department,
@@ -153,7 +155,7 @@ const getAllUsers = async (req, res) => {
   try {
     const users = await User.find(
       {},
-      "name email department salary dateofjoining dateofleaving postname role mobile address username image password status"
+      "companyName name email department salary dateofjoining dateofleaving postname role mobile address username image password status"
     );
     res.status(200).json({ users });
   } catch (err) {
@@ -164,7 +166,7 @@ const getMuteUsers = async (req, res) => {
   try {
     const users = await User.find(
       { status: "Mute" },
-      "name email department postname role mobile address username image password status"
+      "companyName name email department postname role mobile address username image password status"
     );
     res.status(200).json({ users });
   } catch (err) {

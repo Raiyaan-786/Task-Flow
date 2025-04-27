@@ -5,11 +5,11 @@ import { Work } from "../models/work.model.js";
 const createCustomer = async (req, res) => {
   try {
     const {
+      companyName,
       customerName,
       customerCode,
       password,
       billingName,
-      companyName,
       email,
       mobileNo,
       whatsappNo,
@@ -29,11 +29,11 @@ const createCustomer = async (req, res) => {
       }
     }
     const newCustomer = new Customer({
+      companyName,
       customerName,
       customerCode,
       password,
       billingName,
-      companyName,
       email,
       mobileNo,
       whatsappNo: sameAsMobileNo ? mobileNo : whatsappNo,
