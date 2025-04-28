@@ -45,6 +45,7 @@ import OwnerPayments from './components/OwnerPayments';
 import OwnerRequests from './components/OwnerRequests';
 import OwnerClients from './components/OwnerClients';
 import OwnerClientDetails from './components/OwnerClientDetails';
+import OwnerPaymentDetails from './components/OwnerPaymentDetails';
 
 
 
@@ -98,6 +99,7 @@ function App() {
             <Route path='/owner' element={<Owner/>}/>
             <Route path='/owner/dashboard' element={<OwnerHome/>}/>
             <Route path='/owner/payment' element={<OwnerPayments/>}/>
+            <Route path='/owner/payment/:paymentId' element={<OwnerPaymentDetails/>}/>
             <Route path='/owner/request' element={<OwnerRequests/>}/>
             <Route path='/owner/client' element={<OwnerClients/>}/>
             <Route path='/owner/client/:id' element={<OwnerClientDetails/>}/>

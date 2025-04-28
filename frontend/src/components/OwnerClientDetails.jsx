@@ -39,14 +39,11 @@ const OwnerClientDetails = () => {
       }
 
       try {
-        console.log('Fetching client with ID:', id); // Debug
-        console.log('Using token:', token); // Debug
         const response = await API.get(`/owner/getclient/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log('API Response:', response.data); // Debug
         if (!response.data || Object.keys(response.data).length === 0) {
           setError('No client data returned from the server.');
           setLoading(false);

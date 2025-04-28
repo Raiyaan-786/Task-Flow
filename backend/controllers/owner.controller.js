@@ -56,22 +56,23 @@ export const getAllClients = async (req, res) => {
   };
 
 
-  export const getTenantPayments = async (req, res) => {
+  export const getSinglePayment = async (req, res) => {
     try {
-      const tenantId = req.params.tenantId;
-  
-      if (!mongoose.Types.ObjectId.isValid(tenantId)) {
-        return res.status(400).json({ error: "Invalid tenant ID" });
+      const { paymentId } = req.params;
+      if (!paymentId.match(/^[0-9a-fA-F]{24}$/)) {
+        return res.status(400).json({ error: 'Invalid payment ID' });
       }
   
-      const payments = await TenantPayment.find({ tenant: tenantId })
-        .populate("tenant", "name email") // Populate tenant details
-        .populate("plan", "name price"); // Populate plan details
-      if (!payments.length) {
-        return res.status(404).json({ error: "No payments found for this tenant" });
+      const payment = await TenantPayment.findById(paymentId)
+        .populate('tenant', 'name email image') // Populate tenant details
+        .populate('plan', 'name price'); // Populate plan details
+  
+      if (!payment) {
+        return res.status(404).json({ error: 'Payment not found' });
       }
-      return res.status(200).json(payments);
+  
+      return res.status(200).json(payment);
     } catch (err) {
-      return res.status(500).json({ error: "Server error" });
+      return res.status(500).json({ error: err.message || 'Server error' });
     }
   };

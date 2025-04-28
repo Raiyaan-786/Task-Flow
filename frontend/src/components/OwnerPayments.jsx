@@ -32,19 +32,19 @@ const OwnerPayments = () => {
     const fetchPayments = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await API.get('/payments/getallpayments', {
+        const response = await API.get('/owner/getallpayments', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         setPayments(response.data);
+        console.log(response.data)
         setLoading(false);
       } catch (err) {
         setError('Failed to fetch payments. Please try again.');
         setLoading(false);
       }
     };
-
     fetchPayments();
   }, []);
 

@@ -4,7 +4,6 @@ import cloudinary from "../lib/cloudinary.js";
 import { Tenant } from "../models/tenant.model.js";
 import { TenantPayment } from "../models/tenantpayment.model.js";
 import { Plan } from "../models/plan.model.js";
-import axios from 'axios';
 
 export const registerTenant = async (req, res) => {
   try {
