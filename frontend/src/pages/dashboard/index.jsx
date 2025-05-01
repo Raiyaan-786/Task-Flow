@@ -44,10 +44,8 @@ const Dashboard = () => {
     minHeight: "35px",
     padding: "0px 10px",
     color: "obsidian",
-    // color: '#999999',
     "&.Mui-selected": {
       backgroundColor: colors.blueHighlight[900],
-      // backgroundColor: '#007499',
       color: "white",
     },
   }));

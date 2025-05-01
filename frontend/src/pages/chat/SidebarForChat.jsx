@@ -106,7 +106,7 @@ const SidebarForChat = () => {
   return (
     <Box
       sx={{
-        width: 280,
+        // width: 280,
         borderRight: "1px solid #ccc",
         height: "100vh",
         overflowY: "auto",

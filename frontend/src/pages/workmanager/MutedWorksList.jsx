@@ -13,15 +13,14 @@ import {
   Autocomplete,
   Button,
   TextField,
-  Tooltip,
 } from "@mui/material";
 import { tokens } from "../../theme";
 import API from "../../api/api";
 import CustomToolbar from "../../components/CustomToolbar";
-import { Edit, HowToReg } from "@mui/icons-material";
+import { Delete, Edit, HowToReg } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
-const WorkList = () => {
+const MutedWorksList = () => {
   const navigate = useNavigate();
 
   const handleEditClick = (workId) => {
@@ -35,6 +34,7 @@ const WorkList = () => {
   const [selectedWorkId, setSelectedWorkId] = useState(null);
   const [employeeList, setEmployeeList] = useState([]); // Store employee options
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const [works, setWorks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -79,7 +79,7 @@ const WorkList = () => {
 
     try {
       const [worksResponse, employeesResponse] = await Promise.all([
-        API.get("/total-works", {
+        API.get("/muted-works", {
           headers: { Authorization: `Bearer ${token}` },
         }),
         API.get("/auth/allusers", {
@@ -129,46 +129,39 @@ const WorkList = () => {
         { newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
       await fetchEmployeesAndWorks();
     } catch (error) {
       setError("Failed to update status");
     }
   };
 
-  const handleOpenModal = (workId) => {
-    setSelectedWorkId(workId);
-    setOpenModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
-    setSelectedWorkId(null);
-    setSelectedEmployee(null);
-  };
-
-  const handleAssignEmployee = async () => {
-    if (!selectedEmployee) return;
-
+  //code for delete
+  const handleDeleteWork = async () => {
     const token = localStorage.getItem("token");
     try {
-      await API.put(
-        `/updatework/${selectedWorkId}`,
-        { assignedEmployee: selectedEmployee.value },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await API.delete(`/deletework/${selectedWorkId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
+      // Update local state to remove the deleted work
       setWorks((prevWorks) =>
-        prevWorks.map((work) =>
-          work._id === selectedWorkId
-            ? { ...work, assignedEmployee: selectedEmployee.label }
-            : work
-        )
+        prevWorks.filter((work) => work._id !== selectedWorkId)
       );
-
-      handleCloseModal();
+      setDeleteModalOpen(false);
     } catch (error) {
-      setError("Failed to assign employee");
+      setError("Failed to delete work");
     }
+  };
+
+  const handleOpenDeleteModal = (workId) => {
+    setSelectedWorkId(workId);
+    setDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setSelectedWorkId(null);
   };
 
   if (error) return <Alert severity="error">{error}</Alert>;
@@ -270,22 +263,12 @@ const WorkList = () => {
             width: "100%",
           }}
         >
-          <Tooltip title="Assign Employee">
-            <IconButton
-              aria-label="assign-employee"
-              onClick={() => handleOpenModal(row._id)}
-            >
-              <HowToReg />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Edit">
-            <IconButton
-              aria-label="edit"
-              onClick={() => handleEditClick(row._id)}
-            >
-              <Edit />
-            </IconButton>
-          </Tooltip>
+          <IconButton
+            aria-label="delete-work"
+            onClick={() => handleOpenDeleteModal(row._id)}
+          >
+            <Delete color="error" />
+          </IconButton>
         </Box>
       ),
     },
@@ -340,7 +323,8 @@ const WorkList = () => {
           }}
         />
       </Box>
-      <Modal open={openModal} onClose={handleCloseModal}>
+      {/* Delete Confirmation Modal */}
+      <Modal open={deleteModalOpen} onClose={handleCloseDeleteModal}>
         <Box
           sx={{
             position: "absolute",
@@ -349,36 +333,22 @@ const WorkList = () => {
             transform: "translate(-50%, -50%)",
             bgcolor: "background.paper",
             boxShadow: 24,
-            p: "25px",
+            p: 3,
             width: "300px",
-            height: "200px",
-            borderRadius: "25px",
+            borderRadius: "10px",
           }}
         >
-          <Typography variant="h5" mb={2}>
-            Assign Employee
+          <Typography variant="h6" mb={2}>
+            Are you sure you want to delete this work?
           </Typography>
-          <Autocomplete
-            size="small"
-            options={employeeList}
-            getOptionLabel={(option) => option.label}
-            value={selectedEmployee}
-            onChange={(e, value) => setSelectedEmployee(value)}
-            renderInput={(params) => (
-              <TextField {...params} label="Select Employee" />
-            )}
-          />
-          <Box display="flex" justifyContent="flex-end" mt={2}>
-            <Button onClick={handleCloseModal} sx={{ mr: 1 }}>
-              Cancel
-            </Button>
+          <Box display="flex" justifyContent="flex-end" gap={2}>
+            <Button onClick={handleCloseDeleteModal}>Cancel</Button>
             <Button
-              sx={{ bgcolor: colors.teal[200] }}
+              color="error"
               variant="contained"
-              onClick={handleAssignEmployee}
-              disabled={!selectedEmployee}
+              onClick={handleDeleteWork}
             >
-              Assign
+              Delete
             </Button>
           </Box>
         </Box>
@@ -387,4 +357,4 @@ const WorkList = () => {
   );
 };
 
-export default WorkList;
+export default MutedWorksList;

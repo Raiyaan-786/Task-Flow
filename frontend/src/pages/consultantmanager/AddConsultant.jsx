@@ -304,7 +304,7 @@ const AddConsultant = () => {
                 <Grid2 size={2} mt={2}>
                   <Button
                     variant="contained"
-                    sx={{ bgcolor: colors.teal[300] }}
+                    sx={{ bgcolor: colors.blueHighlight[900] }}
                     fullWidth
                     type="submit"
                   // disabled={loading}

@@ -196,55 +196,55 @@ const MutedWorks = () => {
       flex: 2,
       renderCell: ({ row: { currentStatus, _id } }) => (
         <Box
-               height={"100%"}
-               display="flex"
-               justifyContent="center"
-               alignItems={"center"}
-             >
-               <FormControl fullWidth size="small" variant="outlined">
-                 <Select
-                   inputProps={{ "aria-label": "Without label" }}
-                   sx={{
-                     bgcolor: colors.blueHighlight[900],
-                     color: "white",
-                     "& .MuiSvgIcon-root": {
-                       color: "white", // Sets the dropdown icon color to white
-                     },
-                     "& .MuiOutlinedInput-notchedOutline": {
-                       borderColor: "transparent", // Removes the default border
-                     },
-                     "&:hover .MuiOutlinedInput-notchedOutline": {
-                       borderColor: "transparent", // Removes the hover border
-                     },
-                     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                       borderColor: "transparent", // Removes the focus outline
-                     },
-                     "& .MuiSelect-select:focus": {
-                       backgroundColor: "transparent", // Prevents background change on focus
-                     },
-                   }}
-                   displayEmpty
-                   value={currentStatus}
-                   onChange={(e) => handleStatusChange(_id, e.target.value)}
-                 >
-                   {[
-                     "Assigned",
-                     "Picked Up",
-                     "Customer Verification",
-                     "Ready for Checking",
-                     "Hold Work",
-                     "EVC Pending",
-                     "Cancel",
-                     "Completed",
-                     "Mute",
-                   ].map((status) => (
-                     <MenuItem key={status} value={status}>
-                       {status}
-                     </MenuItem>
-                   ))}
-                 </Select>
-               </FormControl>
-             </Box>
+          height={"100%"}
+          display="flex"
+          justifyContent="center"
+          alignItems={"center"}
+        >
+          <FormControl fullWidth size="small" variant="outlined">
+            <Select
+              inputProps={{ "aria-label": "Without label" }}
+              sx={{
+                bgcolor: colors.blueHighlight[900],
+                color: "white",
+                "& .MuiSvgIcon-root": {
+                  color: "white", // Sets the dropdown icon color to white
+                },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "transparent", // Removes the default border
+                },
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "transparent", // Removes the hover border
+                },
+                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "transparent", // Removes the focus outline
+                },
+                "& .MuiSelect-select:focus": {
+                  backgroundColor: "transparent", // Prevents background change on focus
+                },
+              }}
+              displayEmpty
+              value={currentStatus}
+              onChange={(e) => handleStatusChange(_id, e.target.value)}
+            >
+              {[
+                "Assigned",
+                "Picked Up",
+                "Customer Verification",
+                "Ready for Checking",
+                "Hold Work",
+                "EVC Pending",
+                "Cancel",
+                "Completed",
+                "Mute",
+              ].map((status) => (
+                <MenuItem key={status} value={status}>
+                  {status}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
       ),
     },
     {
@@ -276,25 +276,27 @@ const MutedWorks = () => {
 
   return (
     <>
-       <Box
-              display="flex"
-              sx={{
-                height: "92%",
-                "& .MuiDataGrid-root": { border: "none" },
-                "& .MuiDataGrid-cell": { borderBottom: "none" },
-                // '& .name-column--cell': { color: colors.blueHighlight[900] },
-                "& .MuiDataGrid-columnHeader": {
-                  backgroundColor: colors.foreground[100],
-                },
-                "& .MuiDataGrid-virtualScroller": { backgroundColor: colors.bgc[100] },
-                "& .MuiDataGrid-footerContainer": {
-                  backgroundColor: colors.foreground[100],
-                },
-                "& .MuiCheckbox-root": {
-                  color: `${colors.blueAccent[900]} !important`,
-                },
-              }}
-            >
+      <Box
+        display="flex"
+        sx={{
+          height: "92%",
+          "& .MuiDataGrid-root": { border: "none" },
+          "& .MuiDataGrid-cell": { borderBottom: "none" },
+          // '& .name-column--cell': { color: colors.blueHighlight[900] },
+          "& .MuiDataGrid-columnHeader": {
+            backgroundColor: colors.foreground[100],
+          },
+          "& .MuiDataGrid-virtualScroller": {
+            backgroundColor: colors.bgc[100],
+          },
+          "& .MuiDataGrid-footerContainer": {
+            backgroundColor: colors.foreground[100],
+          },
+          "& .MuiCheckbox-root": {
+            color: `${colors.blueAccent[900]} !important`,
+          },
+        }}
+      >
         <DataGrid
           rows={works}
           columns={columns}

@@ -18,13 +18,20 @@ const Chat = () => {
   };
 
   return (
-    <Box display="flex" flexDirection="column" height="88%" margin="10px" p={0.1}>
+    <Box
+      display="flex"
+      flexDirection="column"
+      height="88%"
+      margin="10px"
+      p={0.1}
+    >
       {/* Fixed Header */}
       <Header title="Chat Management" />
 
       {/* Main Chat Container */}
       <Box
-        bgcolor={colors.primary[900]}
+        boxShadow={1}
+        bgcolor={colors.foreground[100]}
         flexGrow={1}
         mt="2px"
         display="flex"
@@ -36,7 +43,7 @@ const Chat = () => {
         <Box
           width="25%"
           minWidth="250px"
-          borderRight={`1px solid ${colors.bgc[100]}`}
+          borderRight={`1px solid ${colors.foreground[100]}`}
           display="flex"
           flexDirection="column"
           flexShrink={0} // Prevents shrinking when chat expands
@@ -45,7 +52,7 @@ const Chat = () => {
           <Box
             p={1}
             fontWeight="bold"
-            bgcolor={colors.bgc[200]}
+            bgcolor={colors.foreground[100]}
             textAlign="center"
             fontSize="1.1rem"
           >
