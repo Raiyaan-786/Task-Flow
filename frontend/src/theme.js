@@ -109,17 +109,6 @@ export const tokens =(mode)=>({
           800: "#511866",
           900: "#290c33"
       },
-      // blueHighlight: {
-      //   100: "#e6f0ff", // Very light, near-white blue for subtle highlights
-      //   200: "#ccdeff", // Light blue, soft highlight for backgrounds
-      //   300: "#b2ccff", // Slightly more vibrant, for hover states
-      //   400: "#99baff", // Bright highlight for interactive elements
-      //   500: "#7fa8ff", // Mid-tone, strong highlight color
-      //   600: "#6696ff", // Bold blue for prominent highlights
-      //   700: "#4c84ff", // Deeper blue for contrast in highlights
-      //   800: "#3372ff", // Darker, intense highlight for focus states
-      //   900: "#1960ff"  // Darkest, vivid blue for strong emphasis
-      // },
       blueHighlight: {
         100: "#e6efff", // Very light, near-white blue for subtle highlights
         200: "#cce0ff", // Light blue, soft highlight for backgrounds
@@ -138,6 +127,9 @@ export const tokens =(mode)=>({
       foreground:{
          100:"#1d1d1d"
       },
+      sidebarHover:{
+         100:"#121212"
+      }
       }:{
             grey: {
                 100: "#141414",
@@ -237,6 +229,9 @@ export const tokens =(mode)=>({
              100:"#FAF9F6"
             //  100:"#ffff"
           },
+          sidebarHover:{
+            100:"#e6efff"
+         }
         }
     )
 })

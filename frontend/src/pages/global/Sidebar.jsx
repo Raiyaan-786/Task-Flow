@@ -1,216 +1,3 @@
-// import { useEffect, useState } from "react";
-// import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
-// import { Box, Divider, Typography, useTheme } from "@mui/material";
-// import { Link } from "react-router-dom";
-// import "react-pro-sidebar/dist/css/styles.css";
-// import { tokens } from "../../theme";
-// import { AssessmentOutlined, ChatBubble, Badge, ChatBubbleOutline, DashboardOutlined, FolderOpenOutlined, Group, GroupOutlined, LinkOutlined, Receipt, ReceiptLongOutlined, ReceiptOutlined, SupervisorAccount, SupervisorAccountOutlined, WhatsApp, Work, WorkOutlineOutlined, Dashboard, ReceiptLong, Assessment, Folder, Home, HomeOutlined, WorkOutline, GroupsOutlined, BadgeOutlined, ChatBubbleOutlined, ChatBubbleOutlineOutlined, FolderOutlined } from "@mui/icons-material";
-// import { useSelector } from "react-redux";
-
-// const Item = ({ title, to, icon, selected, setSelected }) => {
-//   const theme = useTheme();
-//   const colors = tokens(theme.palette.mode);
-//   return (
-//     <MenuItem
-//       active={selected === title}
-//       style={{
-//         color: colors.grey[100],
-//         borderRadius: "10px", // Rounded corners for the highlight
-//       }}
-//       onClick={() => setSelected(title)}
-//       icon={icon}
-//       className={selected === title ? "active-item" : ""}
-//     >
-//       <Typography>{title}</Typography>
-//       <Link to={to} />
-//     </MenuItem>
-//   );
-// };
-
-// const Sidebar = ({ isCollapsed }) => {
-//   const theme = useTheme();
-//   const colors = tokens(theme.palette.mode);
-//   const [selected, setSelected] = useState("Dashboard");
-//   const { user } = useSelector((state) => state.auth);
-
-//   useEffect(() => {
-//     if (!user) {
-//       console.log("User is not logged in!");
-//     }
-//   }, [user]);
-
-//   return (
-//     <Box
-//       boxShadow={1}
-//       height={'100vh'}
-//       sx={{
-//         "& .pro-sidebar-inner": {
-//           background: `${colors.foreground[100]} !important`,
-//         },
-//         "& .pro-icon-wrapper": {
-//           backgroundColor: "transparent !important",
-//         },
-//         "& .pro-inner-item:hover:not(.active-item)": {
-//           borderRadius: '10px',
-//           backgroundColor: `${colors.blueHighlight[100]} !important`, // Hover for non-active items
-//           color: `${colors.grey[100]} !important`, // Keep text grey on hover
-//         },
-//         "& .active-item": {
-//           backgroundColor: `${colors.blueHighlight[900]} !important`, // Blue highlight for active item
-//           borderRadius: "10px", // Matches the rounded look
-//           color: `${colors.foreground[100]} !important`, // White text for active item
-//         },
-//         // Prevent hover effect on active item with higher specificity
-//         "& .pro-inner-item.active-item:hover": {
-//           backgroundColor: `${colors.blueHighlight[900]} !important`, // Force same background
-//           color: `${colors.foreground[100]} !important`, // Force same text color
-//         },
-//       }}
-//     >
-//       <ProSidebar collapsed={isCollapsed}>
-//         <Menu iconShape="square">
-//           {/* LOGO AND MENU ICON */}
-//           <MenuItem
-//             icon={isCollapsed ? <img height={'28px'} width={'32px'} src="logoicon.svg"/> : undefined}
-//             style={{
-//               margin: "10px 0 20px 0",
-//               color: colors.grey[100],
-//             }}
-//           >
-//             {!isCollapsed && (
-//               <Box
-//                 display="flex"
-//                 justifyContent='center'
-//                 alignItems="center"
-//                 ml="15px"
-//               >
-//                 <img height={'28px'} width={'32px'} src="/logoicon.svg" alt="brandlogo" />
-//                 <Typography ml={1} variant="h3" color={colors.grey[100]} fontWeight={'bold'}>
-//                   TASK-FLOW
-//                 </Typography>
-//               </Box>
-//             )}
-//           </MenuItem>
-
-//           {!isCollapsed && (
-//             <Box mb="25px">
-//               <Box display="flex" justifyContent="center" alignItems="center">
-//                 <img
-//                   alt="profile-user"
-//                   width="100px"
-//                   height="100px"
-//                   src="/profileimg1.jpg"
-//                   style={{ cursor: "pointer", borderRadius: "50%" }}
-//                 />
-//               </Box>
-//               <Box textAlign="center">
-//                 <Typography
-//                   variant="h3"
-//                   color={colors.grey[100]}
-//                   fontWeight="bold"
-//                   sx={{ m: "10px 0 0 0" }}
-//                 >
-//                   {user.name}
-//                 </Typography>
-//                 <Typography variant="h6" color={colors.blueHighlight[900]}>
-//                   {user.role}
-//                 </Typography>
-//               </Box>
-//             </Box>
-//           )}
-
-//           <Box
-//             paddingLeft={isCollapsed ? undefined : "10%"}
-//             paddingRight={isCollapsed ? undefined : "10%"}
-//           >
-//             <Item
-//               title="Dashboard"
-//               to="/"
-//               icon={<HomeOutlined/>}
-//               selected={selected}
-//               setSelected={setSelected}
-//             />
-//             <Item
-//               title="Work"
-//               to="/workmanager"
-//               icon={<WorkOutline/>}
-//               selected={selected}
-//               setSelected={setSelected}
-//             />
-//             <Item
-//               title="Customer"
-//               to="/customermanager"
-//               icon={<GroupsOutlined/>}
-//               selected={selected}
-//               setSelected={setSelected}
-//             />
-//             <Item
-//               title="Consultant"
-//               to="/consultantmanager"
-//               icon={<SupervisorAccountOutlined />}
-//               selected={selected}
-//               setSelected={setSelected}
-//             />
-//             <Item
-//               title="HR Section"
-//               to="/employee"
-//               icon={<BadgeOutlined/>}
-//               selected={selected}
-//               setSelected={setSelected}
-//             />
-//             <Item
-//               title="Chat"
-//               to="/chat"
-//               icon={<ChatBubbleOutlineOutlined/>}
-//               selected={selected}
-//               setSelected={setSelected}
-//             />
-//             <Divider sx={{ padding: '5px 0px' }} />
-//             <Item
-//               title="Payroll"
-//               to="/payroll"
-//               icon={<ReceiptOutlined/>}
-//               selected={selected}
-//               setSelected={setSelected}
-//             />
-//             <Item
-//               title="Invoices"
-//               to="/invoices"
-//               icon={<ReceiptLongOutlined />}
-//               selected={selected}
-//               setSelected={setSelected}
-//             />
-//             <Item
-//               title="Report"
-//               to="/report"
-//               icon={<AssessmentOutlined />}
-//               selected={selected}
-//               setSelected={setSelected}
-//             />
-//             <Divider sx={{ padding: '5px 0px' }} />
-//             <Item
-//               title="File Manager"
-//               to="/filemanager"
-//               icon={<FolderOutlined/>}
-//               selected={selected}
-//               setSelected={setSelected}
-//             />
-//             <Item
-//               title="Useful Links"
-//               to="/usefullinks"
-//               icon={<LinkOutlined />}
-//               selected={selected}
-//               setSelected={setSelected}
-//             />
-//           </Box>
-//         </Menu>
-//       </ProSidebar>
-//     </Box>
-//   );
-// };
-
-// export default Sidebar;
-
 import React from "react";
 import { useEffect, useState } from "react";
 import { Box, Divider, Typography, useTheme } from "@mui/material";
@@ -431,7 +218,7 @@ const Sidebar = ({ isCollapsed }) => {
                     backgroundColor:
                       selected === item.title
                         ? `${colors.blueHighlight[900]} !important`
-                        : `${colors.blueHighlight[100]} !important`,
+                        : `${colors.sidebarHover[100]} !important`,
                     color:
                       selected === item.title
                         ? colors.foreground[100]
@@ -512,7 +299,7 @@ const Sidebar = ({ isCollapsed }) => {
                     backgroundColor:
                       selected === item.title
                         ? `${colors.blueHighlight[900]} !important`
-                        : `${colors.blueHighlight[100]} !important`,
+                        : `${colors.sidebarHover[100]} !important`,
                     color:
                       selected === item.title
                         ? colors.foreground[100]
@@ -593,7 +380,7 @@ const Sidebar = ({ isCollapsed }) => {
                     backgroundColor:
                       selected === item.title
                         ? `${colors.blueHighlight[900]} !important`
-                        : `${colors.blueHighlight[100]} !important`,
+                        : `${colors.sidebarHover[100]} !important`,
                     color:
                       selected === item.title
                         ? colors.foreground[100]
