@@ -4,6 +4,7 @@ import cloudinary from "../lib/cloudinary.js";
 import { Tenant } from "../models/tenant.model.js";
 import { TenantPayment } from "../models/tenantpayment.model.js";
 import { Plan } from "../models/plan.model.js";
+import { User } from "../models/user.model.js";
 
 export const registerTenant = async (req, res) => {
   try {
@@ -204,6 +205,125 @@ const calculateRenewsAt = (startsAt, billingCycle) => {
   return renewsAt;
 };
 
+// export const processPayment = async (req, res) => {
+//   try {
+//     const {
+//       tenant,
+//       firstName,
+//       lastName,
+//       plan,
+//       amount,
+//       currency,
+//       cardNumber,
+//       expiry,
+//       cvv,
+//       billingCycle, // Assume this is passed from frontend
+//     } = req.body;
+
+//     // Validate required fields
+//     if (!tenant || !plan || !amount || !firstName || !lastName || !cardNumber || !expiry || !cvv || !billingCycle) {
+//       return res.status(400).json({
+//         success: false,
+//         message: 'Missing required fields',
+//       });
+//     }
+
+//     // Fetch plan details
+//     const planData = await Plan.findById(plan);
+//     if (!planData) {
+//       return res.status(404).json({
+//         success: false,
+//         message: 'Plan not found',
+//       });
+//     }
+//     console.log("plan Data : " ,planData)
+//     // Simulate payment processing (since Stripe is not integrated yet)
+//     const payment = new TenantPayment({
+//       tenant,
+//       firstName,
+//       lastName,
+//       plan,
+//       amount,
+//       currency,
+//       cardNumber,
+//       expiry,
+//       cvv,
+//       status: 'completed',
+//     });
+
+//     await payment.save();
+
+//     // Fetch tenant details for registration
+//     const tenantData = await Tenant.findById(tenant);
+//     if (!tenantData) {
+//       return res.status(404).json({
+//         success: false,
+//         message: 'Tenant not found',
+//       });
+//     }
+
+//     // Generate login credentials
+//     const username = `${firstName.toLowerCase()}.${generateRandomString(6)}`;
+//     const password = generateRandomString(12); // In production, hash this for storage
+
+//     // Calculate plan dates
+//     const startsAt = new Date();
+//     const renewsAt = calculateRenewsAt(startsAt, billingCycle);
+
+//     // Update tenant's loginCredentials and plan details
+//     const updatedTenant = await Tenant.findByIdAndUpdate(
+//       tenant,
+//       {
+//         $set: {
+//           'loginCredentials.username': username,
+//           'loginCredentials.password': password, // In production, hash this
+//           'plan.tier': planData.tier,
+//           'plan.price': amount,
+//           'plan.billingCycle': billingCycle,
+//           'plan.startsAt': startsAt,
+//           'plan.renewsAt': renewsAt,
+//           'plan.status': 'active',
+//           'plan.isAutoRenew': true,
+//         },
+//       },
+//       { new: true }
+//     );
+
+//     if (!updatedTenant) {
+//       return res.status(404).json({
+//         success: false,
+//         message: 'Failed to update tenant details',
+//       });
+//     }
+
+//     res.status(200).json({
+//       success: true,
+//       paymentId: payment._id,
+//       message: 'Payment processed successfully, tenant details updated, and user registered in separate app',
+//       loginCredentials: {
+//         username,
+//         password, // For development only; remove in production
+//       },
+//       plan: {
+//         tier: planData.tier || 'basic',
+//         price: amount,
+//         billingCycle,
+//         startsAt: startsAt.toISOString(),
+//         renewsAt: renewsAt.toISOString(),
+//         status: 'active',
+//         isAutoRenew: true,
+//       },
+//     });
+//   } catch (error) {
+//     console.error('Payment processing error:', error);
+//     res.status(500).json({
+//       success: false,
+//       message: 'Error processing payment: ' + error.message,
+//     });
+//   }
+// };
+
+
 export const processPayment = async (req, res) => {
   try {
     const {
@@ -216,10 +336,10 @@ export const processPayment = async (req, res) => {
       cardNumber,
       expiry,
       cvv,
-      billingCycle, // Assume this is passed from frontend
+      billingCycle,
     } = req.body;
 
-    // Validate required fields
+    // Validate required fields for payment
     if (!tenant || !plan || !amount || !firstName || !lastName || !cardNumber || !expiry || !cvv || !billingCycle) {
       return res.status(400).json({
         success: false,
@@ -235,8 +355,8 @@ export const processPayment = async (req, res) => {
         message: 'Plan not found',
       });
     }
-    console.log("plan Data : " ,planData)
-    // Simulate payment processing (since Stripe is not integrated yet)
+
+    // Simulate payment processing
     const payment = new TenantPayment({
       tenant,
       firstName,
@@ -252,7 +372,7 @@ export const processPayment = async (req, res) => {
 
     await payment.save();
 
-    // Fetch tenant details for registration
+    // Fetch tenant details
     const tenantData = await Tenant.findById(tenant);
     if (!tenantData) {
       return res.status(404).json({
@@ -260,10 +380,11 @@ export const processPayment = async (req, res) => {
         message: 'Tenant not found',
       });
     }
+    // const tenantName = tenantData.name ;
 
-    // Generate login credentials
-    const username = `${firstName.toLowerCase()}.${generateRandomString(6)}`;
-    const password = generateRandomString(12); // In production, hash this for storage
+    // Generate login credentials for tenant
+    const username = `${tenantData.name.toLowerCase()}${generateRandomString(6)}`;
+    const password = generateRandomString(12); // In production, hash this
 
     // Calculate plan dates
     const startsAt = new Date();
@@ -274,6 +395,7 @@ export const processPayment = async (req, res) => {
       tenant,
       {
         $set: {
+          'companyName': tenant.name,
           'loginCredentials.username': username,
           'loginCredentials.password': password, // In production, hash this
           'plan.tier': planData.tier,
@@ -295,10 +417,40 @@ export const processPayment = async (req, res) => {
       });
     }
 
+    // Create a user in the User collection
+    const userName = username; // Use tenant username as name
+    const userEmail = tenantData.email; // Use provided email
+    const userPassword = password; // Use email as password
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ $or: [{ email: userEmail }, { username: userName }] });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: 'User with this email or username already exists',
+      });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(userPassword, 10);
+
+    // Create new user
+    const user = new User({
+      companyName: tenantData.name,
+      name: tenantData.name,
+      username: userName,
+      email: userEmail,
+      password: hashedPassword,
+      role: "Admin",
+    });
+
+    await user.save();
+
     res.status(200).json({
       success: true,
       paymentId: payment._id,
-      message: 'Payment processed successfully, tenant details updated, and user registered in separate app',
+      userId: user._id, // Return the created user's ID
+      message: 'Payment processed successfully, tenant details updated, and user registered',
       loginCredentials: {
         username,
         password, // For development only; remove in production
@@ -312,94 +464,21 @@ export const processPayment = async (req, res) => {
         status: 'active',
         isAutoRenew: true,
       },
+      user: {
+        name: userName,
+        username: userName,
+        email: userEmail,
+        role: "Admin",
+      },
     });
   } catch (error) {
     console.error('Payment processing error:', error);
     res.status(500).json({
       success: false,
-      message: 'Error processing payment: ' + error.message,
+      message: `Error processing payment or user registration: ${error.message}`,
     });
   }
 };
-
-
-// export const processPayment = async (req, res) => {
-//   try {
-//     const {
-//       tenant,
-//       firstName,
-//       lastName,
-//       plan,
-//       amount,
-//       currency,
-//       cardNumber,
-//       expiry,
-//       cvv,
-//     } = req.body;
-
-//     // Validate required fields
-//     if (!tenant || !plan || !amount || !firstName || !lastName || !cardNumber || !expiry || !cvv) {
-//       return res.status(400).json({
-//         success: false,
-//         message: 'Missing required fields',
-//       });
-//     }
-
-//     // Simulate payment processing (since Stripe is not integrated yet)
-//     const payment = new TenantPayment({
-//       tenant,
-//       firstName,
-//       lastName,
-//       plan,
-//       amount,
-//       currency,
-//       cardNumber,
-//       expiry,
-//       cvv,
-//       status: 'completed',
-//     });
-
-//     await payment.save();
-
-//     // Update tenant's loginCredentials
-//     const username = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${generateRandomString(4)}`;
-//     const password = generateRandomString(12); // Generate a random 12-character password
-
-//     const updatedTenant = await Tenant.findByIdAndUpdate(
-//       tenant,
-//       {
-//         $set: {
-//           'loginCredentials.username': username,
-//           'loginCredentials.password': password, // In production, hash this password
-//         },
-//       },
-//       { new: true }
-//     );
-
-//     if (!updatedTenant) {
-//       return res.status(404).json({
-//         success: false,
-//         message: 'Tenant not found for updating login credentials',
-//       });
-//     }
-
-//     res.status(200).json({
-//       success: true,
-//       paymentId: payment._id,
-//       message: 'Payment processed successfully and login credentials updated',
-//       loginCredentials: {
-//         username,
-//         password, // For development only; remove in production
-//       },
-//     });
-//   } catch (error) {
-//     console.error('Payment processing error:', error);
-//     res.status(500).json({
-//       success: false,
-//       message: 'Error processing payment: ' + error.message,
-//     });
-//   }
-// };
 
 export const getReceipt = async (req, res) => {
   try {

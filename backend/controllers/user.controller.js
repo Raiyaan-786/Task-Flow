@@ -43,6 +43,7 @@ const registerUser = async (req, res) => {
       .json({ error: err.message, message: "Registration failed" });
   }
 };
+
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;

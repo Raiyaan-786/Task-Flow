@@ -1,4 +1,3 @@
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Owner } from "../models/owner.model.js";
 import { Tenant } from "../models/tenant.model.js";

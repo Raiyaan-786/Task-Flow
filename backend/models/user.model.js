@@ -5,10 +5,11 @@ const userSchema = new mongoose.Schema(
     companyName: {
       type: String,
       required: true,
+      unique: true,
     },
     name: {
       type: String,
-      required: true,
+      default: ""
     },
     username: {
       type: String,
@@ -32,7 +33,6 @@ const userSchema = new mongoose.Schema(
     },
     mobile: {
       type: String,
-      required: true,
       unique: true,
     },
     address: {
