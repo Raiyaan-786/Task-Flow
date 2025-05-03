@@ -27,7 +27,7 @@ const tenantSchema = new mongoose.Schema(
       default: ""
     },
     phone: {
-      type: String,
+      type: Number,
       unique: true,
       default: "",
     },

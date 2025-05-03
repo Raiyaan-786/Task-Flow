@@ -92,6 +92,11 @@ const TenantPayment = () => {
     if (validateForm()) {
       setLoading(true);
       try {
+        const tenanttoken = localStorage.getItem('tenanttoken');
+        if (!tenanttoken) {
+          navigate('/tenantlogin');
+          return;
+        }
         const tenantData = localStorage.getItem("tenant");
         if (!tenantData) {
           throw new Error("Tenant information not found in localStorage");
@@ -116,7 +121,12 @@ const TenantPayment = () => {
           billingCycle: billingInfo.billingCycle,
         };
 
-        const response = await API.post("/tenant/payments/process", paymentData);
+        const response = await API.post("/tenant/payments/process", paymentData, {
+          headers: {
+            'Authorization': `Bearer ${tenanttoken}`,
+          },
+        });
+
 
         if (response.data.success) {
           const updatedTenant = {
