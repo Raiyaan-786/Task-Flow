@@ -4,12 +4,15 @@ const tenantSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
     },
     email: {
       type: String,
       required: true,
       unique: true,
+    },
+    databaseName: {
+      type: String ,
+      default: ""
     },
     image: {
       type: String,
@@ -17,14 +20,16 @@ const tenantSchema = new mongoose.Schema(
     },
     companyName: {
       type: String,
-      default: "CompanyName",
+      default: "",
     },
     companyLogo: {
       type: String,
+      default: ""
     },
     phone: {
       type: String,
       unique: true,
+      default: "",
     },
     password: {
       type: String,

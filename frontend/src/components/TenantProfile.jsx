@@ -11,25 +11,61 @@ const TenantProfilePage = () => {
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
 
-  // Get the current tenant from localStorage
-  const tenant = JSON.parse(localStorage.getItem('tenant'));
-  const token = localStorage.getItem('token');
-
-  // If no tenant is logged in, redirect to login page
-  useEffect(() => {
-    if (!tenant) {
-      navigate('/login');
-    }
-  }, [tenant, navigate]);
+  // State for tenant data fetched from API
+  const [tenant, setTenant] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // States for editable tenant profile data
-  const [name, setName] = useState(tenant?.name || '');
-  const [phone, setPhone] = useState(tenant?.phone || '');
-  const [companyName, setCompanyName] = useState(tenant?.companyName || '');
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [companyName, setCompanyName] = useState('');
   const [companyLogo, setCompanyLogo] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(tenant?.image || tenant?.companyLogo || '');
-  const [companyLogoPreview, setCompanyLogoPreview] = useState(tenant?.companyLogo || '');
+  const [imagePreview, setImagePreview] = useState('');
+  const [companyLogoPreview, setCompanyLogoPreview] = useState('');
+
+  // Fetch tenant data from API on component mount
+  useEffect(() => {
+    const fetchTenant = async () => {
+      try {
+        const tenanttoken = localStorage.getItem('tenanttoken');
+        if (!tenanttoken) {
+          navigate('/tenantlogin');
+          return;
+        }
+
+        const response = await API.get('/tenant/gettenant', {
+          headers: {
+            'Authorization': `Bearer ${tenanttoken}`,
+          },
+        });
+
+        if (response.data.success) {
+          const fetchedTenant = response.data.tenant;
+          setTenant(fetchedTenant);
+          // Initialize form fields with fetched data
+          setName(fetchedTenant.name || '');
+          setPhone(fetchedTenant.phone || '');
+          setCompanyName(fetchedTenant.companyName || '');
+          setImagePreview(fetchedTenant.image || '');
+          setCompanyLogoPreview(fetchedTenant.companyLogo || '');
+        } else {
+          throw new Error('Failed to fetch tenant data');
+        }
+      } catch (err) {
+        console.error('Error fetching tenant:', err);
+        setError(err.response?.data?.error || 'Failed to fetch tenant data');
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          navigate('/tenantlogin'); // Redirect to login if unauthorized
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTenant();
+  }, [navigate]);
 
   // Check if the plan is Free
   const isFreePlan = tenant?.plan?.tier?.toLowerCase() === 'free';
@@ -69,41 +105,76 @@ const TenantProfilePage = () => {
     formData.append('phone', phone);
 
     if (profileImage) {
-      formData.append('image', profileImage); // Append profile image if selected
+      formData.append('image', profileImage);
     }
 
     if (!isFreePlan) {
       formData.append('companyName', companyName);
       if (companyLogo) {
-        formData.append('companyLogo', companyLogo); // Append company logo if selected
+        formData.append('companyLogo', companyLogo);
       }
     }
 
     try {
-      await API.put(`/tenant/update/${tenant._id}`, formData, {
+      const token = localStorage.getItem('token');
+      const response = await API.put(`/tenant/update/${tenant._id}`, formData, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
         },
       });
-      alert('Tenant profile updated successfully!');
-      // Update tenant data in localStorage
-      localStorage.setItem(
-        'tenant',
-        JSON.stringify({
+
+      if (response.data.success) {
+        alert('Tenant profile updated successfully!');
+        // Update local state with new data
+        const updatedTenant = {
           ...tenant,
           name,
           phone,
           image: imagePreview,
           companyName: isFreePlan ? tenant.companyName : companyName,
           companyLogo: isFreePlan ? tenant.companyLogo : companyLogoPreview,
-        })
-      );
+        };
+        setTenant(updatedTenant);
+      } else {
+        throw new Error('Failed to update tenant profile');
+      }
     } catch (error) {
-      console.error(error);
-      alert('Error updating tenant profile');
+      console.error('Error updating tenant profile:', error);
+      alert('Error updating tenant profile: ' + (error.response?.data?.error || error.message));
     }
   };
+
+  // Render loading or error state
+  if (loading) {
+    return (
+      <TenantLayout>
+        <Box sx={{ p: 3 }}>
+          <Typography variant="h4" gutterBottom>
+            Tenant Profile
+          </Typography>
+          <Typography>Loading...</Typography>
+        </Box>
+      </TenantLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <TenantLayout>
+        <Box sx={{ p: 3 }}>
+          <Typography variant="h4" gutterBottom>
+            Tenant Profile
+          </Typography>
+          <Typography color="error">{error}</Typography>
+        </Box>
+      </TenantLayout>
+    );
+  }
+
+  if (!tenant) {
+    return null; // Redirect handled in useEffect
+  }
 
   return (
     <TenantLayout>
@@ -323,7 +394,7 @@ const TenantProfilePage = () => {
               sx={{ backgroundColor: '#fff' }}
             />
             <TextField
-              label="password"
+              label="Password"
               value={tenant?.loginCredentials?.password || ''}
               fullWidth
               margin="normal"

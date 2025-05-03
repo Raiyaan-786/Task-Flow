@@ -22,9 +22,9 @@ const TenantLogin = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState(""); // Error message state
-  const [isLoading, setIsLoading] = useState(false); // Loading state
-  const [showLoadingScreen, setShowLoadingScreen] = useState(false); // Loading screen state
+  const [errorMessage, setErrorMessage] = useState(""); 
+  const [isLoading, setIsLoading] = useState(false); 
+  const [showLoadingScreen, setShowLoadingScreen] = useState(false); 
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -36,9 +36,8 @@ const TenantLogin = () => {
         email,
         password,
       });
-      console.log(data);
-      const { token, tenant } = data;
-      dispatch(tenantLogin({ tenant, token }));
+      const { tenant, tenanttoken } = data;
+      dispatch(tenantLogin({ tenant, tenanttoken }));
       setShowLoadingScreen(true);
       setTimeout(() => {
         navigate("/tenant");

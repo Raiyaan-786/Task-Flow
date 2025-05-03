@@ -1,8 +1,10 @@
-import { Work } from "../models/work.model.js";
-import { User } from "../models/user.model.js";
+// controllers/work.controller.js
+import { Tenant } from "../models/tenant.model.js";
+import { getTenantConnection } from "../utils/tenantDb.js";
 
 const addWork = async (req, res) => {
   try {
+    const { tenantId } = req.user; // Extracted from JWT middleware
     const {
       customer,
       billingName,
@@ -20,23 +22,43 @@ const addWork = async (req, res) => {
       quantity,
       discount,
       currentStatus = "Assigned",
-      reminder = null, 
-      remark = "", 
+      reminder = null,
+      remark = "",
       paymentStatus = "Pending",
       balancePayment,
     } = req.body;
 
-    const employeeExists = await User.findById(assignedEmployee);
-    if (
-      !employeeExists ||
-      (employeeExists.role !== "Manager" && employeeExists.role !== "Employee")
-    ) {
-      return res
-        .status(400)
-        .json({ error: "Invalid employee ID for assignment" });
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
     }
 
-    const newWork = new Work({
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantWork = models.Work;
+    const TenantUser = models.User;
+    const TenantCustomer = models.Customer;
+
+    // Validate customer exists in the tenant's database
+    const customerExists = await TenantCustomer.findById(customer);
+    if (!customerExists) {
+      return res.status(400).json({ error: "Invalid customer ID" });
+    }
+
+    // Validate assignedEmployee if provided
+    if (assignedEmployee) {
+      const employeeExists = await TenantUser.findById(assignedEmployee);
+      if (
+        !employeeExists ||
+        (employeeExists.role !== "Manager" && employeeExists.role !== "Employee")
+      ) {
+        return res.status(400).json({ error: "Invalid employee ID for assignment" });
+      }
+    }
+
+    // Create new work in the tenant-specific database
+    const newWork = new TenantWork({
       customer,
       billingName,
       email,
@@ -58,30 +80,46 @@ const addWork = async (req, res) => {
       paymentStatus,
       balancePayment,
     });
+
     await newWork.save();
-    res
-      .status(201)
-      .json({ message: "Work created successfully", work: newWork });
+    res.status(201).json({ message: "Work created successfully", work: newWork });
   } catch (err) {
+    console.error("Error creating work:", err);
     res.status(500).json({ error: err.message });
   }
 };
 
 const getWork = async (req, res) => {
   try {
+    const { tenantId } = req.user;
     const { id } = req.params;
-    const work = await Work.findById(id)
-      .populate("assignedEmployee", "name email")
-      .populate("customer", "customerName email mobileNo");
+
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantWork = models.Work;
+    const TenantUser = models.User;
+    const TenantCustomer = models.Customer;
+
+    const work = await TenantWork.findById(id)
+      .populate({ path: "assignedEmployee", select: "name email", model: TenantUser })
+      .populate({ path: "customer", select: "customerName email mobileNo", model: TenantCustomer });
 
     if (!work) {
       return res.status(404).json({ error: "Work not found" });
     }
+
+    // Authorization check
     if (
       req.user.role !== "Admin" &&
       req.user.role !== "Manager" &&
-      req.user.id !== work.assignedEmployee.toString() &&
-      req.user.id !== work.customer.toString()
+      req.user.id !== work.assignedEmployee?.toString() &&
+      req.user.id !== work.customer?.toString()
     ) {
       return res.status(403).json({ error: "Unauthorized" });
     }
@@ -94,9 +132,23 @@ const getWork = async (req, res) => {
 
 const getAllWork = async (req, res) => {
   try {
-    const works = await Work.find()
-      .populate("assignedEmployee", "name email")
-      .populate("customer", "customerName email mobileNo");
+    const { tenantId } = req.user;
+
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantWork = models.Work;
+    const TenantUser = models.User;
+    const TenantCustomer = models.Customer;
+
+    const works = await TenantWork.find()
+      .populate({ path: "assignedEmployee", select: "name email", model: TenantUser })
+      .populate({ path: "customer", select: "customerName email mobileNo", model: TenantCustomer });
 
     res.status(200).json({ works });
   } catch (err) {
@@ -106,20 +158,57 @@ const getAllWork = async (req, res) => {
 
 const updateWork = async (req, res) => {
   try {
+    const { tenantId } = req.user;
     const { id } = req.params;
-    const work = await Work.findById(id);
+    const { assignedEmployee, customer, ...updateData } = req.body;
 
-    if (!work) return res.status(404).json({ error: "Work not found" });
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantWork = models.Work;
+    const TenantUser = models.User;
+    const TenantCustomer = models.Customer;
+
+    const work = await TenantWork.findById(id);
+    if (!work) {
+      return res.status(404).json({ error: "Work not found" });
+    }
+
+    // Authorization check
     if (
       req.user.role !== "Admin" &&
-      work.assignedEmployee.toString() !== req.user.id
+      work.assignedEmployee?.toString() !== req.user.id
     ) {
       return res.status(403).json({ error: "Unauthorized" });
     }
 
-    const updatedWork = await Work.findByIdAndUpdate(id, req.body, {
-      new: true,
-    });
+    // Validate customer if updated
+    if (customer && customer !== work.customer.toString()) {
+      const customerExists = await TenantCustomer.findById(customer);
+      if (!customerExists) {
+        return res.status(400).json({ error: "Invalid customer ID" });
+      }
+      updateData.customer = customer;
+    }
+
+    // Validate assignedEmployee if updated
+    if (assignedEmployee && assignedEmployee !== work.assignedEmployee?.toString()) {
+      const employeeExists = await TenantUser.findById(assignedEmployee);
+      if (
+        !employeeExists ||
+        (employeeExists.role !== "Manager" && employeeExists.role !== "Employee")
+      ) {
+        return res.status(400).json({ error: "Invalid employee ID for assignment" });
+      }
+      updateData.assignedEmployee = assignedEmployee;
+    }
+
+    const updatedWork = await TenantWork.findByIdAndUpdate(id, updateData, { new: true });
     res.status(200).json({ message: "Work updated", updatedWork });
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -128,18 +217,33 @@ const updateWork = async (req, res) => {
 
 const deleteWork = async (req, res) => {
   try {
+    const { tenantId } = req.user;
     const { id } = req.params;
-    const work = await Work.findById(id);
 
-    if (!work) return res.status(404).json({ error: "Work not found" });
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantWork = models.Work;
+
+    const work = await TenantWork.findById(id);
+    if (!work) {
+      return res.status(404).json({ error: "Work not found" });
+    }
+
+    // Authorization check
     if (
       req.user.role !== "Admin" &&
-      work.assignedEmployee.toString() !== req.user.id
+      work.assignedEmployee?.toString() !== req.user.id
     ) {
       return res.status(403).json({ error: "Unauthorized" });
     }
 
-    await Work.findByIdAndDelete(id);
+    await TenantWork.findByIdAndDelete(id);
     res.status(200).json({ message: "Work deleted successfully" });
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -148,10 +252,25 @@ const deleteWork = async (req, res) => {
 
 const getTotalWorks = async (req, res) => {
   try {
-    const totalWorks = await Work.find()
-      .populate("assignedEmployee", "name email")
-      .populate("customer", "customerName email mobileNo"); 
-    res.status(200).json(totalWorks); // Send back the array of work documents
+    const { tenantId } = req.user;
+
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantWork = models.Work;
+    const TenantUser = models.User;
+    const TenantCustomer = models.Customer;
+
+    const totalWorks = await TenantWork.find()
+      .populate({ path: "assignedEmployee", select: "name email", model: TenantUser })
+      .populate({ path: "customer", select: "customerName email mobileNo", model: TenantCustomer });
+
+    res.status(200).json(totalWorks);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -159,11 +278,25 @@ const getTotalWorks = async (req, res) => {
 
 const getCompletedWorks = async (req, res) => {
   try {
-    const completedWorks = await Work.find({
-      currentStatus: "Completed",
-    }).populate("assignedEmployee", "name email")
-    .populate("customer", "customerName email mobileNo");
-    res.status(200).json(completedWorks); 
+    const { tenantId } = req.user;
+
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantWork = models.Work;
+    const TenantUser = models.User;
+    const TenantCustomer = models.Customer;
+
+    const completedWorks = await TenantWork.find({ currentStatus: "Completed" })
+      .populate({ path: "assignedEmployee", select: "name email", model: TenantUser })
+      .populate({ path: "customer", select: "customerName email mobileNo", model: TenantCustomer });
+
+    res.status(200).json(completedWorks);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -171,11 +304,25 @@ const getCompletedWorks = async (req, res) => {
 
 const getAssignedWorks = async (req, res) => {
   try {
-    const assignedWorks = await Work.find({
-      currentStatus: "Assigned",
-    }).populate("assignedEmployee", "name email")
-    .populate("customer", "customerName email mobileNo"); 
-    res.status(200).json(assignedWorks); 
+    const { tenantId } = req.user;
+
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantWork = models.Work;
+    const TenantUser = models.User;
+    const TenantCustomer = models.Customer;
+
+    const assignedWorks = await TenantWork.find({ currentStatus: "Assigned" })
+      .populate({ path: "assignedEmployee", select: "name email", model: TenantUser })
+      .populate({ path: "customer", select: "customerName email mobileNo", model: TenantCustomer });
+
+    res.status(200).json(assignedWorks);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -183,48 +330,129 @@ const getAssignedWorks = async (req, res) => {
 
 const getUnassignedWorks = async (req, res) => {
   try {
-    const unassignedWorks = await Work.find({
-      assignedEmployee: null,
-    }).populate("assignedEmployee", "name email")
-    .populate("customer", "customerName email mobileNo"); 
-    res.status(200).json(unassignedWorks); 
-  } catch (serr) {
+    const { tenantId } = req.user;
+
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantWork = models.Work;
+    const TenantUser = models.User;
+    const TenantCustomer = models.Customer;
+
+    const unassignedWorks = await TenantWork.find({ assignedEmployee: null })
+      .populate({ path: "assignedEmployee", select: "name email", model: TenantUser })
+      .populate({ path: "customer", select: "customerName email mobileNo", model: TenantCustomer });
+
+    res.status(200).json(unassignedWorks);
+  } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
 const getHoldWorks = async (req, res) => {
   try {
-    const holdWorks = await Work.find({ currentStatus: "Hold Work" }).populate("assignedEmployee", "name email")
-    .populate("customer", "customerName email mobileNo"); 
-    res.status(200).json(holdWorks); 
+    const { tenantId } = req.user;
+
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantWork = models.Work;
+    const TenantUser = models.User;
+    const TenantCustomer = models.Customer;
+
+    const holdWorks = await TenantWork.find({ currentStatus: "Hold Work" })
+      .populate({ path: "assignedEmployee", select: "name email", model: TenantUser })
+      .populate({ path: "customer", select: "customerName email mobileNo", model: TenantCustomer });
+
+    res.status(200).json(holdWorks);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 const getReadyForChecking = async (req, res) => {
   try {
-    const holdWorks = await Work.find({ currentStatus: "Ready for Checking" }).populate("assignedEmployee", "name email")
-    .populate("customer", "customerName email mobileNo"); 
-    res.status(200).json(holdWorks); 
+    const { tenantId } = req.user;
+
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantWork = models.Work;
+    const TenantUser = models.User;
+    const TenantCustomer = models.Customer;
+
+    const readyForCheckingWorks = await TenantWork.find({ currentStatus: "Ready for Checking" })
+      .populate({ path: "assignedEmployee", select: "name email", model: TenantUser })
+      .populate({ path: "customer", select: "customerName email mobileNo", model: TenantCustomer });
+
+    res.status(200).json(readyForCheckingWorks);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 const getCustomerVerification = async (req, res) => {
   try {
-    const holdWorks = await Work.find({ currentStatus: "Customer Verification" }).populate("assignedEmployee", "name email")
-    .populate("customer", "customerName email mobileNo"); 
-    res.status(200).json(holdWorks); 
+    const { tenantId } = req.user;
+
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantWork = models.Work;
+    const TenantUser = models.User;
+    const TenantCustomer = models.Customer;
+
+    const customerVerificationWorks = await TenantWork.find({ currentStatus: "Customer Verification" })
+      .populate({ path: "assignedEmployee", select: "name email", model: TenantUser })
+      .populate({ path: "customer", select: "customerName email mobileNo", model: TenantCustomer });
+
+    res.status(200).json(customerVerificationWorks);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 const getEvcPending = async (req, res) => {
   try {
-    const holdWorks = await Work.find({ currentStatus: "EVC Pending" }).populate("assignedEmployee", "name email")
-    .populate("customer", "customerName email mobileNo"); // Fetch works with hold status
-    res.status(200).json(holdWorks); // Send back the array of hold work documents
+    const { tenantId } = req.user;
+
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantWork = models.Work;
+    const TenantUser = models.User;
+    const TenantCustomer = models.Customer;
+
+    const evcPendingWorks = await TenantWork.find({ currentStatus: "EVC Pending" })
+      .populate({ path: "assignedEmployee", select: "name email", model: TenantUser })
+      .populate({ path: "customer", select: "customerName email mobileNo", model: TenantCustomer });
+
+    res.status(200).json(evcPendingWorks);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -232,49 +460,92 @@ const getEvcPending = async (req, res) => {
 
 const getCancelledWorks = async (req, res) => {
   try {
-    const canceledWorks = await Work.find({
-      currentStatus: "Cancel",
-    }).populate("assignedEmployee", "name email")
-    .populate("customer", "customerName email mobileNo"); 
+    const { tenantId } = req.user;
+
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantWork = models.Work;
+    const TenantUser = models.User;
+    const TenantCustomer = models.Customer;
+
+    const canceledWorks = await TenantWork.find({ currentStatus: "Cancel" })
+      .populate({ path: "assignedEmployee", select: "name email", model: TenantUser })
+      .populate({ path: "customer", select: "customerName email mobileNo", model: TenantCustomer });
+
     res.status(200).json(canceledWorks);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 const getMutedWorks = async (req, res) => {
   try {
-    const mutedWorks = await Work.find({
-      currentStatus: "Mute",
-    }).populate("assignedEmployee", "name email")
-    .populate("customer", "customerName email mobileNo"); 
+    const { tenantId } = req.user;
+
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantWork = models.Work;
+    const TenantUser = models.User;
+    const TenantCustomer = models.Customer;
+
+    const mutedWorks = await TenantWork.find({ currentStatus: "Mute" })
+      .populate({ path: "assignedEmployee", select: "name email", model: TenantUser })
+      .populate({ path: "customer", select: "customerName email mobileNo", model: TenantCustomer });
+
     res.status(200).json(mutedWorks);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
-const updateWorkStatus = async (req, res) => {
-  const { id } = req.params;
-  const { newStatus } = req.body;
 
-  const validStatuses = [
-    "Assigned",
-    "Picked Up",
-    "Customer Verification",
-    "Ready for Checking",
-    "Hold Work",
-    "EVC Pending",
-    "Cancel",
-    "Completed",
-    "Mute"
-  ];
-  if (!validStatuses.includes(newStatus)) {
-    return res.status(400).json({ error: "Invalid status value" });
-  }
+const updateWorkStatus = async (req, res) => {
   try {
-    const work = await Work.findById(id);
+    const { tenantId } = req.user;
+    const { id } = req.params;
+    const { newStatus } = req.body;
+
+    const validStatuses = [
+      "Assigned",
+      "Picked Up",
+      "Customer Verification",
+      "Ready for Checking",
+      "Hold Work",
+      "EVC Pending",
+      "Cancel",
+      "Completed",
+      "Mute",
+    ];
+    if (!validStatuses.includes(newStatus)) {
+      return res.status(400).json({ error: "Invalid status value" });
+    }
+
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantWork = models.Work;
+
+    const work = await TenantWork.findById(id);
     if (!work) {
       return res.status(404).json({ error: "Work not found" });
     }
+
     work.currentStatus = newStatus;
     await work.save();
     return res.status(200).json({ message: "Work status updated successfully", work });
@@ -300,5 +571,5 @@ export {
   getEvcPending,
   getReadyForChecking,
   getMutedWorks,
-  updateWorkStatus
+  updateWorkStatus,
 };

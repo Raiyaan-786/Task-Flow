@@ -57,14 +57,12 @@ const TenantPlanConfirm = () => {
           total,
         });
       } else {
-        // Redirect to plans page if no plan is found
         navigate("/tenant/plan");
       }
     }
   }, [location, navigate]);
 
   const handleProceedToPayment = () => {
-    // Navigate to payment page with selected plan and billing info
     navigate("/tenant/payment", { state: { selectedPlan, billingInfo } });
   };
 
@@ -73,7 +71,7 @@ const TenantPlanConfirm = () => {
   };
 
   if (!selectedPlan) {
-    return null; // Render nothing while redirecting
+    return null; 
   }
 
   return (

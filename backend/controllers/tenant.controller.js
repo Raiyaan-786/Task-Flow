@@ -4,24 +4,27 @@ import cloudinary from "../lib/cloudinary.js";
 import { Tenant } from "../models/tenant.model.js";
 import { TenantPayment } from "../models/tenantpayment.model.js";
 import { Plan } from "../models/plan.model.js";
-import { User } from "../models/user.model.js";
+import { getTenantConnection } from "../utils/tenantDb.js";
+import { SharedUser } from "../models/sharedUser.model.js";
 
 export const registerTenant = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password , phone} = req.body;
     const existingTenant = await Tenant.findOne({ email });
     if (existingTenant) return res.status(400).json({ error: "Email already registered" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newTenant = new Tenant({
       email,
+      phone,
       password: hashedPassword,
     });
     await newTenant.save();
 
     return res.status(201).json({newTenant, message: "Tenant registered successfully" });
   } catch (err) {
-    return res.status(500).json({ error: "Server error" });
+    console.log(err)
+    return res.status(500).json({err, error: "Server error" });
   }
 };
 
@@ -34,18 +37,37 @@ export const loginTenant = async (req, res) => {
     const isMatch = await bcrypt.compare(password, tenant.password);
     if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
 
-    const token = jwt.sign(
+    const tenanttoken = jwt.sign(
       { id: tenant._id, tenantId: tenant._id, role: "Tenant", subscriptionPlan: tenant.subscriptionPlan },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
 
-    return res.status(200).json({tenant, token });
+    return res.status(200).json({tenant, tenanttoken });
   } catch (err) {
     return res.status(500).json({ error: "Server error" });
   }
 };
 
+export const getTenant = async (req, res) => {
+  try {
+    const tenantId = req.user?.id; 
+
+    if (!tenantId) {
+      return res.status(401).json({ error: "Unauthorized: Tenant ID not found in token" });
+    }
+
+    const tenant = await Tenant.findById(tenantId).select('-password');
+    if (!tenant) {
+      return res.status(404).json({ error: "Tenant not found" });
+    }
+
+    return res.status(200).json({ success: true, tenant });
+  } catch (err) {
+    console.error("Error fetching tenant:", err);
+    return res.status(500).json({ error: "Server error" });
+  }
+};
 
 export const updateTenant = async (req, res) => {
   try {
@@ -205,129 +227,26 @@ const calculateRenewsAt = (startsAt, billingCycle) => {
   return renewsAt;
 };
 
-// export const processPayment = async (req, res) => {
-//   try {
-//     const {
-//       tenant,
-//       firstName,
-//       lastName,
-//       plan,
-//       amount,
-//       currency,
-//       cardNumber,
-//       expiry,
-//       cvv,
-//       billingCycle, // Assume this is passed from frontend
-//     } = req.body;
+const removeSpacesAndSpecialChars = (input, allowedChars = '') => {
+  if (typeof input !== 'string') {
+    throw new Error('Input must be a string');
+  }
 
-//     // Validate required fields
-//     if (!tenant || !plan || !amount || !firstName || !lastName || !cardNumber || !expiry || !cvv || !billingCycle) {
-//       return res.status(400).json({
-//         success: false,
-//         message: 'Missing required fields',
-//       });
-//     }
-
-//     // Fetch plan details
-//     const planData = await Plan.findById(plan);
-//     if (!planData) {
-//       return res.status(404).json({
-//         success: false,
-//         message: 'Plan not found',
-//       });
-//     }
-//     console.log("plan Data : " ,planData)
-//     // Simulate payment processing (since Stripe is not integrated yet)
-//     const payment = new TenantPayment({
-//       tenant,
-//       firstName,
-//       lastName,
-//       plan,
-//       amount,
-//       currency,
-//       cardNumber,
-//       expiry,
-//       cvv,
-//       status: 'completed',
-//     });
-
-//     await payment.save();
-
-//     // Fetch tenant details for registration
-//     const tenantData = await Tenant.findById(tenant);
-//     if (!tenantData) {
-//       return res.status(404).json({
-//         success: false,
-//         message: 'Tenant not found',
-//       });
-//     }
-
-//     // Generate login credentials
-//     const username = `${firstName.toLowerCase()}.${generateRandomString(6)}`;
-//     const password = generateRandomString(12); // In production, hash this for storage
-
-//     // Calculate plan dates
-//     const startsAt = new Date();
-//     const renewsAt = calculateRenewsAt(startsAt, billingCycle);
-
-//     // Update tenant's loginCredentials and plan details
-//     const updatedTenant = await Tenant.findByIdAndUpdate(
-//       tenant,
-//       {
-//         $set: {
-//           'loginCredentials.username': username,
-//           'loginCredentials.password': password, // In production, hash this
-//           'plan.tier': planData.tier,
-//           'plan.price': amount,
-//           'plan.billingCycle': billingCycle,
-//           'plan.startsAt': startsAt,
-//           'plan.renewsAt': renewsAt,
-//           'plan.status': 'active',
-//           'plan.isAutoRenew': true,
-//         },
-//       },
-//       { new: true }
-//     );
-
-//     if (!updatedTenant) {
-//       return res.status(404).json({
-//         success: false,
-//         message: 'Failed to update tenant details',
-//       });
-//     }
-
-//     res.status(200).json({
-//       success: true,
-//       paymentId: payment._id,
-//       message: 'Payment processed successfully, tenant details updated, and user registered in separate app',
-//       loginCredentials: {
-//         username,
-//         password, // For development only; remove in production
-//       },
-//       plan: {
-//         tier: planData.tier || 'basic',
-//         price: amount,
-//         billingCycle,
-//         startsAt: startsAt.toISOString(),
-//         renewsAt: renewsAt.toISOString(),
-//         status: 'active',
-//         isAutoRenew: true,
-//       },
-//     });
-//   } catch (error) {
-//     console.error('Payment processing error:', error);
-//     res.status(500).json({
-//       success: false,
-//       message: 'Error processing payment: ' + error.message,
-//     });
-//   }
-// };
-
+  // Escape special characters in allowedChars for regex
+  const escapedAllowedChars = allowedChars.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+  // Create regex to keep only alphanumeric and allowed characters
+  const regex = new RegExp(`[^a-zA-Z0-9${escapedAllowedChars}]`, 'g');
+  
+  return input
+    .replace(regex, '') // Remove all characters except alphanumeric and allowed ones
+    .toLowerCase(); // Optional: Convert to lowercase for consistency
+};
 
 export const processPayment = async (req, res) => {
   try {
     const {
       tenant,
+      companyName,
       firstName,
       lastName,
       plan,
@@ -338,15 +257,14 @@ export const processPayment = async (req, res) => {
       cvv,
       billingCycle,
     } = req.body;
-
+    
     // Validate required fields for payment
-    if (!tenant || !plan || !amount || !firstName || !lastName || !cardNumber || !expiry || !cvv || !billingCycle) {
+    if (!tenant || !plan || !amount || !firstName || !lastName || !cardNumber || !expiry || !cvv || !billingCycle || !companyName) {
       return res.status(400).json({
         success: false,
         message: 'Missing required fields',
       });
     }
-
     // Fetch plan details
     const planData = await Plan.findById(plan);
     if (!planData) {
@@ -380,10 +298,12 @@ export const processPayment = async (req, res) => {
         message: 'Tenant not found',
       });
     }
-    // const tenantName = tenantData.name ;
+    const database = removeSpacesAndSpecialChars(companyName) + "-" + tenantData._id.toString().slice(0, 10);
+    const { models } = await getTenantConnection(tenantData._id.toString(), database);
+    const User = models.User;
 
     // Generate login credentials for tenant
-    const username = `${tenantData.name.toLowerCase()}${generateRandomString(6)}`;
+    const username = `${firstName.toLowerCase()}${tenantData._id.toString().slice(0, 10)}`;
     const password = generateRandomString(12); // In production, hash this
 
     // Calculate plan dates
@@ -395,9 +315,10 @@ export const processPayment = async (req, res) => {
       tenant,
       {
         $set: {
-          'companyName': tenant.name,
+          'companyName': companyName,
+          'databaseName': database,
           'loginCredentials.username': username,
-          'loginCredentials.password': password, // In production, hash this
+          'loginCredentials.password': password,
           'plan.tier': planData.tier,
           'plan.price': amount,
           'plan.billingCycle': billingCycle,
@@ -409,7 +330,6 @@ export const processPayment = async (req, res) => {
       },
       { new: true }
     );
-
     if (!updatedTenant) {
       return res.status(404).json({
         success: false,
@@ -418,12 +338,12 @@ export const processPayment = async (req, res) => {
     }
 
     // Create a user in the User collection
-    const userName = username; // Use tenant username as name
-    const userEmail = tenantData.email; // Use provided email
-    const userPassword = password; // Use email as password
+    const userName = username; 
+    const userEmail = tenantData.email; 
+    const userPassword = password; 
 
     // Check if user already exists
-    const existingUser = await User.findOne({ $or: [{ email: userEmail }, { username: userName }] });
+    const existingUser = await User.findOne({ email: userEmail });
     if (existingUser) {
       return res.status(400).json({
         success: false,
@@ -431,29 +351,37 @@ export const processPayment = async (req, res) => {
       });
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(userPassword, 10);
 
     // Create new user
     const user = new User({
-      companyName: tenantData.name,
+      companyName: companyName ,
+      tenantId: tenantData._id ,
       name: tenantData.name,
       username: userName,
       email: userEmail,
       password: hashedPassword,
       role: "Admin",
     });
-
     await user.save();
+
+    const shareduser = new SharedUser({
+      companyName: companyName,
+      tenantId: tenantData._id ,
+      email: userEmail,
+      password: hashedPassword,
+    });
+
+    await shareduser.save();
 
     res.status(200).json({
       success: true,
       paymentId: payment._id,
-      userId: user._id, // Return the created user's ID
+      userId: user._id, 
       message: 'Payment processed successfully, tenant details updated, and user registered',
       loginCredentials: {
         username,
-        password, // For development only; remove in production
+        password, 
       },
       plan: {
         tier: planData.tier || 'basic',
@@ -469,6 +397,11 @@ export const processPayment = async (req, res) => {
         username: userName,
         email: userEmail,
         role: "Admin",
+      },
+      shareduser: {
+        email: userEmail,
+        companyName: tenantData.companyName,
+        tenantId: tenantData._id
       },
     });
   } catch (error) {

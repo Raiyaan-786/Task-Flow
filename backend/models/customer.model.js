@@ -10,7 +10,7 @@ const customerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    customerImage:{
+    image:{
       type: String,
       default: '',
     },
@@ -23,7 +23,7 @@ const customerSchema = new mongoose.Schema(
     billingName: {
       type: String,
     },
-    companyName: {
+    customerCompanyName: {
       type: String,
     },
     email: {

@@ -118,7 +118,7 @@ const AddCustomer = () => {
           customerName: "",
           customerCode: "",
           billingName: "",
-          companyName: "",//
+          customerCompanyName: "",//
           email: "",
           mobileNo: "",
           whatsappNo: "",
@@ -139,7 +139,7 @@ const AddCustomer = () => {
           customerName: yup.string().required("Customer Name is required"),
           customerCode: yup.string(),
           billingName: yup.string(),
-          companyName: yup.string(),
+          customerCompanyName: yup.string(),
           email: yup.string().email("Invalid email").required("Email ID is required"),
           mobileNo: yup.string(),
           whatsappNo: yup.string(),
@@ -437,8 +437,8 @@ const AddCustomer = () => {
                     size="small"
                     disabled={!panChecked}
                     freeSolo // Allow typing any value (free-text entry)
-                    value={values.companyName}
-                    onChange={(event, newValue) => setFieldValue('companyName', newValue)}
+                    value={values.customerCompanyName}
+                    onChange={(event, newValue) => setFieldValue('customerCompanyName', newValue)}
                     renderInput={(params) => <TextField variant="filled" {...params} placeholder="ENTER COMPANY/FIRM NAME" />}
                   />
                 </Grid2>

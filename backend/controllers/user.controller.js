@@ -1,33 +1,104 @@
 import cloudinary from "../lib/cloudinary.js";
-import { User } from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { SharedUser } from "../models/sharedUser.model.js";
+import { Tenant } from "../models/tenant.model.js";
+import { getTenantConnection } from "../utils/tenantDb.js";
 
-// Register User (Customer registration)
+const fetchCompaniesByEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: "Email required" });
+    }
+
+    const sharedUsers = await SharedUser.find({ email }, 'companyName tenantId');
+    if (!sharedUsers.length) {
+      return res.status(404).json({ message: "No companies found for this email" });
+    }
+
+    const companies = sharedUsers.map(user => ({
+      tenantId: user.tenantId,
+      companyName: user.companyName,
+    }));
+
+    res.status(200).json({ companies });
+  } catch (err) {
+    console.error("Error fetching companies:", err.message);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+const loginUser = async (req, res) => {
+  try {
+    const { email, password, tenantId } = req.body;
+    if (!email || !password || !tenantId) {
+      return res.status(400).json({ error: "Email, password, and tenantId required" });
+    }
+
+    const sharedUser = await SharedUser.findOne({ email, tenantId });
+    if (!sharedUser) {
+      return res.status(404).json({ error: "User not found for this company" });
+    }
+
+    const isMatch = await bcrypt.compare(password, sharedUser.password);
+    if (!isMatch) {
+      return res.status(400).json({ error: "Invalid credentials" });
+    }
+
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ error: "Tenant not found" });
+    }
+
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const User = models.User;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: "User not found in tenant database" });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, tenantId, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+    const { password: pwd, ...userWithoutPassword } = user._doc;
+    return res.status(200).json({ user: userWithoutPassword, token });
+  } catch (err) {
+    console.error("Error during login user:", err.message);
+    return res.status(500).json({ error: "Server error" });
+  }
+};
+
 const registerUser = async (req, res) => {
   try {
-    const {
-      name,
-      username,
-      email,
-      password,
-      role,
-    } = req.body;
+    const { tenantId } = req.user;
+    const { name, username, email, password, mobile, address, role } = req.body;
+
     if (!name || !username || !email || !password || !mobile || !address) {
       return res.status(400).json({ message: "All fields are required" });
     }
+
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const User = models.User;
+
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ message: "Email or username already exists" });
+      return res.status(400).json({ message: "Email or username already exists" });
     }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({
+      companyName: tenant.companyName,
       name,
       username,
-      department,
-      postname,
       email,
       password: hashedPassword,
       mobile,
@@ -35,45 +106,26 @@ const registerUser = async (req, res) => {
       role,
     });
     await user.save();
+
+    const sharedUser = new SharedUser({
+      companyName: tenant.companyName,
+      tenantId,
+      email,
+      password: hashedPassword,
+    });
+    await sharedUser.save();
+
     res.status(201).json({ user, message: "Customer registered successfully" });
   } catch (err) {
     console.error("Error during registration:", err.message);
-    res
-      .status(400)
-      .json({ error: err.message, message: "Registration failed" });
-  }
-};
-
-const loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ error: "Invalid credentials" });
-    }
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
-    const { password: pwd, ...userWithoutPassword } = user._doc;
-    return res.status(200).json({ user: userWithoutPassword, token });
-  } catch (err) {
-    console.error("Error during login:", err.message);
-    return res
-      .status(500)
-      .json({ error: "Server error. Please try again later." });
+    res.status(400).json({ error: err.message, message: "Registration failed" });
   }
 };
 
 const createUser = async (req, res) => {
   try {
+    const { tenantId } = req.user;
     const {
-      companyName,
       name,
       username,
       department,
@@ -93,20 +145,39 @@ const createUser = async (req, res) => {
       return res.status(400).json({ error: "Invalid role specified" });
     }
 
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    const companyName = tenant.companyName ;
+
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const User = models.User;
+
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
       return res.status(400).json({ error: "Email or username already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    let imageBuffer = null;
+    let imageUrl = null;
     if (req.file) {
-      imageBuffer = req.file.buffer; // Store image as Buffer (not Base64)
+      const uploadResult = await new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          { folder: "profile_pictures" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        ).end(req.file.buffer);
+      });
+      imageUrl = uploadResult.secure_url;
     }
 
     const newUser = new User({
       companyName,
+      tenantId,
       name,
       username,
       department,
@@ -120,33 +191,50 @@ const createUser = async (req, res) => {
       address,
       role,
       status: "Active",
-      image: imageBuffer, 
+      image: imageUrl,
     });
+
     await newUser.save();
+
+    const sharedUser = new SharedUser({
+      companyName: tenant.companyName,
+      tenantId,
+      email,
+      password: hashedPassword,
+    });
+    await sharedUser.save();
+
     res.status(201).json({ message: `${role} created successfully`, user: newUser });
   } catch (err) {
+    console.log(err)
     res.status(500).json({ error: err.message });
   }
 };
 
 const getUser = async (req, res) => {
   try {
+    const { tenantId } = req.user;
     const { id } = req.params;
+
+    const tenant = await Tenant.findById(tenantId);
+    
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const User = models.User;
+
     const user = await User.findById(
       id,
-      "name email department salary dateofjoining dateofleaving postname role mobile address username image password status"
+      "name email department salary dateofjoining dateofleaving postname role mobile address username image status"
     );
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    let imageBase64 = null;
-    if (user.image) {
-      imageBase64 = user.image.toString("base64"); // Convert Buffer to Base64 for response
-    }
-
-    res.status(200).json({ user: { ...user._doc, image: imageBase64 } });
+    res.status(200).json({ user });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -154,41 +242,76 @@ const getUser = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
   try {
+    const { tenantId } = req.user;
+
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const User = models.User;
+
     const users = await User.find(
       {},
-      "companyName name email department salary dateofjoining dateofleaving postname role mobile address username image password status"
+      "companyName name email department salary dateofjoining dateofleaving postname role mobile address username image status"
     );
     res.status(200).json({ users });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 const getMuteUsers = async (req, res) => {
   try {
+    const { tenantId } = req.user;
+
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const User = models.User;
+
     const users = await User.find(
       { status: "Mute" },
-      "companyName name email department postname role mobile address username image password status"
+      "companyName name email department postname role mobile address username image status"
     );
     res.status(200).json({ users });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 const updateUserRole = async (req, res) => {
   try {
+    const { tenantId } = req.user;
     const { id } = req.params;
     const { role } = req.body;
+
     const validRoles = ["Admin", "Manager", "Employee", "Inactive"];
     if (!validRoles.includes(role)) {
       return res.status(400).json({ error: "Invalid role specified" });
     }
+
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const User = models.User;
+
     const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
+
     if (user._id.toString() === req.user.id) {
       return res.status(403).json({ error: "You cannot change your own role" });
     }
+
     user.role = role;
     await user.save();
     res.status(200).json({ message: "User role updated successfully", user });
@@ -199,14 +322,26 @@ const updateUserRole = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
+    const { tenantId } = req.user;
     const { id } = req.params;
+
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const User = models.User;
+
     const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
+
     if (user.role === "Admin") {
       return res.status(403).json({ error: "You cannot delete an admin user" });
     }
+
     await User.findByIdAndDelete(id);
     res.status(200).json({ message: "User deleted successfully" });
   } catch (err) {
@@ -214,9 +349,9 @@ const deleteUser = async (req, res) => {
   }
 };
 
-
 const updateUser = async (req, res) => {
   try {
+    const { tenantId } = req.user;
     const { id } = req.params;
     const {
       name,
@@ -233,6 +368,14 @@ const updateUser = async (req, res) => {
       status,
     } = req.body;
 
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const User = models.User;
+
     let updateData = {
       name,
       username,
@@ -248,37 +391,26 @@ const updateUser = async (req, res) => {
       status,
     };
 
-    // Find existing user
     const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // If a new image is uploaded, replace the old one on Cloudinary
     if (req.file) {
-      const uploadResult = cloudinary.uploader.upload_stream(
-        { folder: "profile_pictures" }, // Save in Cloudinary folder
-        async (error, result) => {
-          if (error) {
-            return res.status(500).json({ message: "Image upload failed", error });
+      const uploadResult = await new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          { folder: "profile_pictures" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
           }
-
-          updateData.image = result.secure_url; // Save Cloudinary URL
-
-          // Update user data in MongoDB
-          const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true });
-
-          res.json({ message: "User updated successfully", user: updatedUser });
-        }
-      ).end(req.file.buffer);
-      return;
+        ).end(req.file.buffer);
+      });
+      updateData.image = uploadResult.secure_url;
     }
 
-    // Update user details if no new image
     const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true });
-
     res.json({ message: "User updated successfully", user: updatedUser });
-
   } catch (error) {
     res.status(500).json({ message: "Error updating user", error: error.message });
   }
@@ -286,18 +418,40 @@ const updateUser = async (req, res) => {
 
 const updateUserImage = async (req, res) => {
   try {
+    const { tenantId } = req.user;
     const { id } = req.params;
-    const { image } = req.body;
-    if (!image) {
+
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const User = models.User;
+
+    if (!req.file) {
       return res.status(400).json({ message: "No image provided" });
     }
-    const uploadResponse = await cloudinary.uploader.upload(profilePic);
+
+    const uploadResult = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        { folder: "profile_pictures" },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      ).end(req.file.buffer);
+    });
 
     const updatedUser = await User.findByIdAndUpdate(
       id,
-      { image: uploadResponse.secure_url },
+      { image: uploadResult.secure_url },
       { new: true }
     );
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     res.json({ message: "User image updated successfully", user: updatedUser });
   } catch (error) {
     res.status(500).json({ message: "Error updating user image", error: error.message });
@@ -305,8 +459,9 @@ const updateUserImage = async (req, res) => {
 };
 
 export {
-  registerUser,
+  fetchCompaniesByEmail,
   loginUser,
+  registerUser,
   createUser,
   getUser,
   getAllUsers,

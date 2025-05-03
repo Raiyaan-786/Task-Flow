@@ -5,7 +5,10 @@ const userSchema = new mongoose.Schema(
     companyName: {
       type: String,
       required: true,
-      unique: true,
+    },
+    tenantId: {
+      type: String,
+      required: true,
     },
     name: {
       type: String,
@@ -14,7 +17,6 @@ const userSchema = new mongoose.Schema(
     username: {
       type: String,
       required: true,
-      unique: true,
     },
     department: {
       type: String,

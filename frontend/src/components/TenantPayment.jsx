@@ -30,6 +30,7 @@ const TenantPayment = () => {
   const [paymentDetails, setPaymentDetails] = useState({
     firstName: "",
     lastName: "",
+    companyName: "",
     cardNumber: "",
     cvv: "",
     expiryMonth: "",
@@ -65,6 +66,9 @@ const TenantPayment = () => {
     }
     if (!paymentDetails.lastName || paymentDetails.lastName.trim() === "") {
       newErrors.lastName = "Last name is required";
+    }
+    if (!paymentDetails.companyName || paymentDetails.companyName.trim() === "") {
+      newErrors.companyName = "Company name is required";
     }
     if (!paymentDetails.cardNumber || !/^\d{16}$/.test(paymentDetails.cardNumber)) {
       newErrors.cardNumber = "Enter a valid 16-digit card number";
@@ -102,6 +106,7 @@ const TenantPayment = () => {
           tenant: tenant._id,
           firstName: paymentDetails.firstName,
           lastName: paymentDetails.lastName,
+          companyName: paymentDetails.companyName,
           plan: planId,
           amount: billingInfo.total,
           currency: "USD",
@@ -114,7 +119,6 @@ const TenantPayment = () => {
         const response = await API.post("/tenant/payments/process", paymentData);
 
         if (response.data.success) {
-          // Update localStorage with loginCredentials and plan details
           const updatedTenant = {
             ...tenant,
             loginCredentials: response.data.loginCredentials,
@@ -222,6 +226,16 @@ const TenantPayment = () => {
                   sx={{ mb: 2 }}
                 />
               </Box>
+              <TextField
+                fullWidth
+                label="Company name"
+                name="companyName"
+                value={paymentDetails.companyName}
+                onChange={handleInputChange}
+                error={!!errors.companyName}
+                helperText={errors.companyName || "Please review as it cannot be changed"}
+                sx={{ mb: 2 }}
+              />
               <TextField
                 fullWidth
                 label="Card number"

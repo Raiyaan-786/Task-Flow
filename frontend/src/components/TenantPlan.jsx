@@ -36,14 +36,14 @@ const TenantPlan = () => {
     // Fetch plans from backend
     const fetchPlans = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) {
+        const tenanttoken = localStorage.getItem("tenanttoken");
+        if (!tenanttoken) {
           throw new Error("No authentication token found. Please log in.");
         }
 
         const response = await API.get("/tenant/getAllPlans", {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${tenanttoken}`,
           },
         });
 
@@ -52,7 +52,7 @@ const TenantPlan = () => {
         }
 
         setPlans(response.data.plans);
-        setError(null); // Clear any previous errors
+        setError(null); 
       } catch (error) {
         console.error("Error fetching plans:", {
           message: error.message,
@@ -69,7 +69,6 @@ const TenantPlan = () => {
     fetchPlans();
   }, []);
 
-  // Function to check if the plan is the tenant's current plan
   const isCurrentPlan = (plan) => {
     if (!tenantPlan) return false;
     return plan.tier.toLowerCase() === tenantPlan.tier.toLowerCase();

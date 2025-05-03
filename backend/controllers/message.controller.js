@@ -1,17 +1,50 @@
-import { Message } from "../models/message.model.js";
-import { User } from "../models/user.model.js";
-import { Customer } from "../models/customer.model.js";
-import canSendMessage from "../middlewares/message.middleware.js";
-import { getRecieverSocketId, io } from "../app.js";
+// controllers/message.controller.js
 import mongoose from "mongoose";
 import cloudinary from "../lib/cloudinary.js";
-import { Notification } from "../models/notification.model.js";
-import streamifier from 'streamifier'
+import { Tenant } from "../models/tenant.model.js";
+import { getTenantConnection } from "../utils/tenantDb.js";
+import canSendMessage from "../middlewares/message.middleware.js";
+import { getReceiverSocketId, io } from "../app.js";
+import streamifier from 'streamifier';
 import path from "path";
 
+const isImageFile = (filename) => {
+  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
+  const ext = filename.substring(filename.lastIndexOf('.')).toLowerCase();
+  return imageExtensions.includes(ext);
+};
+
+const uploadToCloudinary = async (fileBuffer, filename) => {
+  return new Promise((resolve, reject) => {
+    const ext = path.extname(filename).toLowerCase();
+    const isImage = isImageFile(filename);
+
+    let resource_type = 'auto';
+    if (isImage) resource_type = 'image';
+    else if (['.mp4', '.mov', '.avi'].includes(ext)) resource_type = 'video';
+    else if (['.pdf', '.doc', '.docx'].includes(ext)) resource_type = 'raw';
+
+    const sanitizedFilename = filename.replace(/[^\w.-]/g, '_');
+
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        resource_type,
+        folder: 'message_attachments',
+        public_id: sanitizedFilename.replace(/\.[^/.]+$/, ""),
+      },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    );
+
+    streamifier.createReadStream(fileBuffer).pipe(uploadStream);
+  });
+};
 
 export const getUserMessages = async (req, res) => {
   try {
+    const { tenantId } = req.user; // Extracted from JWT middleware
     const { id: userToChatId } = req.params;
     const myId = req.user.id;
 
@@ -19,10 +52,26 @@ export const getUserMessages = async (req, res) => {
       return res.status(400).json({ error: "Invalid user ID format" });
     }
 
-    const receiver = await User.findById(userToChatId) || await Customer.findById(userToChatId);
-    if (!receiver) return res.status(404).json({ error: "Receiver not found" });
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
 
-    const messages = await Message.find({
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantUser = models.User;
+    const TenantCustomer = models.Customer;
+    const TenantMessage = models.Message;
+
+    // Check if receiver exists in the tenant's database (either as a User or Customer)
+    const receiver = await TenantUser.findById(userToChatId) || await TenantCustomer.findById(userToChatId);
+    if (!receiver) {
+      return res.status(404).json({ error: "Receiver not found" });
+    }
+
+    // Fetch messages between the sender (myId) and receiver (userToChatId)
+    const messages = await TenantMessage.find({
       $or: [
         { sender: myId, receiver: userToChatId },
         { sender: userToChatId, receiver: myId },
@@ -36,57 +85,41 @@ export const getUserMessages = async (req, res) => {
   }
 };
 
-// Improved isImageFile function
-const isImageFile = (filename) => {
-  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
-  const ext = filename.substring(filename.lastIndexOf('.')).toLowerCase();
-  return imageExtensions.includes(ext);
-};
-
-
-const uploadToCloudinary = async (fileBuffer, filename) => {
-  return new Promise((resolve, reject) => {
-    const ext = path.extname(filename).toLowerCase();
-    const isImage = isImageFile(filename);
-    
-    // Determine resource type more precisely
-    let resource_type = 'auto';
-    if (isImage) resource_type = 'image';
-    else if (['.mp4', '.mov', '.avi'].includes(ext)) resource_type = 'video';
-    else if (['.pdf', '.doc', '.docx'].includes(ext)) resource_type = 'raw';
-
-    // Sanitize filename
-    const sanitizedFilename = filename.replace(/[^\w.-]/g, '_');
-
-    const uploadStream = cloudinary.uploader.upload_stream(
-      {
-        resource_type,
-        folder: 'message_attachments',
-        public_id: sanitizedFilename.replace(/\.[^/.]+$/, ""),
-        // Add size limits if needed
-        // max_bytes: 10 * 1024 * 1024 // 10MB
-      },
-      (error, result) => {
-        if (error) reject(error);
-        else resolve(result);
-      }
-    );
-
-    streamifier.createReadStream(fileBuffer).pipe(uploadStream);
-  });
-};
-
 export const sendMessage = async (req, res) => {
   try {
+    const { tenantId } = req.user; // Extracted from JWT middleware
     const { id: receiverId } = req.params;
     const { text } = req.body;
-    const sender = await User.findById(req.user.id);
-    const receiver = await User.findById(receiverId) || await Customer.findById(receiverId);
 
-    if (!receiver) return res.status(404).json({ error: "Receiver not found" });
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
 
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantUser = models.User;
+    const TenantCustomer = models.Customer;
+    const TenantMessage = models.Message;
+    const TenantNotification = models.Notification;
+
+    // Fetch sender and receiver
+    const sender = await TenantUser.findById(req.user.id);
+    if (!sender) {
+      return res.status(404).json({ error: "Sender not found" });
+    }
+
+    const receiver = await TenantUser.findById(receiverId) || await TenantCustomer.findById(receiverId);
+    if (!receiver) {
+      return res.status(404).json({ error: "Receiver not found" });
+    }
+
+    // Check if messaging is allowed
     const allowed = await canSendMessage(sender, receiver);
-    if (!allowed) return res.status(403).json({ error: "Messaging not allowed" });
+    if (!allowed) {
+      return res.status(403).json({ error: "Messaging not allowed" });
+    }
 
     // Handle file upload if present
     let fileData = null;
@@ -104,39 +137,39 @@ export const sendMessage = async (req, res) => {
         };
       } catch (uploadError) {
         console.error("Cloudinary upload failed:", uploadError);
-        return res.status(500).json({ 
-          error: uploadError.message.includes('File size limit') 
-            ? "File too large" 
-            : "File upload failed" 
+        return res.status(500).json({
+          error: uploadError.message.includes('File size limit')
+            ? "File too large"
+            : "File upload failed",
         });
       }
     }
-    // console.log(fileData)
 
-    const newMessage = new Message({
+    // Create and save the new message
+    const newMessage = new TenantMessage({
       sender: sender._id,
       receiver: receiver._id,
-      receiverModel: receiver instanceof User ? "User" : "Customer",
+      receiverModel: receiver instanceof TenantUser ? "User" : "Customer",
       text,
       file: fileData,
     });
 
     await newMessage.save();
 
-    // Create notification
-    const notification = new Notification({
+    // Create and save the notification
+    const notification = new TenantNotification({
       recipient: receiver._id,
-      recipientModel: receiver instanceof User ? "User" : "Customer",
+      recipientModel: receiver instanceof TenantUser ? "User" : "Customer",
       sender: sender._id,
-      senderImage: sender.image, // Store the image URL/path
-      senderName: sender.name || sender.username, // Store name
+      senderImage: sender.image,
+      senderName: sender.name || sender.username,
       message: newMessage._id,
-      content: text || (fileData ? `Sent a ${fileData.fileType}` : "New message")
+      content: text || (fileData ? `Sent a ${fileData.fileType}` : "New message"),
     });
     await notification.save();
 
-    // Real-time updates
-    const receiverSocketId = getRecieverSocketId(receiver._id);
+    // Emit real-time updates via Socket.IO
+    const receiverSocketId = getReceiverSocketId(tenantId, receiver._id.toString());
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("newMessage", newMessage);
       io.to(receiverSocketId).emit("newNotification", notification);
@@ -148,6 +181,3 @@ export const sendMessage = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
-
-  

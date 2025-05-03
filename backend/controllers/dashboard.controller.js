@@ -1,12 +1,23 @@
-import { User } from '../models/user.model.js';
-import { Work } from '../models/work.model.js';
-import { Customer } from '../models/customer.model.js';
-import { CustomerGroup } from '../models/customer.model.js';
-
+// controllers/summary.controller.js
+import { Tenant } from '../models/tenant.model.js';
+import { getTenantConnection } from '../utils/tenantDb.js';
 
 export const getWorkSummary = async (req, res) => {
   try {
-    const workSummary = await User.aggregate([
+    const { tenantId } = req.user; // Extracted from JWT middleware
+
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantUser = models.User;
+    const TenantWork = models.Work;
+
+    const workSummary = await TenantUser.aggregate([
       {
         $match: {
           role: { $in: ["Admin", "Manager", "Employee"] },
@@ -14,7 +25,7 @@ export const getWorkSummary = async (req, res) => {
       },
       {
         $lookup: {
-          from: 'works', // Ensure this is the correct collection name
+          from: TenantWork.collection.collectionName, // Use the tenant-specific Work collection name
           localField: '_id',
           foreignField: 'assignedEmployee',
           as: 'works',
@@ -111,40 +122,52 @@ export const getWorkSummary = async (req, res) => {
 
 export const getWorkSummaryByType = async (req, res) => {
   try {
-    const workSummary = await Work.aggregate([ 
+    const { tenantId } = req.user; // Extracted from JWT middleware
+
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantWork = models.Work;
+
+    const workSummary = await TenantWork.aggregate([
       {
-        $group: { 
+        $group: {
           _id: "$workType",
-          totalWorks: { $sum: 1 }, 
+          totalWorks: { $sum: 1 },
           worksDone: {
-            $sum: { $cond: [{ $eq: ["$currentStatus", "Completed"] }, 1, 0] } 
+            $sum: { $cond: [{ $eq: ["$currentStatus", "Completed"] }, 1, 0] },
           },
           assignedWork: {
-            $sum: { $cond: [{ $eq: ["$currentStatus", "Assigned"] }, 1, 0] } 
+            $sum: { $cond: [{ $eq: ["$currentStatus", "Assigned"] }, 1, 0] },
           },
           pickedUp: {
-            $sum: { $cond: [{ $eq: ["$currentStatus", "Picked Up"] }, 1, 0] } 
+            $sum: { $cond: [{ $eq: ["$currentStatus", "Picked Up"] }, 1, 0] },
           },
           customerVerification: {
-            $sum: { $cond: [{ $eq: ["$currentStatus", "Customer Verification"] }, 1, 0] } 
+            $sum: { $cond: [{ $eq: ["$currentStatus", "Customer Verification"] }, 1, 0] },
           },
           readyForChecking: {
-            $sum: { $cond: [{ $eq: ["$currentStatus", "Ready for Checking"] }, 1, 0] } 
+            $sum: { $cond: [{ $eq: ["$currentStatus", "Ready for Checking"] }, 1, 0] },
           },
           holdWork: {
-            $sum: { $cond: [{ $eq: ["$currentStatus", "Hold Work"] }, 1, 0] } 
+            $sum: { $cond: [{ $eq: ["$currentStatus", "Hold Work"] }, 1, 0] },
           },
           evcPending: {
-            $sum: { $cond: [{ $eq: ["$currentStatus", "EVC Pending"] }, 1, 0] } 
+            $sum: { $cond: [{ $eq: ["$currentStatus", "EVC Pending"] }, 1, 0] },
           },
           cancel: {
-            $sum: { $cond: [{ $eq: ["$currentStatus", "Cancel"] }, 1, 0] }
-          }
-        }
+            $sum: { $cond: [{ $eq: ["$currentStatus", "Cancel"] }, 1, 0] },
+          },
+        },
       },
       {
-        $project: { 
-          _id: 0, 
+        $project: {
+          _id: 0,
           workType: "$_id",
           totalWorks: 1,
           worksDone: 1,
@@ -154,23 +177,37 @@ export const getWorkSummaryByType = async (req, res) => {
           readyForChecking: 1,
           holdWork: 1,
           evcPending: 1,
-          cancel: 1
-        }
-      }
+          cancel: 1,
+        },
+      },
     ]);
+
     res.status(200).json(workSummary);
   } catch (error) {
-    console.error('Error fetching work summary:', error);
+    console.error('Error fetching work summary by type:', error);
     res.status(500).json({ message: 'Server error' });
-  }  
+  }
 };
 
 export const getCustomerSummary = async (req, res) => {
   try {
-    const customerSummary = await Customer.aggregate([
+    const { tenantId } = req.user; // Extracted from JWT middleware
+
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantCustomer = models.Customer;
+    const TenantWork = models.Work;
+
+    const customerSummary = await TenantCustomer.aggregate([
       {
         $lookup: {
-          from: 'works', // Ensure this is the correct collection name
+          from: TenantWork.collection.collectionName, // Use the tenant-specific Work collection name
           localField: '_id',
           foreignField: 'customer',
           as: 'works',
@@ -180,14 +217,14 @@ export const getCustomerSummary = async (req, res) => {
         $project: {
           customerName: 1,
           customerCode: 1,
-          customerImage: 1,
-          works: 1,  // Project the raw works array to check if it's being populated correctly
+          customerImage: 1, // Assuming this field exists in the Customer schema
+          works: 1, // Include for debugging if needed
           "workCounts.total": { $size: "$works" },
           "workCounts.done": {
             $size: {
               $filter: {
-                input: "$works", 
-                as: "work", 
+                input: "$works",
+                as: "work",
                 cond: { $eq: ["$$work.currentStatus", "Completed"] },
               },
             },
@@ -196,7 +233,7 @@ export const getCustomerSummary = async (req, res) => {
             $size: {
               $filter: {
                 input: "$works",
-                as: "work", 
+                as: "work",
                 cond: { $eq: ["$$work.currentStatus", "Assigned"] },
               },
             },
@@ -205,7 +242,7 @@ export const getCustomerSummary = async (req, res) => {
             $size: {
               $filter: {
                 input: "$works",
-                as: "work", 
+                as: "work",
                 cond: { $eq: ["$$work.currentStatus", "Picked Up"] },
               },
             },
@@ -214,7 +251,7 @@ export const getCustomerSummary = async (req, res) => {
             $size: {
               $filter: {
                 input: "$works",
-                as: "work", 
+                as: "work",
                 cond: { $eq: ["$$work.currentStatus", "Customer Verification"] },
               },
             },
@@ -223,7 +260,7 @@ export const getCustomerSummary = async (req, res) => {
             $size: {
               $filter: {
                 input: "$works",
-                as: "work", 
+                as: "work",
                 cond: { $eq: ["$$work.currentStatus", "Ready for Checking"] },
               },
             },
@@ -232,7 +269,7 @@ export const getCustomerSummary = async (req, res) => {
             $size: {
               $filter: {
                 input: "$works",
-                as: "work", 
+                as: "work",
                 cond: { $eq: ["$$work.currentStatus", "Hold Work"] },
               },
             },
@@ -241,7 +278,7 @@ export const getCustomerSummary = async (req, res) => {
             $size: {
               $filter: {
                 input: "$works",
-                as: "work", 
+                as: "work",
                 cond: { $eq: ["$$work.currentStatus", "EVC Pending"] },
               },
             },
@@ -250,7 +287,7 @@ export const getCustomerSummary = async (req, res) => {
             $size: {
               $filter: {
                 input: "$works",
-                as: "work", 
+                as: "work",
                 cond: { $eq: ["$$work.currentStatus", "Cancel"] },
               },
             },
@@ -258,7 +295,7 @@ export const getCustomerSummary = async (req, res) => {
         },
       },
     ]);
-    // Return customer summary with raw works data for debugging
+
     res.status(200).json(customerSummary);
   } catch (error) {
     console.error('Error fetching customer summary:', error);
@@ -266,25 +303,37 @@ export const getCustomerSummary = async (req, res) => {
   }
 };
 
-
-
 export const getCustomerGroupSummary = async (req, res) => {
   try {
-    const customerGroupSummary = await CustomerGroup.aggregate([
+    const { tenantId } = req.user; // Extracted from JWT middleware
+
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantCustomerGroup = models.CustomerGroup;
+    const TenantCustomer = models.Customer;
+    const TenantWork = models.Work;
+
+    const customerGroupSummary = await TenantCustomerGroup.aggregate([
       {
         $lookup: {
-          from: 'customers', 
+          from: TenantCustomer.collection.collectionName, // Use the tenant-specific Customer collection name
           localField: 'customers',
           foreignField: '_id',
           as: 'groupCustomers',
         },
       },
       {
-        $unwind: '$groupCustomers', 
+        $unwind: '$groupCustomers',
       },
       {
         $lookup: {
-          from: 'works', 
+          from: TenantWork.collection.collectionName, // Use the tenant-specific Work collection name
           localField: 'groupCustomers._id',
           foreignField: 'customer',
           as: 'works',
@@ -293,7 +342,7 @@ export const getCustomerGroupSummary = async (req, res) => {
       {
         $project: {
           groupName: 1,
-          works: 1, // Include the works array in the projection
+          works: 1,
         },
       },
       {
@@ -377,7 +426,7 @@ export const getCustomerGroupSummary = async (req, res) => {
       },
       {
         $group: {
-          _id: '$groupName', // Group by customer group name
+          _id: '$groupName',
           totalWorks: { $sum: '$workCounts.total' },
           worksDone: { $sum: '$workCounts.done' },
           assignedWorks: { $sum: '$workCounts.assigned' },
@@ -414,49 +463,59 @@ export const getCustomerGroupSummary = async (req, res) => {
 };
 
 export const getEmployeeWorks = async (req, res) => {
-  const { employeeId } = req.params;
-  const { status } = req.query;
-  
-  if (!employeeId || !status) {
-    return res.status(400).json({ error: 'Employee ID and status are required.' });
-  }
-
-  const validStatuses = [
-    "Assigned",
-    "Picked Up",
-    "Customer Verification",
-    "Ready for Checking",
-    "Hold Work",
-    "EVC Pending",
-    "Cancel",
-    "Completed",
-    "Mute",
-    "Total Works" 
-  ];
-
-  if (!validStatuses.includes(status)) {
-    return res.status(400).json({ error: 'Invalid status value.' });
-  }
-
   try {
-    const employee = await User.findById(employeeId);
+    const { tenantId } = req.user; // Extracted from JWT middleware
+    const { employeeId } = req.params;
+    const { status } = req.query;
+
+    if (!employeeId || !status) {
+      return res.status(400).json({ error: 'Employee ID and status are required.' });
+    }
+
+    const validStatuses = [
+      "Assigned",
+      "Picked Up",
+      "Customer Verification",
+      "Ready for Checking",
+      "Hold Work",
+      "EVC Pending",
+      "Cancel",
+      "Completed",
+      "Mute",
+      "Total Works",
+    ];
+
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ error: 'Invalid status value.' });
+    }
+
+    // Fetch tenant details
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant || !tenant.databaseName) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    // Switch to tenant-specific database
+    const { models } = await getTenantConnection(tenantId, tenant.databaseName);
+    const TenantUser = models.User;
+    const TenantWork = models.Work;
+
+    // Validate employee exists in the tenant's database
+    const employee = await TenantUser.findById(employeeId);
     if (!employee) {
       return res.status(404).json({ error: 'Employee not found.' });
     }
-    console.log(employee)
+
     let works;
     if (status === 'Total Works') {
-      works = await Work.find({ assignedEmployee: employeeId });
+      works = await TenantWork.find({ assignedEmployee: employeeId });
     } else {
-      works = await Work.find({ assignedEmployee: employeeId, currentStatus: status });
+      works = await TenantWork.find({ assignedEmployee: employeeId, currentStatus: status });
     }
 
-    res.json({ works });
+    res.status(200).json({ works });
   } catch (err) {
     console.error("Error fetching employee works:", err);
     res.status(500).json({ error: 'Server error. Failed to fetch works.' });
   }
 };
-
-
-
