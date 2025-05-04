@@ -75,7 +75,7 @@ const TenantPlanConfirm = () => {
   }
 
   return (
-    <TenantLayout>
+   
       <Box sx={{ p: 3, maxWidth: 600, mx: "auto" }}>
         <Typography variant="h4" gutterBottom sx={{ display: "flex", alignItems: "center" }}>
           <FaCheckCircle style={{ color: "#4CAF50", marginRight: 8 }} />
@@ -155,7 +155,7 @@ const TenantPlanConfirm = () => {
           </CardActions>
         </Card>
       </Box>
-    </TenantLayout>
+  
   );
 };
 

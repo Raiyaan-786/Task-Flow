@@ -12,7 +12,7 @@ import {
   Alert,
 } from "@mui/material";
 import TenantLayout from "./TenantLayout";
-import API from "../api/api";
+import API from "../../api/api";
 
 const TenantPlan = () => {
   const [plans, setPlans] = useState([]);
@@ -84,7 +84,7 @@ const TenantPlan = () => {
   };
 
   return (
-    <TenantLayout>
+    
       <Box sx={{ p: 3 }}>
         <Typography variant="h4" gutterBottom>
           Subscription Plans
@@ -224,7 +224,7 @@ const TenantPlan = () => {
           ))}
         </Box>
       </Box>
-    </TenantLayout>
+    
   );
 };
 

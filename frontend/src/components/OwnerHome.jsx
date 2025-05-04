@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import TenantLayout from './TenantLayout';
+// import TenantLayout from './TenantLayout';
 import OwnerLayout from './OwnerLayout';
 
 const OwnerHome = () => {

@@ -40,7 +40,7 @@ const TenantLogin = () => {
       dispatch(tenantLogin({ tenant, tenanttoken }));
       setShowLoadingScreen(true);
       setTimeout(() => {
-        navigate("/tenant");
+        navigate("/tenant/home");
       }, 5000);
     } catch (err) {
       setErrorMessage("Login failed. Please check your credentials.");

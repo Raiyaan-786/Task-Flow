@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { FaCreditCard } from "react-icons/fa";
 import TenantLayout from "./TenantLayout";
-import API from "../api/api";
+import API from "../../api/api";
 
 const TenantPayment = () => {
   const navigate = useNavigate();
@@ -189,7 +189,7 @@ const TenantPayment = () => {
   const years = Array.from({ length: 10 }, (_, i) => currentYear + i);
 
   return (
-    <TenantLayout>
+   
       <Box sx={{ p: 3, maxWidth: 600, mx: "auto" }}>
         <Typography variant="h4" gutterBottom sx={{ display: "flex", alignItems: "center" }}>
           <FaCreditCard style={{ color: "#4CAF50", marginRight: 8 }} />
@@ -349,7 +349,7 @@ const TenantPayment = () => {
           </CardActions>
         </Card>
       </Box>
-    </TenantLayout>
+  
   );
 };
 

@@ -27,14 +27,18 @@ import { io } from 'socket.io-client';
 import { setSocket } from './features/socketSlice';
 import { setOnlineUsers } from './features/chatSlice';
 import Home from './landing/Home';
-import Tenant from './landing/Tenant';
 import TenantLogin from './landing/TenantLogin';
-import TenantProfile from './components/TenantProfile';
-import TenantPlan from './components/TenantPlan';
-import TenantSettings from './components/TenantSettings';
-import TenantPlanConfirm from './components/TenantPlanConfirm';
-import TenantPayment from './components/TenantPayment';
-import TenantReceipt from './components/TenantReciept';
+// import Tenant from './landing/Tenant';
+import TenantLayout from './layout/TenantLayout'
+import TenantHome from './pages/tenant/TenantHome';
+import TenantDemo from './pages/tenant/TenantDemo';
+import TenantProfile from './pages/tenant/TenantProfile';
+import TenantPlan from './pages/tenant/TenantPlan';
+import TenantSettings from './pages/tenant/TenantSettings';
+import TenantPlanConfirm from './pages/tenant/TenantPlanConfirm';
+import TenantPayment from './pages/tenant/TenantPayment';
+import TenantReceipt from './pages/tenant/TenantReciept';
+
 import OwnerLogin from './landing/OwnerLogin';
 import Owner from './landing/Owner';
 import OwnerHome from './components/OwnerHome';
@@ -43,6 +47,8 @@ import OwnerRequests from './components/OwnerRequests';
 import OwnerClients from './components/OwnerClients';
 import OwnerClientDetails from './components/OwnerClientDetails';
 import OwnerPaymentDetails from './components/OwnerPaymentDetails';
+
+
 
 function App() {
   const { user } = useSelector((store) => store.auth);
@@ -97,6 +103,7 @@ function App() {
 
   const [theme, colorMode] = useMode();
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isTenantCollapsed, setIsTenantCollapsed] = useState(false);
 
   return (
     <ColorModeContext.Provider value={colorMode}>
@@ -117,15 +124,20 @@ function App() {
             <Route path="/owner/client" element={<OwnerClients />} />
             <Route path="/owner/client/:id" element={<OwnerClientDetails />} />
 
-            <Route path="/home" element={<Home />} />
-            <Route path="/tenant" element={<Tenant />} />
-            <Route path="/tenant/profile" element={<TenantProfile />} />
-            <Route path="/tenant/plan" element={<TenantPlan />} />
-            <Route path="/tenant/settings" element={<TenantSettings />} />
-            <Route path="/tenant/transactions" element={<TenantSettings />} />
-            <Route path="/tenant/plan-confirmation" element={<TenantPlanConfirm />} />
-            <Route path="/tenant/payment" element={<TenantPayment />} />
-            <Route path="/tenant/receipt" element={<TenantReceipt />} />
+              <Route path="/home" element={<Home />} />
+
+            <Route element={<TenantLayout isCollapsed={isTenantCollapsed} setIsCollapsed={setIsTenantCollapsed} />}>
+              
+              <Route path="/tenant/home" element={<TenantHome/>} />
+              <Route path="/tenant/demo" element={<TenantDemo/>} />
+              <Route path="/tenant/profile" element={<TenantProfile/>} />
+              <Route path="/tenant/plan" element={<TenantPlan />} />
+              <Route path="/tenant/settings" element={<TenantSettings />} />
+              <Route path="/tenant/transactions" element={<TenantSettings />} />
+              <Route path="/tenant/plan-confirmation" element={<TenantPlanConfirm />} />
+              <Route path="/tenant/payment" element={<TenantPayment />} />
+              <Route path="/tenant/receipt" element={<TenantReceipt />} />
+            </Route>
 
             {/* Private routes only accessed after successful login */}
             <Route element={<PrivateRoute><PrivateLayout isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} /></PrivateRoute>}>

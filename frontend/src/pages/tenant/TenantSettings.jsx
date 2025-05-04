@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { tenantLogout } from "../features/tenantAuthSlice";
+import { tenantLogout } from "../../features/tenantAuthSlice";
 import { FaSave } from "react-icons/fa";
 import {
   Typography,
@@ -13,8 +13,8 @@ import {
   Divider,
 } from "@mui/material";
 import { useTheme } from '@emotion/react';
-import { tokens } from '../theme';
-import TenantLayout from "./TenantLayout";
+import { tokens } from '../../theme';
+
 
 const TenantSettings = () => {
   const theme = useTheme();
@@ -48,7 +48,7 @@ const TenantSettings = () => {
   };
 
   return (
-    <TenantLayout>
+    
       <Box sx={{ p: 3 }}>
         <Typography variant="h4" gutterBottom>
           Account Settings
@@ -164,7 +164,7 @@ const TenantSettings = () => {
           </Box>
         </Paper>
       </Box>
-    </TenantLayout>
+   
   );
 };
 

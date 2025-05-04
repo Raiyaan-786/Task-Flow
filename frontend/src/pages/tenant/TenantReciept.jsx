@@ -27,7 +27,7 @@ const TenantReciept = () => {
   };
 
   return (
-    <TenantLayout>
+    
       <Box sx={{ p: 3, maxWidth: 600, mx: "auto" }}>
         <Typography
           variant="h4"
@@ -98,7 +98,7 @@ const TenantReciept = () => {
           </Box>
         </Card>
       </Box>
-    </TenantLayout>
+   
   );
 };
 
