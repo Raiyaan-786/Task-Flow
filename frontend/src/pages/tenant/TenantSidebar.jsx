@@ -87,11 +87,14 @@ const TenantSidebar = ({ isCollapsed }) => {
         {/* Logo */}
         <Box
           sx={{
-            margin: "20px 5px 25px 5px",
+            margin: "10px 0px 25px 0px",
+            paddingLeft:2,
+            paddingBottom:2,
             display: "flex",
             alignItems: "center",
             justifyContent: isCollapsed ? "center" : "flex-start",
             transition: "all 0.3s ease-in-out",
+            borderBottom:'.5px solid #e8e8e8'
           }}
         >
           <Box
@@ -117,7 +120,7 @@ const TenantSidebar = ({ isCollapsed }) => {
               >
                 <Typography
                   ml={1}
-                  variant="h3"
+                  variant="h4"
                   color={colors.grey[100]}
                   fontWeight="bold"
                   sx={{
@@ -266,7 +269,7 @@ const TenantSidebar = ({ isCollapsed }) => {
               </Box>
             </Link>
           ))}
-          <Divider sx={{ marginTop: 1, marginBottom: 1 }} />
+          {/* <Divider sx={{ marginTop: 1, marginBottom: 1 }} /> */}
           {menuItems.slice(3, 5).map((item) => (
             <Link
               to={item.to}

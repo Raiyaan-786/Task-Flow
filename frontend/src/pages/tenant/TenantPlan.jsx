@@ -5,7 +5,7 @@ import API from "../../api/api";
 import { tokens } from "../../theme";
 import { useTheme } from "@emotion/react";
 import "./TenantPlan.css";
-import { Typography } from "@mui/material";
+import { Typography, Skeleton } from "@mui/material";
 import { CancelOutlined, CheckCircleOutlineOutlined } from "@mui/icons-material";
 
 const TenantPlan = () => {
@@ -87,20 +87,12 @@ const TenantPlan = () => {
         padding: "24px",
       }}
     >
-      {/* <h1 className="tenant-pricing-section-title">
-        Simple, Transparent{" "}
-        <span className="tenant-pricing-gradient-text">Subscription Plans</span>
-      </h1>
-      <h4 className="tenant-pricing-section-subtitle">
-        Choose the perfect plan for your CA firm. All plans include a 14-day
-        free trial.
-      </h4> */}
       <Typography variant="h1" fontWeight={700} mt={5} mb={2} className="pricing-section-title">
-                  Simple, Transparent <span className="pricing-gradient-text">Subscription Plans</span>
-                </Typography>
-                <Typography variant="h4" className="pricing-section-subtitle">
-                  Choose the perfect plan for your CA firm. All plans include a 14-day free trial.
-                </Typography>
+        Simple, Transparent <span className="pricing-gradient-text">Subscription Plans</span>
+      </Typography>
+      <Typography variant="h4" className="pricing-section-subtitle">
+        Choose the perfect plan for your CA firm. All plans include a 14-day free trial.
+      </Typography>
       {tenantPlan && (
         <p className="tenant-pricing-current-plan">
           Your current plan: <strong>{tenantPlan.tier}</strong> (
@@ -111,109 +103,131 @@ const TenantPlan = () => {
       {error && <div className="tenant-pricing-error">{error}</div>}
 
       {plans.length === 0 && !error && (
-        <p className="tenant-pricing-loading">Loading plans...</p>
+        <div className="tenant-pricing-grid">
+          {[1, 2, 3,4].map((_, index) => (
+            <div key={index} className="tenant-pricing-card">
+              <div className="tenant-pricing-card-header">
+                <Skeleton variant="text" width="60%" height={40} sx={{ mx: "auto" }} />
+                <div className="tenant-pricing-price-container">
+                  <Skeleton variant="text" width={100} height={60} />
+                  <Skeleton variant="text" width={60} height={30} />
+                </div>
+              </div>
+              <div className="tenant-pricing-card-content">
+                <ul className="tenant-pricing-features-list">
+                  {[1, 2, 3, 4, 5].map((_, idx) => (
+                    <li key={idx} className="tenant-pricing-feature-item">
+                      <Skeleton variant="circular" width={20} height={20} sx={{ mr: 1 }} />
+                      <Skeleton variant="text" width="80%" height={24} />
+                    </li>
+                  ))}
+                </ul>
+                <Skeleton variant="rectangular" height={40} sx={{ borderRadius: 1 }} />
+              </div>
+            </div>
+          ))}
+        </div>
       )}
 
-      <div className="tenant-pricing-grid">
-        {plans.map((plan) => (
-          <div
-            key={plan._id}
-            className={`tenant-pricing-card ${
-              isCurrentPlan(plan)
-                ? "tenant-pricing-current"
-                : plan.recommended
-                ? "tenant-pricing-popular"
-                : ""
-            }`}
-          >
-            {(plan.recommended || isCurrentPlan(plan)) && (
-              <div className="tenant-pricing-badge">
-                {isCurrentPlan(plan) ? "Current Plan" : "Recommended"}
-              </div>
-            )}
-            <div className="tenant-pricing-card-header">
-              <Typography
-                variant="h3"
-                fontWeight={700}
-                mb={1}
-                className="tenant-pricing-plan-name"
-              >
-                {plan.tier}
-              </Typography>
-              <div className="tenant-pricing-price-container">
-                {/* <span className="tenant-pricing-price">${parseFloat(plan.price).toFixed(2)}</span> */}
-                {/* <span className="tenant-pricing-period">/{plan.billingCycle}</span> */}
+      {plans.length > 0 && (
+        <div className="tenant-pricing-grid">
+          {plans.map((plan) => (
+            <div
+              key={plan._id}
+              className={`tenant-pricing-card ${
+                isCurrentPlan(plan)
+                  ? "tenant-pricing-current"
+                  : plan.recommended
+                  ? "tenant-pricing-popular"
+                  : ""
+              }`}
+            >
+              {(plan.recommended || isCurrentPlan(plan)) && (
+                <div className="tenant-pricing-badge">
+                  {isCurrentPlan(plan) ? "Current Plan" : "Recommended"}
+                </div>
+              )}
+              <div className="tenant-pricing-card-header">
                 <Typography
-                  variant="h1"
+                  variant="h3"
                   fontWeight={700}
-                  mr={1}
-                  className="pricing-price"
+                  mb={1}
+                  className="tenant-pricing-plan-name"
                 >
-                  ${plan.price}
+                  {plan.tier}
                 </Typography>
-                <Typography variant="h5" className="pricing-period">
-                  {plan.billingCycle}
-                </Typography>
+                <div className="tenant-pricing-price-container">
+                  <Typography
+                    variant="h1"
+                    fontWeight={700}
+                    mr={1}
+                    className="pricing-price"
+                  >
+                    ${plan.price}
+                  </Typography>
+                  <Typography variant="h5" className="pricing-period">
+                    {plan.billingCycle}
+                  </Typography>
+                </div>
+              </div>
+              <div className="tenant-pricing-card-content">
+                <ul className="tenant-pricing-features-list">
+                  <li className="tenant-pricing-feature-item">
+                    <CheckCircleOutlineOutlined className="tenant-pricing-check-icon"/>
+                    <Typography variant="h5" fontWeight={400} className="tenant-pricing-feature-text">
+                      {plan.features.users} users
+                    </Typography>
+                  </li>
+                  <li className="tenant-pricing-feature-item">
+                    <CheckCircleOutlineOutlined className="tenant-pricing-check-icon"/>
+                    <Typography variant="h5" fontWeight={400} className="tenant-pricing-feature-text">
+                      {plan.features.storage} storage
+                    </Typography>
+                  </li>
+                  <li className="tenant-pricing-feature-item">
+                    <CheckCircleOutlineOutlined className="tenant-pricing-check-icon"/>
+                    <Typography variant="h5" fontWeight={400} className="tenant-pricing-feature-text">
+                      {plan.features.support}
+                    </Typography>
+                  </li>
+                  <li className="tenant-pricing-feature-item">
+                    {plan.features.apiAccess ? (
+                      <CheckCircleOutlineOutlined className="tenant-pricing-check-icon"/>
+                    ) : (
+                      <CancelOutlined className="tenant-pricing-times-icon" />
+                    )}
+                    <Typography variant="h5" fontWeight={400} className="tenant-pricing-feature-text">
+                      API Access
+                    </Typography>
+                  </li>
+                  <li className="tenant-pricing-feature-item">
+                    {plan.features.analytics ? (
+                      <CheckCircleOutlineOutlined className="tenant-pricing-check-icon"/>
+                    ) : (
+                      <CancelOutlined className="tenant-pricing-times-icon" />
+                    )}
+                    <Typography variant="h5" fontWeight={400} className="tenant-pricing-feature-text">
+                      Advanced Analytics
+                    </Typography>
+                  </li>
+                </ul>
+                <button
+                  className={`tenant-pricing-button ${
+                    isCurrentPlan(plan)
+                      ? "tenant-pricing-current-button"
+                      : plan.recommended
+                      ? "tenant-pricing-gradient-button"
+                      : "tenant-pricing-outline-button"
+                  }`}
+                  onClick={() => handlePlanSelect(plan)}
+                >
+                  {isCurrentPlan(plan) ? "Current Plan" : "Upgrade Now"}
+                </button>
               </div>
             </div>
-            <div className="tenant-pricing-card-content">
-              <ul className="tenant-pricing-features-list">
-                <li className="tenant-pricing-feature-item">
-                  <CheckCircleOutlineOutlined className="tenant-pricing-check-icon"/>
-                  <Typography variant="h5" fontWeight={400} className="tenant-pricing-feature-text">
-                    {plan.features.users} users
-                  </Typography>
-                </li>
-                <li className="tenant-pricing-feature-item">
-                   <CheckCircleOutlineOutlined className="tenant-pricing-check-icon"/>
-                  <Typography variant="h5" fontWeight={400} className="tenant-pricing-feature-text">
-                    {plan.features.storage} storage
-                  </Typography>
-                </li>
-                <li className="tenant-pricing-feature-item">
-                   <CheckCircleOutlineOutlined className="tenant-pricing-check-icon"/>
-                  
-                   <Typography variant="h5" fontWeight={400} className="tenant-pricing-feature-text">
-                    {plan.features.support}
-                  </Typography>
-                </li>
-                <li className="tenant-pricing-feature-item">
-                  {plan.features.apiAccess ? (
-                     <CheckCircleOutlineOutlined className="tenant-pricing-check-icon"/>
-                  ) : (
-                    <CancelOutlined className="tenant-pricing-times-icon" />
-                  )}
-                   <Typography variant="h5" fontWeight={400} className="tenant-pricing-feature-text">
-                    API Access
-                  </Typography>
-                </li>
-                <li className="tenant-pricing-feature-item">
-                  {plan.features.analytics ? (
-                     <CheckCircleOutlineOutlined className="tenant-pricing-check-icon"/>
-                  ) : (
-                    <CancelOutlined className="tenant-pricing-times-icon" />
-                  )}
-                  <Typography variant="h5" fontWeight={400} className="tenant-pricing-feature-text">
-                    Advanced Analytics
-                  </Typography>
-                </li>
-              </ul>
-              <button
-                className={`tenant-pricing-button ${
-                  isCurrentPlan(plan)
-                    ? "tenant-pricing-current-button"
-                    : plan.recommended
-                    ? "tenant-pricing-gradient-button"
-                    : "tenant-pricing-outline-button"
-                }`}
-                onClick={() => handlePlanSelect(plan)}
-              >
-                {isCurrentPlan(plan) ? "Current Plan" : "Upgrade Now"}
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
