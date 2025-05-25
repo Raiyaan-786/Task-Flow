@@ -27,7 +27,7 @@ const TabPanel = (props) => {
       aria-labelledby={`tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && <Box >{children}</Box>}
     </div>
   );
 };
@@ -42,6 +42,7 @@ const TenantProfilePage = () => {
   });
 
   const RoundedTab = styled(Tab)(({ theme }) => ({
+
     marginRight: "5px",
     textTransform: "none",
     fontWeight: 400,
@@ -50,7 +51,8 @@ const TenantProfilePage = () => {
     padding: "0px 10px",
     color: "obsidian",
     "&.Mui-selected": {
-      backgroundColor: colors.blueHighlight[900],
+      // backgroundColor: colors.blueHighlight[900],
+       background: "linear-gradient(to right, #2563eb, #7c3aed)",
       color: "white",
     },
   }));
@@ -200,27 +202,28 @@ const TenantProfilePage = () => {
   return (
     <Box sx={{ height: "100vh", overflow: "auto" ,bgcolor: colors.foreground[100]}}>
       <Box bgcolor={colors.foreground[100]} display="flex" flexDirection="column">
-        <Box bgcolor={colors.foreground[100]} sx={{ height: 335, position: "relative", mb: 3 }}>
-          <Box sx={{ height: 180, backgroundImage: `url(${profilebg})`, backgroundSize: 'cover', backgroundPosition: 'center', }} />
+        <Box bgcolor={colors.foreground[100]} sx={{ height: 335, position: "relative"}}>
+          <Box sx={{borderRadius:3,mr:1,ml:1, height: 180, backgroundImage: `url("/login_background1.jpg")`, backgroundSize: 'cover', backgroundPosition: 'center', }} />
+          {/* <Box sx={{borderBottomLeftRadius:30,borderBottomRightRadius:30, height: 180, backgroundImage: `url(${profilebg})`, backgroundSize: 'cover', backgroundPosition: 'center', }} /> */}
           <Box
             bgcolor="transparent"
-            sx={{ height: 210, top: "120px", position: "absolute", width: "100%", zIndex: 999, display: 'flex' }}
+            sx={{ height: 210, top: "110px", position: "absolute", width: "100%", zIndex: 999, display: 'flex' }}
           >
             <Avatar
-              src={imagePreview || "https://via.placeholder.com/80"}
-              alt="Profile"
+              src={imagePreview}
+              alt="Remy Sharp"
               sx={{ width: 210, height: 210, border: "4px solid white", marginLeft: 5 }}
             />
             <Box sx={{ pl: 2, width: "500px", display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <Typography variant="h2" fontWeight={700} color="initial">{name}</Typography>
               <Typography variant="h6" color={colors.grey[500]}>{tenant?.email || ""}</Typography>
             </Box>
-            <Box sx={{ pl: 2, width: "500px", display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 2 }}>
-              <Button variant="outlined" color="primary" sx={{ height: '40px', width: '60px' }} onClick={handleCancel}>
-                cancel
+            <Box sx={{ mr:5, width: "500px", display: 'flex', justifyContent: 'end', alignItems: 'center', gap: 2 }}>
+              <Button  variant="outlined" color="primary" sx={{ height: '35px', width: '60px',textTransform:'none' }} onClick={handleCancel}>
+                Cancel
               </Button>
-              <Button variant="contained" color="primary" sx={{ height: '40px', width: '60px', bgcolor: colors.blueHighlight[900] }} onClick={handleSubmit}>
-                save
+              <Button className="gradient-button" variant="contained" color="primary" sx={{ height: '35px', width: '60px', bgcolor: colors.blueHighlight[900] ,textTransform:'none'}} onClick={handleSubmit}>
+                Save
               </Button>
             </Box>
           </Box>
@@ -232,14 +235,16 @@ const TenantProfilePage = () => {
           <RoundedTab label="Login Credentials" />
           <RoundedTab label="Features" />
         </RoundedTabs>
+        <Divider variant="middle" sx={{mb:1,mt:1}} />
         <form onSubmit={handleSubmit}>
-          <TabPanel value={tabValue} index={0}>
+          <TabPanel value={tabValue} index={0} >
             <Grid2
               container
               spacing={2}
               gap={2}
               color={colors.grey[200]}
-              ml={5}
+              ml={8}
+              
             >
               <Grid2 size={4} display={"flex"} alignItems={"center"}>
                 <label>Name</label>
@@ -251,14 +256,14 @@ const TenantProfilePage = () => {
                 <label>Profile Image</label>
               </Grid2>
               <Grid2 size={4}>
-                <Avatar src={imagePreview || "https://via.placeholder.com/150"} alt="Tenant Profile" sx={{ width: 60, height: 60 }} />
+                <Avatar src={imagePreview } alt="Remy Sharp" sx={{ width: 60, height: 60 }} />
               </Grid2>
               <Grid2 size={2}  sx={{alignItems:'center',justifyContent:"end",display:'flex'}}>
                 <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: "none" }} id="profile-image-input" />
                 <label htmlFor="profile-image-input">
-                  <Button size="small" variant="outlined" component="span">Update</Button>
+                  <Button sx={{textTransform:'none'}} size="small" variant="outlined" component="span">Update</Button>
                 </label>
-                <Button size="small" variant="outlined"  onClick={handleDeleteProfileImage} sx={{ ml: 1 }}>Delete</Button>
+                <Button sx={{textTransform:'none', ml: 1 }} size="small" variant="outlined"  onClick={handleDeleteProfileImage} >Delete</Button>
               </Grid2>
               <Grid2 size={4} display={"flex"} alignItems={"center"}>
                 <label>Phone</label>
@@ -280,7 +285,7 @@ const TenantProfilePage = () => {
               spacing={2}
               gap={2}
               color={colors.grey[200]}
-              ml={5}
+              ml={8}
             >
               <Grid2 size={4} display={"flex"} alignItems={"center"}>
                 <label>Company Name</label>
@@ -292,14 +297,14 @@ const TenantProfilePage = () => {
                 <label>Company Logo</label>
               </Grid2>
               <Grid2 size={4}>
-                <Avatar src={companyLogoPreview || "https://via.placeholder.com/150"} alt="Company Logo" sx={{ width: 60, height: 60 }} />
+                <Avatar src={companyLogoPreview } alt="./companyPlaceholder.png" sx={{ width: 60, height: 60 }} />
               </Grid2>
               <Grid2 size={2}  sx={{alignItems:'center',justifyContent:"end",display:'flex'}}>
                 <input type="file" accept="image/*" onChange={handleCompanyLogoChange} style={{ display: "none" }} id="company-logo-input" disabled={isFreePlan} />
                 <label htmlFor="company-logo-input">
-                  <Button size="small" variant="outlined" component="span" disabled={isFreePlan}>Update</Button>
+                  <Button sx={{textTransform:'none'}} size="small" variant="outlined" component="span" disabled={isFreePlan}>Update</Button>
                 </label>
-                <Button size="small" variant="outlined"  onClick={handleDeleteCompanyLogo} sx={{ ml: 1 }} disabled={isFreePlan}>Delete</Button>
+                <Button sx={{textTransform:'none',ml: 1}} size="small" variant="outlined"  onClick={handleDeleteCompanyLogo}  disabled={isFreePlan}>Delete</Button>
               </Grid2>
             </Grid2>
           </TabPanel>
@@ -309,7 +314,7 @@ const TenantProfilePage = () => {
               spacing={2}
               gap={1}
               color={colors.grey[200]}
-              ml={5}
+              ml={8}
             >
               <Grid2 size={4} display={"flex"} alignItems={"center"}>
                 <label>Subscription Plan</label>
@@ -347,7 +352,7 @@ const TenantProfilePage = () => {
               spacing={2}
               gap={1}
               color={colors.grey[200]}
-              ml={5}
+             ml={8}
             >
               <Grid2 size={4} display={"flex"} alignItems={"center"}>
                 <label>Username</label>
@@ -369,7 +374,7 @@ const TenantProfilePage = () => {
               spacing={2}
               gap={1}
               color={colors.grey[200]}
-              ml={5}
+             ml={8}
             >
               <Grid2 size={4} display={"flex"} alignItems={"center"}>
                 <label>Can Export</label>

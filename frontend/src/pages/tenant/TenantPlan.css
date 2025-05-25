@@ -1,0 +1,207 @@
+.tenant-pricing-section {
+  padding: 24px;
+}
+
+.tenant-pricing-section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.tenant-pricing-gradient-text {
+  background: linear-gradient(45deg, #1976d2, #42a5f5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.tenant-pricing-section-subtitle {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #666;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.tenant-pricing-current-plan {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.tenant-pricing-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  border: 1px solid #f5c6cb;
+}
+
+.tenant-pricing-loading {
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.tenant-pricing-grid {
+  display: flex;
+  gap: 24px;
+  margin-top: 80px;
+  flex-wrap: wrap;
+  justify-content: center;
+  /* background-color: red; */
+}
+
+.tenant-pricing-card {
+  flex: 1;
+  min-width: 250px;
+  max-width: 300px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  /* overflow: hidden; */
+}
+
+.tenant-pricing-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.tenant-pricing-popular {
+  border: 2px solid #5ced3a;
+}
+
+.tenant-pricing-current {
+  border: 2px solid #3b82f6;
+}
+
+.tenant-pricing-badge {
+  position: absolute;
+  top: -15px;
+  /* right: 10px; */
+  left: 50%;
+  transform: translateX(-50%);
+  /* background-color: #5ced3a; */
+  background: linear-gradient(to right, #018e06, #5ced3a);
+  color: #fff;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+}
+
+.tenant-pricing-current .tenant-pricing-badge {
+   background: linear-gradient(to right, #2563eb, #7c3aed);
+}
+
+.tenant-pricing-card-header {
+  padding: 24px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+.tenant-pricing-plan-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.tenant-pricing-price-container {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.tenant-pricing-price {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1976d2;
+}
+
+.tenant-pricing-period {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.tenant-pricing-card-content {
+  padding: 24px;
+}
+
+.tenant-pricing-features-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px 0;
+}
+
+.tenant-pricing-feature-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.tenant-pricing-check-icon {
+  color: #4CAF50;
+  margin-right: 8px;
+  font-size: 1.2rem;
+}
+
+.tenant-pricing-times-icon {
+  color: #f44336;
+  margin-right: 8px;
+  font-size: 1.2rem;
+}
+
+.tenant-pricing-feature-text {
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.tenant-pricing-button {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: inherit;
+}
+
+.tenant-pricing-gradient-button {
+   background: linear-gradient(to right, #018e06, #5ced3a);
+  color: #fff;
+}
+
+.tenant-pricing-gradient-button:hover {
+ background: linear-gradient(to right, #016904, #4ecb32);
+  /* transform: scale(1.05); */
+}
+
+.tenant-pricing-current-button {
+    
+ background: linear-gradient(to right, #2563eb, #7c3aed);
+  color: white;
+}
+
+.tenant-pricing-current-button:hover {
+  background: linear-gradient(to right, #1d4ed8, #6d28d9);
+}
+
+.tenant-pricing-outline-button {
+  background: #2e3b4e;
+  color: #fff;
+}
+
+.tenant-pricing-outline-button:hover {
+  background: #1a252f;
+  /* transform: scale(1.05); */
+}

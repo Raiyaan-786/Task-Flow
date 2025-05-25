@@ -217,7 +217,8 @@ export const tokens =(mode)=>({
             600: "#66a4ff", // Bold blue for prominent highlights
             700: "#4c95ff", // Deeper blue for contrast in highlights
             800: "#3386ff", // Darker, intense highlight for focus states
-            900: "#0065e2"  // Darkest, vivid blue (base color) for strong emphasis
+            900: "#0065e2" , // Darkest, vivid blue (base color) for strong emphasis
+            1000:"#2563eb"
           },
           bgc:{
             100:"#f0f0f0",

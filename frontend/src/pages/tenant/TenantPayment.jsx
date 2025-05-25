@@ -54,7 +54,7 @@ const TenantPayment = () => {
         setSelectedPlan(storedPlan);
         setBillingInfo(storedBilling);
       } else {
-        navigate("/plan-confirmation");
+        navigate("/tenant/plan-confirmation");
       }
     }
   }, [location, navigate]);
@@ -177,7 +177,7 @@ const TenantPayment = () => {
   };
 
   const handleCancel = () => {
-    navigate("/plan-confirmation", { state: { plan: selectedPlan } });
+    navigate("/tenant/plan-confirmation", { state: { plan: selectedPlan } });
   };
 
   if (!selectedPlan || !billingInfo) {

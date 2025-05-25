@@ -207,7 +207,7 @@ color: transparent;
   flex-direction: column;
   gap: 16px;
   justify-content: center;
-  margin-bottom: 35px;
+  margin-bottom: 100px;
 }
 
 @media (min-width: 640px) {

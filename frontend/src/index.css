@@ -27,3 +27,7 @@ html,body,#root,.app,.content{
 ::-webkit-scrollbar-track:hover{
   background: #555;
 }
+.gradient-button {
+  background: linear-gradient(to right, #2563eb, #7c3aed);
+  color: white;
+}

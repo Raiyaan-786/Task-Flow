@@ -388,7 +388,7 @@ const TenantSignup = () => {
                     }
                     label={
                       <span>
-                        I agree to Tenant Portal's{" "}
+                        I agree to TaskFlow's{" "}
                         <Link
                           href="#"
                           sx={{ color: "#2563eb", textDecoration: "none", "&:hover": { color: "#1e40af" } }}
@@ -453,14 +453,14 @@ const TenantSignup = () => {
             }}
           >
             <Typography variant="h6" sx={{ fontWeight: "bold", mb: 3 }}>
-              What you get with Tenant Portal:
+              What you get with Free Plan:
             </Typography>
             <Box sx={{ mb: 4 }}>
               {[
-                "14-day free trial with full access",
-                "Complete tenant & lease management",
-                "AI-powered automation tools",
-                "Advanced analytics & reporting",
+                "14-day free access to tenant portal",
+                "Complete tenant management",
+                "Explore plans and pricing",
+                "Community access",
                 "24/7 customer support",
                 "Bank-level security & compliance",
               ].map((benefit, index) => (

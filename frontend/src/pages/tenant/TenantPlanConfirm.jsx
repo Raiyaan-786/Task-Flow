@@ -11,8 +11,13 @@ import {
 } from "@mui/material";
 import { FaCheckCircle } from "react-icons/fa";
 import TenantLayout from "./TenantLayout";
+import { useTheme } from "@emotion/react";
+import { tokens } from "../../theme";
+import { CancelOutlined, CheckCircleOutline } from "@mui/icons-material";
 
 const TenantPlanConfirm = () => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -76,55 +81,57 @@ const TenantPlanConfirm = () => {
 
   return (
    
-      <Box sx={{ p: 3, maxWidth: 600, mx: "auto" }}>
-        <Typography variant="h4" gutterBottom sx={{ display: "flex", alignItems: "center" }}>
-          <FaCheckCircle style={{ color: "#4CAF50", marginRight: 8 }} />
-          Confirm Your Plan
-        </Typography>
-        <Typography variant="body1" color="text.secondary" gutterBottom>
-          Please review your selected plan and billing details below.
-        </Typography>
+      <Box sx={{ p: 3,height:'100vh',bgcolor:colors.foreground[100] }}>
 
-        <Card sx={{ mt: 3, borderRadius: 2, boxShadow: 2, border: "1px solid #ddd" }}>
+         <Typography variant="h1" fontWeight={700} mt={5} mb={2} className="pricing-section-title">
+                          Confirm  <span className="pricing-gradient-text">Your Plan</span>
+                        </Typography>
+                        <Typography variant="h4" className="pricing-section-subtitle">
+                          Please review your selected plan and billing details below.
+         </Typography>
+         
+        <Card sx={{ mt: 5, borderRadius: 2, border: "1px solid #ddd" }}>
           <CardContent>
-            <Typography variant="h5" color="text.primary" gutterBottom>
+            <Typography variant="h4" fontWeight={500} color="text.primary" gutterBottom>
               {selectedPlan.name} Plan
             </Typography>
-            <Typography variant="body1" color="text.secondary">
+            <Typography variant="h5" color="text.secondary">
               Billed {selectedPlan.billingCycle}
             </Typography>
             <Divider sx={{ my: 2 }} />
-            <Typography variant="h6">Plan Details</Typography>
-            <Typography sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-              <FaCheckCircle style={{ color: "#4CAF50", marginRight: 8 }} />
+            <Typography variant="h4" fontWeight={500}>Plan Details</Typography>
+            <Typography variant="h5" color="text.secondary" sx={{ display: "flex", alignItems: "center", mt: 1 }}>
+              <CheckCircleOutline style={{ color: "#4CAF50", marginRight: 8 }} />
               {selectedPlan.features.users} users
             </Typography>
-            <Typography sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-              <FaCheckCircle style={{ color: "#4CAF50", marginRight: 8 }} />
+            <Typography variant="h5" color="text.secondary" sx={{ display: "flex", alignItems: "center", mt: 1 }}>
+              <CheckCircleOutline style={{ color: "#4CAF50", marginRight: 8 }} />
               {selectedPlan.features.storage} storage
             </Typography>
-            <Typography sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-              <FaCheckCircle style={{ color: "#4CAF50", marginRight: 8 }} />
+            <Typography variant="h5" color="text.secondary" sx={{ display: "flex", alignItems: "center", mt: 1 }}>
+              <CheckCircleOutline style={{ color: "#4CAF50", marginRight: 8 }} />
               {selectedPlan.features.support}
             </Typography>
-            <Typography sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-              <FaCheckCircle style={{ color: "#4CAF50", marginRight: 8 }} />
+            <Typography variant="h5" color="text.secondary" sx={{ display: "flex", alignItems: "center", mt: 1 }}>
+              {selectedPlan.features.apiAccess ? (<CheckCircleOutline style={{ color: "#4CAF50", marginRight: 8 }} />) 
+              : (<CancelOutlined className="tenant-pricing-times-icon" />)}
               {selectedPlan.features.apiAccess ? "API Access" : "No API Access"}
             </Typography>
-            <Typography sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-              <FaCheckCircle style={{ color: "#4CAF50", marginRight: 8 }} />
+            <Typography variant="h5" color="text.secondary" sx={{ display: "flex", alignItems: "center", mt: 1 }}>
+              {selectedPlan.features.analytics ? (<CheckCircleOutline style={{ color: "#4CAF50", marginRight: 8 }} />) 
+              : (<CancelOutlined className="tenant-pricing-times-icon" />)}
               {selectedPlan.features.analytics ? "Advanced Analytics" : "No Advanced Analytics"}
             </Typography>
             <Divider sx={{ my: 2 }} />
-            <Typography variant="h6">Billing Information</Typography>
+            <Typography variant="h4" fontWeight={500}>Billing Information</Typography>
             <Box sx={{ mt: 1 }}>
-              <Typography variant="body1">
+              <Typography variant="h5" color="text.secondary">
                 Plan Price: ${billingInfo.price.toFixed(2)}/{billingInfo.billingCycle}
               </Typography>
-              <Typography variant="body1">
+              <Typography variant="h5" color="text.secondary">
                 Tax (8%): ${billingInfo.tax.toFixed(2)}
               </Typography>
-              <Typography variant="h6" sx={{ mt: 1 }}>
+              <Typography variant="h5" color="text.secondary" sx={{ mt: 1 }}>
                 Total: ${billingInfo.total.toFixed(2)}
               </Typography>
             </Box>
@@ -137,17 +144,19 @@ const TenantPlanConfirm = () => {
                 borderColor: "#2e3b4e",
                 color: "#2e3b4e",
                 "&:hover": { borderColor: "#1a252f", color: "#1a252f" },
+                textTransform: "none",
+                fontSize: ".875rem",
               }}
             >
               Back to Plans
             </Button>
             <Button
+              className="gradient-button"
               variant="contained"
               onClick={handleProceedToPayment}
               sx={{
-                backgroundColor: "#4CAF50",
-                "&:hover": { backgroundColor: "#45a049" },
-                borderRadius: 1,
+                textTransform: "none",
+                fontSize: ".875rem",
               }}
             >
               Proceed to Payment

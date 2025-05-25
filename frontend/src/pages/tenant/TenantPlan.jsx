@@ -1,23 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaCheck, FaTimes } from "react-icons/fa";
-import {
-  Typography,
-  Button,
-  Card,
-  CardContent,
-  CardActions,
-  Chip,
-  Box,
-  Alert,
-} from "@mui/material";
-import TenantLayout from "./TenantLayout";
 import API from "../../api/api";
+import { tokens } from "../../theme";
+import { useTheme } from "@emotion/react";
+import "./TenantPlan.css";
+import { Typography } from "@mui/material";
+import { CancelOutlined, CheckCircleOutlineOutlined } from "@mui/icons-material";
 
 const TenantPlan = () => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
   const [plans, setPlans] = useState([]);
   const [tenantPlan, setTenantPlan] = useState(null);
-  const [error, setError] = useState(null); // State for error message
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,7 +22,7 @@ const TenantPlan = () => {
     if (tenantData) {
       try {
         const parsedTenantData = JSON.parse(tenantData);
-        setTenantPlan(parsedTenantData.plan); // Extract tenant's plan
+        setTenantPlan(parsedTenantData.plan);
       } catch (error) {
         console.error("Error parsing tenant data:", error);
         setError("Failed to load tenant data.");
@@ -52,7 +48,7 @@ const TenantPlan = () => {
         }
 
         setPlans(response.data.plans);
-        setError(null); 
+        setError(null);
       } catch (error) {
         console.error("Error fetching plans:", {
           message: error.message,
@@ -74,7 +70,6 @@ const TenantPlan = () => {
     return plan.tier.toLowerCase() === tenantPlan.tier.toLowerCase();
   };
 
-  // Handle plan selection
   const handlePlanSelect = (plan) => {
     if (isCurrentPlan(plan)) {
       alert(`You are already on the ${plan.tier} plan`);
@@ -84,147 +79,142 @@ const TenantPlan = () => {
   };
 
   return (
-    
-      <Box sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          Subscription Plans
-        </Typography>
-        <Typography variant="body1" color="text.secondary" gutterBottom>
-          Choose the plan that fits your business needs
-        </Typography>
+    <div
+      className="tenant-pricing-section"
+      style={{
+        backgroundColor: colors.foreground[100],
+        minHeight: "100vh",
+        padding: "24px",
+      }}
+    >
+      {/* <h1 className="tenant-pricing-section-title">
+        Simple, Transparent{" "}
+        <span className="tenant-pricing-gradient-text">Subscription Plans</span>
+      </h1>
+      <h4 className="tenant-pricing-section-subtitle">
+        Choose the perfect plan for your CA firm. All plans include a 14-day
+        free trial.
+      </h4> */}
+      <Typography variant="h1" fontWeight={700} mt={5} mb={2} className="pricing-section-title">
+                  Simple, Transparent <span className="pricing-gradient-text">Subscription Plans</span>
+                </Typography>
+                <Typography variant="h4" className="pricing-section-subtitle">
+                  Choose the perfect plan for your CA firm. All plans include a 14-day free trial.
+                </Typography>
+      {tenantPlan && (
+        <p className="tenant-pricing-current-plan">
+          Your current plan: <strong>{tenantPlan.tier}</strong> (
+          {tenantPlan.status === "active" ? "Active" : tenantPlan.status})
+        </p>
+      )}
 
-        {tenantPlan && (
-          <Typography variant="body2" color="text.primary" sx={{ mb: 2 }}>
-            Your current plan: <strong>{tenantPlan.tier}</strong> (
-            {tenantPlan.status === "active" ? "Active" : tenantPlan.status})
-          </Typography>
-        )}
+      {error && <div className="tenant-pricing-error">{error}</div>}
 
-        {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {error}
-          </Alert>
-        )}
+      {plans.length === 0 && !error && (
+        <p className="tenant-pricing-loading">Loading plans...</p>
+      )}
 
-        {plans.length === 0 && !error && (
-          <Typography variant="body2" color="text.secondary">
-            Loading plans...
-          </Typography>
-        )}
-
-        <Box sx={{ display: "flex", gap: 3, mt: 4, flexWrap: "wrap" }}>
-          {plans.map((plan) => (
-            <Card
-              key={plan._id}
-              sx={{
-                flex: 1,
-                minWidth: 250,
-                borderRadius: 2,
-                boxShadow: 2,
-                border: isCurrentPlan(plan)
-                  ? "2px solid #FF9800"
-                  : plan.recommended
-                  ? "2px solid #4CAF50"
-                  : "1px solid #ddd",
-                position: "relative",
-              }}
-            >
-              {(plan.recommended || isCurrentPlan(plan)) && (
-                <Chip
-                  label={isCurrentPlan(plan) ? "Current Plan" : "Recommended"}
-                  sx={{
-                    position: "absolute",
-                    top: -10,
-                    right: 10,
-                    fontWeight: "bold",
-                    backgroundColor: isCurrentPlan(plan) ? "#FF9800" : "#4CAF50",
-                    color: "#fff",
-                  }}
-                />
-              )}
-              <CardContent>
+      <div className="tenant-pricing-grid">
+        {plans.map((plan) => (
+          <div
+            key={plan._id}
+            className={`tenant-pricing-card ${
+              isCurrentPlan(plan)
+                ? "tenant-pricing-current"
+                : plan.recommended
+                ? "tenant-pricing-popular"
+                : ""
+            }`}
+          >
+            {(plan.recommended || isCurrentPlan(plan)) && (
+              <div className="tenant-pricing-badge">
+                {isCurrentPlan(plan) ? "Current Plan" : "Recommended"}
+              </div>
+            )}
+            <div className="tenant-pricing-card-header">
+              <Typography
+                variant="h3"
+                fontWeight={700}
+                mb={1}
+                className="tenant-pricing-plan-name"
+              >
+                {plan.tier}
+              </Typography>
+              <div className="tenant-pricing-price-container">
+                {/* <span className="tenant-pricing-price">${parseFloat(plan.price).toFixed(2)}</span> */}
+                {/* <span className="tenant-pricing-period">/{plan.billingCycle}</span> */}
                 <Typography
-                  variant="h5"
-                  component="div"
-                  color="text.primary"
-                  gutterBottom
+                  variant="h1"
+                  fontWeight={700}
+                  mr={1}
+                  className="pricing-price"
                 >
-                  {plan.tier}
+                  ${plan.price}
                 </Typography>
-                <Typography variant="h4" color="primary">
-                  ${parseFloat(plan.price).toFixed(2)}
-                  <span style={{ fontSize: "1rem", color: "#666" }}>
-                    /{plan.billingCycle}
-                  </span>
+                <Typography variant="h5" className="pricing-period">
+                  {plan.billingCycle}
                 </Typography>
-                <Box sx={{ mt: 2 }}>
-                  <Typography
-                    sx={{ display: "flex", alignItems: "center", mb: 1 }}
-                  >
-                    <FaCheck style={{ color: "#4CAF50", marginRight: 8 }} />
+              </div>
+            </div>
+            <div className="tenant-pricing-card-content">
+              <ul className="tenant-pricing-features-list">
+                <li className="tenant-pricing-feature-item">
+                  <CheckCircleOutlineOutlined className="tenant-pricing-check-icon"/>
+                  <Typography variant="h5" fontWeight={400} className="tenant-pricing-feature-text">
                     {plan.features.users} users
                   </Typography>
-                  <Typography
-                    sx={{ display: "flex", alignItems: "center", mb: 1 }}
-                  >
-                    <FaCheck style={{ color: "#4CAF50", marginRight: 8 }} />
+                </li>
+                <li className="tenant-pricing-feature-item">
+                   <CheckCircleOutlineOutlined className="tenant-pricing-check-icon"/>
+                  <Typography variant="h5" fontWeight={400} className="tenant-pricing-feature-text">
                     {plan.features.storage} storage
                   </Typography>
-                  <Typography
-                    sx={{ display: "flex", alignItems: "center", mb: 1 }}
-                  >
-                    <FaCheck style={{ color: "#4CAF50", marginRight: 8 }} />
+                </li>
+                <li className="tenant-pricing-feature-item">
+                   <CheckCircleOutlineOutlined className="tenant-pricing-check-icon"/>
+                  
+                   <Typography variant="h5" fontWeight={400} className="tenant-pricing-feature-text">
                     {plan.features.support}
                   </Typography>
-                  <Typography
-                    sx={{ display: "flex", alignItems: "center", mb: 1 }}
-                  >
-                    {plan.features.apiAccess ? (
-                      <FaCheck style={{ color: "#4CAF50", marginRight: 8 }} />
-                    ) : (
-                      <FaTimes style={{ color: "#f44336", marginRight: 8 }} />
-                    )}
+                </li>
+                <li className="tenant-pricing-feature-item">
+                  {plan.features.apiAccess ? (
+                     <CheckCircleOutlineOutlined className="tenant-pricing-check-icon"/>
+                  ) : (
+                    <CancelOutlined className="tenant-pricing-times-icon" />
+                  )}
+                   <Typography variant="h5" fontWeight={400} className="tenant-pricing-feature-text">
                     API Access
                   </Typography>
-                  <Typography sx={{ display: "flex", alignItems: "center" }}>
-                    {plan.features.analytics ? (
-                      <FaCheck style={{ color: "#4CAF50", marginRight: 8 }} />
-                    ) : (
-                      <FaTimes style={{ color: "#f44336", marginRight: 8 }} />
-                    )}
+                </li>
+                <li className="tenant-pricing-feature-item">
+                  {plan.features.analytics ? (
+                     <CheckCircleOutlineOutlined className="tenant-pricing-check-icon"/>
+                  ) : (
+                    <CancelOutlined className="tenant-pricing-times-icon" />
+                  )}
+                  <Typography variant="h5" fontWeight={400} className="tenant-pricing-feature-text">
                     Advanced Analytics
                   </Typography>
-                </Box>
-              </CardContent>
-              <CardActions>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  onClick={() => handlePlanSelect(plan)}
-                  sx={{
-                    backgroundColor: isCurrentPlan(plan)
-                      ? "#FF9800"
-                      : plan.recommended
-                      ? "#4CAF50"
-                      : "#2e3b4e",
-                    "&:hover": {
-                      backgroundColor: isCurrentPlan(plan)
-                        ? "#F57C00"
-                        : plan.recommended
-                        ? "#45a049"
-                        : "#1a252f",
-                    },
-                    borderRadius: 1,
-                  }}
-                >
-                  {isCurrentPlan(plan) ? "Current Plan" : "Upgrade Now"}
-                </Button>
-              </CardActions>
-            </Card>
-          ))}
-        </Box>
-      </Box>
-    
+                </li>
+              </ul>
+              <button
+                className={`tenant-pricing-button ${
+                  isCurrentPlan(plan)
+                    ? "tenant-pricing-current-button"
+                    : plan.recommended
+                    ? "tenant-pricing-gradient-button"
+                    : "tenant-pricing-outline-button"
+                }`}
+                onClick={() => handlePlanSelect(plan)}
+              >
+                {isCurrentPlan(plan) ? "Current Plan" : "Upgrade Now"}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 

@@ -8,7 +8,7 @@ const Pricing = () => {
   const plans = [
     {
       name: 'Basic',
-      price: '₹999',
+      price: '$9.99',
       period: 'per month',
       description: 'Perfect for small CA firms getting started',
       features: [
@@ -17,18 +17,18 @@ const Pricing = () => {
         'Client database (up to 100 clients)',
         'Email support',
         'Basic reporting',
-        'Mobile app access',
+        'Advanced Analytics',
       ],
       buttonText: 'Start Free Trial',
       popular: false,
     },
     {
       name: 'Professional',
-      price: '₹1,999',
+      price: '$29.99',
       period: 'per month',
       description: 'Most popular for growing CA practices',
       features: [
-        'Up to 15 team members',
+        'Up to 10 team members',
         'Advanced task automation',
         'Unlimited client database',
         'Priority support',
@@ -42,12 +42,12 @@ const Pricing = () => {
     },
     {
       name: 'Enterprise',
-      price: '₹3,999',
+      price: '$99.99',
       period: 'per month',
       description: 'For large firms with complex needs',
       features: [
-        'Unlimited team members',
-        'AI-powered insights',
+        'Up to 50 team members',
+        'Advanced task automation',
         'White-label solution',
         '24/7 phone support',
         'Custom integrations',
