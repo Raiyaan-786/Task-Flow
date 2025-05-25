@@ -26,8 +26,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { io } from 'socket.io-client';
 import { setSocket } from './features/socketSlice';
 import { setOnlineUsers } from './features/chatSlice';
-import Home from './landing/Home';
-import TenantLogin from './landing/TenantLogin';
+// import Home from './landing/Home';
+// import TenantLogin from './landing/TenantLogin';
+import TenantLogin from './landingpage/TenantLogin';
 // import Tenant from './landing/Tenant';
 import TenantLayout from './layout/TenantLayout'
 import TenantHome from './pages/tenant/TenantHome';
@@ -47,6 +48,8 @@ import OwnerRequests from './components/OwnerRequests';
 import OwnerClients from './components/OwnerClients';
 import OwnerClientDetails from './components/OwnerClientDetails';
 import OwnerPaymentDetails from './components/OwnerPaymentDetails';
+import LandingPage from './landingpage';
+import TenantSignup from './landingpage/TenantSignup';
 
 
 
@@ -111,9 +114,14 @@ function App() {
         <CssBaseline>
           <Routes>
             {/* Public routes */}
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/login" element={<Login />} />
+            
+            <Route path="/landingpage" element={<LandingPage/>} />
             <Route path="/tenantlogin" element={<TenantLogin />} />
+            <Route path="/tenantsignup" element={<TenantSignup />} />
+
+           
+            <Route path="/login" element={<Login />} />
+            
             <Route path="/ownerlogin" element={<OwnerLogin />} />
 
             <Route path="/owner" element={<Owner />} />
@@ -124,7 +132,7 @@ function App() {
             <Route path="/owner/client" element={<OwnerClients />} />
             <Route path="/owner/client/:id" element={<OwnerClientDetails />} />
 
-              <Route path="/home" element={<Home />} />
+              {/* <Route path="/home" element={<Home />} /> */}
 
             <Route element={<TenantLayout isCollapsed={isTenantCollapsed} setIsCollapsed={setIsTenantCollapsed} />}>
               

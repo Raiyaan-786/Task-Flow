@@ -12,6 +12,7 @@ import {
   PaymentOutlined,
   SettingsOutlined,
   LogoutOutlined,
+  CallMadeOutlined,
 } from "@mui/icons-material";
 
 // Define the shaking animation
@@ -29,7 +30,7 @@ const shakeAnimation = `
 const TenantSidebar = ({ isCollapsed }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [selected, setSelected] = useState("Dashboard");
+  const [selected, setSelected] = useState("Profile");
   const { tenant } = useSelector((state) => state.tenantAuth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -46,11 +47,12 @@ const TenantSidebar = ({ isCollapsed }) => {
   };
 
   const menuItems = [
-    { title: "Dashboard", to: "/tenant/home", icon: <HomeOutlined /> },
+    // { title: "Home", to: "/tenant/home", icon: <HomeOutlined /> },
     { title: "Profile", to: "/tenant/profile", icon: <PersonOutline /> },
     { title: "Plan", to: "/tenant/plan", icon: <ListAltOutlined /> },
     { title: "Transactions", to: "/tenant/transactions", icon: <PaymentOutlined /> },
     { title: "Settings", to: "/tenant/settings", icon: <SettingsOutlined /> },
+    { title: "TaskFlow", to: "", icon: <CallMadeOutlined/>, onClick: handleLogout },
     { title: "Logout", to: "", icon: <LogoutOutlined />, onClick: handleLogout },
   ];
 
@@ -64,6 +66,7 @@ const TenantSidebar = ({ isCollapsed }) => {
         transition: "width 0.4s ease-in-out",
         backgroundColor: `${colors.foreground[100]} !important`,
         overflow: "hidden",
+       
       }}
     >
       <style>{shakeAnimation}</style>
@@ -75,6 +78,7 @@ const TenantSidebar = ({ isCollapsed }) => {
           height: "100%",
           overflowY: "auto",
           bgcolor: colors.foreground[100],
+           borderRight: ".5px solid #e8e8e8",
         }}
       >
         {/* Logo */}
@@ -96,13 +100,7 @@ const TenantSidebar = ({ isCollapsed }) => {
               ml: isCollapsed ? "0px" : "15px",
             }}
           >
-            <img
-              height="28px"
-              width="32px"
-              src="logoicon.svg"
-              alt="brandlogo"
-              style={{ transition: "transform 0.3s ease-in-out" }}
-            />
+            
             {!isCollapsed && (
               <motion.div
                 animate={{ opacity: isCollapsed ? 0 : 1 }}
@@ -139,7 +137,7 @@ const TenantSidebar = ({ isCollapsed }) => {
                 alt="profile-tenant"
                 width="100px"
                 height="100px"
-                src={tenant?.image || "default-profile.png"}
+                src={tenant?.image || "/defaultavatar.jpg"}
                 style={{ cursor: "pointer", borderRadius: "50%" }}
               />
             </Box>
@@ -166,7 +164,7 @@ const TenantSidebar = ({ isCollapsed }) => {
                 animate={{ opacity: isCollapsed ? 0 : 1, x: isCollapsed ? -10 : 0 }}
                 transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
               >
-                <Typography
+                {/* <Typography
                   variant="h6"
                   color={colors.blueHighlight[900]}
                   sx={{
@@ -176,7 +174,7 @@ const TenantSidebar = ({ isCollapsed }) => {
                   }}
                 >
                   Tenant
-                </Typography>
+                </Typography> */}
               </motion.div>
             </Box>
           </motion.div>

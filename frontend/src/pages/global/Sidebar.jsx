@@ -144,10 +144,10 @@ const Sidebar = ({ isCollapsed }) => {
           >
             <Box display="flex" justifyContent="center" alignItems="center" >
               <img
-                alt="profile-user"
+                // alt="defaultavatar.svg"
                 width="100px"
                 height="100px"
-                src={user.image}
+                src={user.image || "defaultavatar.jpg"}
                 style={{ cursor: "pointer", borderRadius: "50%" }}
               />
             </Box>

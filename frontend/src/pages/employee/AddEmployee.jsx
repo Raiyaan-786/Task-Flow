@@ -314,7 +314,7 @@ const AddEmployee = () => {
                                 >
                                     <Box sx={{
                                         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                                        height: '220px', width: '300px', bgcolor: 'white', borderRadius: '15px', padding: '25px'
+                                        height: '220px', width: '300px', bgcolor:colors.bgc[200], borderRadius: '15px', padding: '25px'
                                     }}>
                                         {error ? (
                                             <>
@@ -324,13 +324,13 @@ const AddEmployee = () => {
                                             </>
                                         ) : (
                                             <>
-                                                <CheckCircle color="success" sx={{ height: '80px', width: '80px' }} />
+                                                <CheckCircle color="#11b823" sx={{ height: '80px', width: '80px',color:"#11b823" }} />
                                                 <Typography variant="h2" fontWeight={500} color="initial">Success</Typography>
                                                 <Typography variant="h5" mb={1} color={colors.grey[500]}>{success}</Typography>
                                             </>
                                         )}
 
-                                        <Button sx={{ borderRadius: 5 }} color={error ? "error" : "success"} variant="contained" fullWidth onClick={() => setOpen(false)}>
+                                        <Button sx={{ borderRadius: 5,bgcolor:error?"error":"#11b823" }}  variant="contained" fullWidth onClick={() => setOpen(false)}>
                                             OK
                                         </Button>
 

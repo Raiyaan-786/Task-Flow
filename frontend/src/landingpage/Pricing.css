@@ -1,0 +1,256 @@
+.pricing-section {
+  padding: 80px 0;
+  background: linear-gradient(135deg, #f9fafb 0%, #eff6ff 100%);
+}
+
+.pricing-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.pricing-text-center {
+  text-align: center;
+  margin-bottom: 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.pricing-section-title {
+  font-size: 2.25rem;
+  font-weight: 900;
+  margin-bottom: 16px;
+  line-height: 1.2;
+  font-family: inherit;
+}
+
+@media (min-width: 768px) {
+  .pricing-section-title {
+    font-size: 3rem;
+  }
+}
+
+.pricing-gradient-text {
+  background: linear-gradient(to right, #2563eb, #7c3aed);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.pricing-section-subtitle {
+  font-size: 1.5rem;
+  color: #4b5563;
+  max-width: 768px;
+  margin: 0 auto;
+  line-height: 1.5;
+  font-family: inherit;
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .pricing-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.pricing-card {
+    border-radius: 10px;
+  position: relative;
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.pricing-card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-8px);
+}
+
+.pricing-popular {
+  background-color: #ffffff;
+  border: 2px solid #3b82f6;
+}
+
+.pricing-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(to right, #2563eb, #7c3aed);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: inherit;
+}
+
+.pricing-card-header {
+  text-align: center;
+  padding-bottom: 24px;
+  padding: 24px 24px 0;
+}
+
+.pricing-plan-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: inherit;
+}
+
+.pricing-plan-description {
+  color: #4b5563;
+  margin-bottom: 16px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.pricing-price-container {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+}
+
+.pricing-price {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #111827;
+  font-family: inherit;
+}
+
+.pricing-period {
+  color: #4b5563;
+  margin-left: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.pricing-card-content {
+  padding: 0 24px 24px;
+}
+
+.pricing-features-list {
+  margin-bottom: 32px;
+}
+
+.pricing-feature-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.pricing-check-icon {
+  width: 20px;
+  height: 20px;
+  color: #22c55e;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.pricing-feature-text {
+  color: #374151;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.pricing-button {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.pricing-gradient-button {
+  background: linear-gradient(to right, #2563eb, #7c3aed);
+  color: white;
+}
+
+.pricing-gradient-button:hover {
+  background: linear-gradient(to right, #1d4ed8, #6d28d9);
+}
+
+.pricing-outline-button {
+  border: 1px solid #bfdbfe;
+  color: #2563eb;
+  background-color: transparent;
+}
+
+.pricing-outline-button:hover {
+  background-color: #eff6ff;
+}
+
+.pricing-arrow-icon {
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+  transition: transform 0.4s ease-out;
+}
+
+.pricing-button:hover .pricing-arrow-icon {
+  transform: translateX(4px);
+}
+
+.pricing-link {
+  display: block;
+  text-decoration: none;
+}
+
+.pricing-guarantee-section {
+  margin-top: 64px;
+  text-align: center;
+}
+
+.pricing-guarantee-card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 32px;
+  max-width: 768px;
+  margin: 0 auto;
+}
+
+.pricing-guarantee-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  font-family: inherit;
+}
+
+.pricing-guarantee-description {
+  color: #4b5563;
+  margin-bottom: 24px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.pricing-guarantee-features {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+}
+
+.pricing-guarantee-feature {
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-family: inherit;
+}

@@ -1,0 +1,246 @@
+.footer-section {
+  background-color: #111827;
+  color: white;
+  padding: 64px 0;
+}
+
+.footer-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+@media (min-width: 768px) {
+  .footer-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.footer-col-span-1 {
+  grid-column: span 1;
+}
+
+.footer-logo-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.footer-logo-icon {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(to right, #2563eb, #7c3aed);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+}
+
+.footer-icon {
+  width: 20px;
+  height: 20px;
+  color: white;
+}
+
+.footer-logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(to right, #60a5fa, #a78bfa);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-family: inherit;
+}
+
+.footer-description {
+  color: #9ca3af;
+  margin-bottom: 24px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.footer-contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer-contact-item {
+  display: flex;
+  align-items: center;
+  color: #9ca3af;
+}
+
+.footer-contact-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+}
+
+.footer-contact-text {
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.footer-section-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  font-family: inherit;
+}
+
+.footer-link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  list-style: none;
+  /* background-color: red; */
+  padding: 0;
+}
+
+.footer-link {
+  color: #9ca3af;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+  font-family: inherit;
+}
+
+.footer-link:hover {
+  color: white;
+}
+
+.footer-newsletter-section {
+  border-top: 1px solid #1f2937;
+  margin-top: 48px;
+  padding-top: 32px;
+}
+
+.footer-newsletter-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .footer-newsletter-container {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.footer-newsletter-text {
+  margin-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+  .footer-newsletter-text {
+    margin-bottom: 0;
+  }
+}
+
+.footer-newsletter-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-family: inherit;
+}
+
+.footer-newsletter-description {
+  color: #9ca3af;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.footer-newsletter-form {
+  display: flex;
+  gap: 8px;
+}
+
+.footer-newsletter-input {
+  padding: 8px 16px;
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  color: white;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.footer-newsletter-input::placeholder {
+  color: #9ca3af;
+}
+
+.footer-newsletter-input:focus {
+  outline: none;
+  border-color: transparent;
+  box-shadow: 0 0 0 2px #3b82f6;
+}
+
+.footer-newsletter-button {
+  padding: 8px 16px;
+  background: linear-gradient(to right, #2563eb, #7c3aed);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.4s ease-out;
+  font-family: inherit;
+}
+
+.footer-newsletter-button:hover {
+  background: linear-gradient(to right, #1d4ed8, #6d28d9);
+}
+
+.footer-bottom-bar {
+  border-top: 1px solid #1f2937;
+  margin-top: 32px;
+  padding-top: 32px;
+}
+
+.footer-bottom-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .footer-bottom-container {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.footer-copyright {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  font-family: inherit;
+}
+
+.footer-bottom-links {
+  display: flex;
+  gap: 24px;
+}
+
+.footer-bottom-link {
+  color: #9ca3af;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.3s ease;
+  font-family: inherit;
+}
+
+.footer-bottom-link:hover {
+  color: white;
+}
