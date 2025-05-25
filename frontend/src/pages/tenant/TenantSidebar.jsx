@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { tenantLogout } from "../../features/tenantAuthSlice";
-import { Avatar, Box, Divider, Typography, useTheme } from "@mui/material";
+import { Avatar, Box, Divider, IconButton, Tooltip, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 import { tokens } from "../../theme";
 import {
@@ -53,7 +53,7 @@ const TenantSidebar = ({ isCollapsed }) => {
     { title: "Transactions", to: "/tenant/transactions", icon: <PaymentOutlined /> },
     { title: "Settings", to: "/tenant/settings", icon: <SettingsOutlined /> },
     { title: "TaskFlow", to: "", icon: <CallMadeOutlined/>, onClick: handleLogout },
-    { title: "Logout", to: "", icon: <LogoutOutlined />, onClick: handleLogout },
+    // { title: "Logout", to: "", icon: <LogoutOutlined />, onClick: handleLogout },
   ];
 
   return (
@@ -72,19 +72,22 @@ const TenantSidebar = ({ isCollapsed }) => {
       <style>{shakeAnimation}</style>
       <Box
         sx={{
-          padding: isCollapsed ? "10px" : "10px 20px",
+          // padding: isCollapsed ? "10px" : "10px 20px",
+          paddingTop: "10px",
           display: "flex",
           flexDirection: "column",
           height: "100%",
           overflowY: "auto",
           bgcolor: colors.foreground[100],
            borderRight: ".5px solid #e8e8e8",
+          
+           
         }}
       >
         {/* Logo */}
         <Box
           sx={{
-            margin: "10px 0 25px 0",
+            margin: "20px 5px 25px 5px",
             display: "flex",
             alignItems: "center",
             justifyContent: isCollapsed ? "center" : "flex-start",
@@ -100,7 +103,13 @@ const TenantSidebar = ({ isCollapsed }) => {
               ml: isCollapsed ? "0px" : "15px",
             }}
           >
-            
+             <img
+              height="28px"
+              width="32px"
+              src="/logoicon.svg"
+              alt="brandlogo"
+              style={{ transition: "transform 0.3s ease-in-out" }}
+            />
             {!isCollapsed && (
               <motion.div
                 animate={{ opacity: isCollapsed ? 0 : 1 }}
@@ -126,20 +135,14 @@ const TenantSidebar = ({ isCollapsed }) => {
         </Box>
 
         {/* Tenant Profile */}
-        {!isCollapsed && (
+        {isCollapsed && (
           <motion.div
             animate={{ opacity: isCollapsed ? 0 : 1, height: isCollapsed ? 0 : "auto" }}
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
             sx={{ mb: "25px", overflow: "hidden" }}
           >
             <Box display="flex" justifyContent="center" alignItems="center">
-              {/* <img
-                alt="profile-tenant"
-                width="100px"
-                height="100px"
-                src={tenant?.image || "/defaultavatar.jpg"}
-                style={{ cursor: "pointer", borderRadius: "50%" }}
-              /> */}
+              
               <Avatar src={tenant?.image } alt="Remy Sharp" sx={{ width: "100px", height: "100px" }} />
             </Box>
             <Box textAlign="center">
@@ -182,7 +185,7 @@ const TenantSidebar = ({ isCollapsed }) => {
         )}
 
         {/* Menu Items with Scroll */}
-        <Box sx={{ flexGrow: 1, mt: 2 }}>
+        <Box sx={{ flexGrow: 1,mt:1, padding: isCollapsed ? "10px" : "0px 20px" }}>
           {menuItems.slice(0, 3).map((item) => (
             <Link
               to={item.to}
@@ -344,7 +347,7 @@ const TenantSidebar = ({ isCollapsed }) => {
               </Box>
             </Link>
           ))}
-          <Divider sx={{ marginTop: 1, marginBottom: 1 }} />
+          {/* <Divider sx={{ marginTop: 1, marginBottom: 1 }} /> */}
           {menuItems.slice(5).map((item) => (
             <Box
               key={item.title}
@@ -425,6 +428,18 @@ const TenantSidebar = ({ isCollapsed }) => {
               )}
             </Box>
           ))}
+        </Box>
+        <Box  borderTop={'.5px solid #e8e8e8'} sx={{padding:3,height:'100px',width:'100%',display:'flex',alignItems:'center'}}>
+          <Avatar  src={tenant?.image } alt="Remy Sharp" sx={{ width: "50px", height: "50px" }} />
+          <Box padding={2}>
+            <Typography variant="body1" fontWeight={700} color="initial">{tenant?.name || "Tenant Name"}</Typography>
+            <Typography variant="body2" color="text.secondary">{tenant.email}</Typography>
+          </Box>
+          <Tooltip title="Logout">
+          <IconButton aria-label="Logout" onClick={handleLogout}>
+            <LogoutOutlined/>
+          </IconButton>
+          </Tooltip>
         </Box>
       </Box>
     </motion.div>

@@ -51,8 +51,8 @@ const TenantProfilePage = () => {
     padding: "0px 10px",
     color: "obsidian",
     "&.Mui-selected": {
-      // backgroundColor: colors.blueHighlight[900],
-       background: "linear-gradient(to right, #2563eb, #7c3aed)",
+      backgroundColor: colors.blueHighlight[900],
+      //  background: "linear-gradient(to right, #2563eb, #7c3aed)",
       color: "white",
     },
   }));
