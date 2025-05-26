@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography, Link, useTheme, Modal, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Box, Button, TextField, Typography, Link, useTheme } from '@mui/material';
 import React, { useState } from 'react';
 import API from '../../api/api';
 import { useNavigate } from 'react-router-dom';
@@ -19,7 +19,6 @@ const Login = () => {
   const [step, setStep] = useState("email"); // email, selectCompany, password
   const [companies, setCompanies] = useState([]);
   const [selectedTenantId, setSelectedTenantId] = useState("");
-  const [modalOpen, setModalOpen] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -37,7 +36,7 @@ const Login = () => {
         return;
       }
       setCompanies(data.companies);
-      setModalOpen(true);
+      console.log(data.companies)
       setStep("selectCompany");
     } catch (err) {
       setErrorMessage("Failed to fetch companies. Please try again.");
@@ -46,17 +45,16 @@ const Login = () => {
     }
   };
 
-  const handleCompanySelect = (e) => {
-    setSelectedTenantId(e.target.value);
+  const handleCompanySelect = (tenantId) => {
+    setSelectedTenantId(tenantId);
   };
 
-  const handleModalSubmit = (e) => {
+  const handleCompanySubmit = (e) => {
     e.preventDefault();
     if (!selectedTenantId) {
       setErrorMessage("Please select a company.");
       return;
     }
-    setModalOpen(false);
     setStep("password");
   };
 
@@ -180,10 +178,84 @@ const Login = () => {
               </Button>
               <br />
               <br />
-              <Box display={'flex'} alignItems={'center'} justifyContent={'center'}>
+              {/* <Box display={'flex'} alignItems={'center'} justifyContent={'center'}>
                 <Typography variant="caption" color='#e6dfdf'>
                   Don't Have An Account? <Link href="/Sign Up" underline="none" color={"white"}>Signup</Link>
                 </Typography>
+              </Box> */}
+            </form>
+          </>
+        )}
+
+        {step === "selectCompany" && (
+          <>
+            <Typography variant='h1' fontWeight={500} color={'white'}>
+               Select Company
+            </Typography>
+            <br />
+            <form onSubmit={handleCompanySubmit}>
+            
+              <Box sx={{ maxHeight: '200px', overflowY: 'auto', mb: 2 }}>
+                {companies.slice(0, 4).map((company) => (
+                  <Box
+                    key={company.tenantId}
+                    onClick={() => handleCompanySelect(company.tenantId)}
+                    sx={{
+                      padding: '10px 16px',
+                      borderRadius: '4px',
+                      border: selectedTenantId === company.tenantId ? '1px solid rgba(255, 255, 255, 0.8)' : '1px solid rgba(255, 255, 255, 0.5)',
+                      backgroundColor: selectedTenantId === company.tenantId ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
+                      mb: 1,
+                      cursor: 'pointer',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                      },
+                    }}
+                  >
+                    <Typography variant="body1" sx={{ fontWeight: 400, color: 'white' }}>
+                      {company.companyName}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+              {errorMessage && (
+                <Typography color="error" variant="body2" sx={{ mb: 2 }}>
+                  {errorMessage}
+                </Typography>
+              )}
+              <Button
+                color='black'
+                fullWidth
+                variant='contained'
+                type="submit"
+                disabled={!selectedTenantId || isLoading}
+                sx={{
+                  borderRadius: '25px',
+                  bgcolor: 'white',
+                  color: 'black',
+                  boxShadow: 'none',
+                  '&:hover': {
+                    bgcolor: '#f0f0f0',
+                    boxShadow: 'none',
+                  },
+                }}
+              >
+                {isLoading ? "Fetching..." : "NEXT"}
+              </Button>
+              <br />
+              <br />
+              <Box display={'flex'} alignItems={'center'} justifyContent={'center'}>
+                <Button
+                  onClick={() => {
+                    setStep("email");
+                    setCompanies([]);
+                    setSelectedTenantId("");
+                    setErrorMessage("");
+                  }}
+                  sx={{ color: 'white' }}
+                >
+                  Back
+                </Button>
               </Box>
             </form>
           </>
@@ -271,79 +343,6 @@ const Login = () => {
             </form>
           </>
         )}
-
-        <Modal
-          open={modalOpen}
-          onClose={() => setModalOpen(false)}
-          aria-labelledby="company-selection-modal"
-          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-        >
-          <Box
-            sx={{
-              padding: '20px',
-              width: 300,
-              borderRadius: 5,
-              background: 'rgba(255, 255, 255, 0.9)',
-              border: '1px solid rgba(255, 255, 255, 0.3)',
-              boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-            }}
-          >
-            <Typography variant="h6" color="black" gutterBottom>
-              Select a Company
-            </Typography>
-            <form onSubmit={handleModalSubmit}>
-              <FormControl fullWidth sx={{ mb: 2 }}>
-                <InputLabel>Company</InputLabel>
-                <Select
-                  value={selectedTenantId}
-                  onChange={handleCompanySelect}
-                  label="Company"
-                  required
-                >
-                  <MenuItem value="">
-                    <em>Select a company</em>
-                  </MenuItem>
-                  {companies.map((company) => (
-                    <MenuItem key={company.tenantId} value={company.tenantId}>
-                      {company.companyName}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              {errorMessage && (
-                <Typography color="error" variant="body2" sx={{ mb: 2 }}>
-                  {errorMessage}
-                </Typography>
-              )}
-              <Box display="flex" justifyContent="space-between">
-                <Button
-                  onClick={() => {
-                    setModalOpen(false);
-                    setStep("email");
-                    setCompanies([]);
-                    setErrorMessage("");
-                  }}
-                  sx={{ color: 'black' }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  disabled={!selectedTenantId || isLoading}
-                  sx={{
-                    borderRadius: '25px',
-                    bgcolor: 'black',
-                    color: 'white',
-                    '&:hover': { bgcolor: '#333' },
-                  }}
-                >
-                  Next
-                </Button>
-              </Box>
-            </form>
-          </Box>
-        </Modal>
       </Box>
     </Box>
   );
