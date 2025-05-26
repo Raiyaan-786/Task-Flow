@@ -9,7 +9,7 @@ import { SharedUser } from "../models/sharedUser.model.js";
 
 export const registerTenant = async (req, res) => {
   try {
-    const { email, password , phone} = req.body;
+    const { email, password ,phone} = req.body;
     const existingTenant = await Tenant.findOne({ email });
     if (existingTenant) return res.status(400).json({ error: "Email already registered" });
 
@@ -38,11 +38,10 @@ export const loginTenant = async (req, res) => {
     if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
 
     const tenanttoken = jwt.sign(
-      { id: tenant._id, tenantId: tenant._id, role: "Tenant", subscriptionPlan: tenant.subscriptionPlan },
+      { id: tenant._id, role: "Tenant", subscriptionPlan: tenant.subscriptionPlan },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
-
     return res.status(200).json({tenant, tenanttoken });
   } catch (err) {
     return res.status(500).json({ error: "Server error" });
@@ -51,7 +50,7 @@ export const loginTenant = async (req, res) => {
 
 export const getTenant = async (req, res) => {
   try {
-    const tenantId = req.user?.id; 
+    const tenantId = req.user?.tenantId; 
 
     if (!tenantId) {
       return res.status(401).json({ error: "Unauthorized: Tenant ID not found in token" });

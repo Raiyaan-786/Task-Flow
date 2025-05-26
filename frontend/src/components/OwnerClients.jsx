@@ -31,10 +31,10 @@ const OwnerClients = () => {
   useEffect(() => {
     const fetchClients = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const ownertoken = localStorage.getItem('ownertoken');
         const response = await API.get('/owner/getallclients', {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${ownertoken}`,
           },
         });
         setClients(response.data);

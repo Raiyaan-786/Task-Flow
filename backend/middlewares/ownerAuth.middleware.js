@@ -8,17 +8,18 @@ export const verifyOwnerJWT = (req, res, next) => {
   const token = authHeader.split(" ")[1];
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(decoded)
     req.user = decoded;
     next();
   } catch (err) {
-    return res.status(403).json({ error: "Invalid token" });
+    return res.status(405).json({ error: "Invalid token" });
   }
 };
 
 export const authorizeRole = (role) => {
   return (req, res, next) => {
     if (req.user.role !== role) {
-      return res.status(403).json({ error: "Access denied" });
+      return res.status(403).json({ error: `Access denied , you are not owner ${req.user.role}`});
     }
     next();
   };

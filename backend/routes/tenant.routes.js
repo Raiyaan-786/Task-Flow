@@ -12,7 +12,7 @@ router.route("/register").post(registerTenant);
 router.route("/login").post(loginTenant);
 router.route('/gettenant').get(verifyOwnerJWT,getTenant);
 router.route("/createPlan").post(verifyOwnerJWT, authorizeRole("Owner") , createPlan);
-router.route("/getAllPlans").get(verifyOwnerJWT, authorizeRole("Tenant") , getAllPlans);
+router.route("/getAllPlans").get(verifyOwnerJWT, getAllPlans);
 router.route("/update/:tenantId").put(upload.single("image") ,verifyOwnerJWT, authorizeRole("Tenant"),updateTenant);
 router.route("/updateplan/:tenantId").post(verifyOwnerJWT, authorizeRole("Tenant"),updateTenantPlanDetails);
 router.route("/payments/process").post(verifyOwnerJWT, authorizeRole("Tenant"), processPayment);

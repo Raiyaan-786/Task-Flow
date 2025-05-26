@@ -13,12 +13,12 @@ export const loginOwner = async (req, res) => {
       return res.status(500).json({ error: "Authorization error" });
     }
 
-    const token = jwt.sign(
+    const ownertoken = jwt.sign(
       { id: owner._id, role: "Owner" },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
-    return res.status(200).json({ token });
+    return res.status(200).json({ ownertoken });
   } catch (err) {
     return res.status(500).json({ error: "Server error" });
   }

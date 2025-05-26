@@ -30,7 +30,7 @@ const OwnerPaymentDetails = () => {
   useEffect(() => {
     const fetchPayment = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('ownertoken');
         if (!token) {
           navigate('/ownerlogin');
           return;

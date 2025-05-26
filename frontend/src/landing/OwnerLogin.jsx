@@ -36,8 +36,8 @@ const OwnerLogin = () => {
         email,
         password,
       });
-      const { token } = data;
-      dispatch(ownerLogin({ token }));
+      const { ownertoken } = data;
+      dispatch(ownerLogin({ ownertoken }));
       setShowLoadingScreen(true);
       setTimeout(() => {
         navigate("/owner");

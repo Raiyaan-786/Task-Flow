@@ -30,8 +30,8 @@ const OwnerClientDetails = () => {
   useEffect(() => {
     const fetchClient = async () => {
       // Check for token
-      const token = localStorage.getItem('token');
-      if (!token) {
+      const ownertoken = localStorage.getItem('ownertoken');
+      if (!ownertoken) {
         setError('No authentication token found. Please log in.');
         setLoading(false);
         navigate('/ownerlogin');
@@ -41,7 +41,7 @@ const OwnerClientDetails = () => {
       try {
         const response = await API.get(`/owner/getclient/${id}`, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${ownertoken}`,
           },
         });
         if (!response.data || Object.keys(response.data).length === 0) {

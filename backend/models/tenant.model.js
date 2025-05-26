@@ -10,6 +10,10 @@ const tenantSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    role: {
+      type: String,
+      default: "tenant"
+    },
     databaseName: {
       type: String ,
       default: ""

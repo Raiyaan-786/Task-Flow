@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    token: localStorage.getItem('token') || null,  // Load token from localStorage
-    isAuthenticated: !!localStorage.getItem('token'),  // Check if token exists
+    ownertoken: localStorage.getItem('ownertoken') || null,  // Load token from localStorage
+    isAuthenticated: !!localStorage.getItem('onwertoken'),  // Check if token exists
   };
 
   const ownerAuthSlice = createSlice({
@@ -10,14 +10,14 @@ const initialState = {
     initialState,
     reducers: {
       ownerLogin: (state, action) => {
-        state.token = action.payload.token;
+        state.ownertoken = action.payload.ownertoken;
         state.isAuthenticated = true;
-        localStorage.setItem("token", state.token);
+        localStorage.setItem("ownertoken", state.ownertoken);
       },
       ownerLogout: (state) => {
-        state.token = null;
+        state.ownertoken = null;
         state.isAuthenticated = false;
-        localStorage.removeItem("token");
+        localStorage.removeItem("ownertoken");
       }
     },
   });

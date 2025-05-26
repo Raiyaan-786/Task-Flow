@@ -31,10 +31,10 @@ const OwnerPayments = () => {
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const ownertoken = localStorage.getItem('ownertoken');
         const response = await API.get('/owner/getallpayments', {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${ownertoken}`,
           },
         });
         setPayments(response.data);
