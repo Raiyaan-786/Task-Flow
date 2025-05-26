@@ -9,7 +9,8 @@ import {
   Tabs,
   Tab,
   styled,
-  Grid2
+  Grid2,
+  Skeleton
 } from "@mui/material";
 import { useTheme } from "@emotion/react";
 import { useNavigate } from "react-router-dom";
@@ -184,9 +185,39 @@ const TenantProfilePage = () => {
   };
 
   if (loading) return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4">Tenant Profile</Typography>
-      <Typography>Loading...</Typography>
+    <Box sx={{ p: 3, bgcolor: colors.foreground[100], height: "100vh", overflow: "auto" }}>
+      
+      <Box sx={{ height: 335, position: "relative" }}>
+        <Skeleton variant="rectangular" width="100%" height={180} sx={{ borderRadius: 3, mr: 1, ml: 1 }} />
+        <Box sx={{ height: 210, top: "110px", position: "absolute", width: "100%", zIndex: 999, display: 'flex' }}>
+          <Skeleton variant="circular" width={210} height={210} sx={{ border: "4px solid white", marginLeft: 5 }} />
+          <Box sx={{ pl: 2, width: "500px", display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <Skeleton variant="text" width={200} height={40} />
+            <Skeleton variant="text" width={150} height={20} />
+          </Box>
+          <Box sx={{ mr: 5, width: "500px", display: 'flex', justifyContent: 'end', alignItems: 'center', gap: 2 }}>
+            <Skeleton variant="rectangular" width={60} height={35} />
+            <Skeleton variant="rectangular" width={60} height={35} />
+          </Box>
+        </Box>
+      </Box>
+      <Box sx={{ ml: 5, mt: 2 }}>
+        <Skeleton variant="rectangular" width={300} height={40} />
+      </Box>
+      <Divider variant="middle" sx={{ mb: 1, mt: 1 }} />
+      <Box sx={{ ml: 8, mt: 2 }}>
+        <Grid2 container spacing={2} gap={2}>
+          <Grid2 size={4}><Skeleton variant="text" width={100} height={30} /></Grid2>
+          <Grid2 size={6}><Skeleton variant="rectangular" width="100%" height={40} /></Grid2>
+          <Grid2 size={4}><Skeleton variant="text" width={100} height={30} /></Grid2>
+          <Grid2 size={4}><Skeleton variant="circular" width={60} height={60} /></Grid2>
+          <Grid2 size={2}><Skeleton variant="rectangular" width={100} height={30} /></Grid2>
+          <Grid2 size={4}><Skeleton variant="text" width={100} height={30} /></Grid2>
+          <Grid2 size={6}><Skeleton variant="rectangular" width="100%" height={40} /></Grid2>
+          <Grid2 size={4}><Skeleton variant="text" width={100} height={30} /></Grid2>
+          <Grid2 size={6}><Skeleton variant="rectangular" width="100%" height={40} /></Grid2>
+        </Grid2>
+      </Box>
     </Box>
   );
   if (error) return (
@@ -203,16 +234,16 @@ const TenantProfilePage = () => {
     <Box sx={{ height: "100vh", overflow: "auto" ,bgcolor: colors.foreground[100]}}>
       <Box bgcolor={colors.foreground[100]} display="flex" flexDirection="column">
         <Box bgcolor={colors.foreground[100]} sx={{ height: 335, position: "relative"}}>
-          <Box sx={{borderRadius:3,mr:1,ml:1, height: 180, backgroundImage: `url("/login_background1.jpg")`, backgroundSize: 'cover', backgroundPosition: 'center', }} />
+          <Box sx={{borderRadius:2,m:1, height: 190, backgroundImage: `url("/login_background1.jpg")`, backgroundSize: 'cover', backgroundPosition: 'center', }} />
           {/* <Box sx={{borderBottomLeftRadius:30,borderBottomRightRadius:30, height: 180, backgroundImage: `url(${profilebg})`, backgroundSize: 'cover', backgroundPosition: 'center', }} /> */}
           <Box
             bgcolor="transparent"
-            sx={{ height: 210, top: "110px", position: "absolute", width: "100%", zIndex: 999, display: 'flex' }}
+            sx={{ height: 210, top: "130px", position: "absolute", width: "100%", zIndex: 999, display: 'flex' }}
           >
             <Avatar
               src={imagePreview}
               alt="Remy Sharp"
-              sx={{ width: 210, height: 210, border: "4px solid white", marginLeft: 5 }}
+              sx={{ width: 200, height: 200, border: "4px solid white", marginLeft: 5 }}
             />
             <Box sx={{ pl: 2, width: "500px", display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <Typography variant="h2" fontWeight={700} color="initial">{name}</Typography>
@@ -297,7 +328,7 @@ const TenantProfilePage = () => {
                 <label>Company Logo</label>
               </Grid2>
               <Grid2 size={4}>
-                <Avatar src={companyLogoPreview } alt="./companyPlaceholder.png" sx={{ width: 60, height: 60 }} />
+                <Avatar src={companyLogoPreview || "/companyPlaceholder.png" }  sx={{ width: 60, height: 60 }} />
               </Grid2>
               <Grid2 size={2}  sx={{alignItems:'center',justifyContent:"end",display:'flex'}}>
                 <input type="file" accept="image/*" onChange={handleCompanyLogoChange} style={{ display: "none" }} id="company-logo-input" disabled={isFreePlan} />

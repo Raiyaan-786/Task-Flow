@@ -90,8 +90,8 @@ const TenantPlanConfirm = () => {
                           Please review your selected plan and billing details below.
          </Typography>
          
-        <Card sx={{ mt: 5, borderRadius: 2, border: "1px solid #ddd" }}>
-          <CardContent>
+        <Card sx={{height:550, mt: 3, borderRadius: 2,maxWidth:900 ,boxShadow: 2, border: "1px solid #ddd",display:'flex',flexDirection:'column',justifyContent:'space-between'}}>
+          <CardContent >
             <Typography variant="h4" fontWeight={500} color="text.primary" gutterBottom>
               {selectedPlan.name} Plan
             </Typography>
@@ -136,7 +136,7 @@ const TenantPlanConfirm = () => {
               </Typography>
             </Box>
           </CardContent>
-          <CardActions sx={{ justifyContent: "space-between", p: 2 }}>
+          <CardActions sx={{ justifyContent: "space-between", p: 2 }} >
             <Button
               variant="outlined"
               onClick={handleBack}

@@ -73,7 +73,7 @@ const TenantSignup = () => {
       dispatch(tenantLogin({ tenant, tenanttoken }));
       setShowLoadingScreen(true);
       setTimeout(() => {
-        navigate("/tenant/home");
+        navigate("/tenantlogin");
       }, 5000);
     } catch (err) {
       setErrorMessage(err.response?.data?.error || "Signup failed. Please check your details and try again.");

@@ -16,8 +16,12 @@ import {
 import { FaCreditCard } from "react-icons/fa";
 import TenantLayout from "./TenantLayout";
 import API from "../../api/api";
+import { useTheme } from "@emotion/react";
+import { tokens } from "../../theme";
 
 const TenantPayment = () => {
+  const theme = useTheme();
+    const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -190,18 +194,16 @@ const TenantPayment = () => {
 
   return (
    
-      <Box sx={{ p: 3, maxWidth: 600, mx: "auto" }}>
-        <Typography variant="h4" gutterBottom sx={{ display: "flex", alignItems: "center" }}>
-          <FaCreditCard style={{ color: "#4CAF50", marginRight: 8 }} />
-          Payment Details
-        </Typography>
-        <Typography variant="body1" color="text.secondary" gutterBottom>
-          Enter your payment information to subscribe to the {selectedPlan.name} plan.
-        </Typography>
-
-        <Card sx={{ mt: 3, borderRadius: 2, boxShadow: 2, border: "1px solid #ddd" }}>
+      <Box sx={{ p: 3,height:'100vh',bgcolor:colors.foreground[100] }}>
+            <Typography variant="h1" fontWeight={700} mt={5} mb={2} className="pricing-section-title">
+                Payment  <span className="pricing-gradient-text">Details</span>
+            </Typography>
+            <Typography variant="h4" className="pricing-section-subtitle">
+                Enter your payment information to subscribe to the {selectedPlan.name} plan.
+            </Typography>
+        <Card sx={{height:550, mt: 3, borderRadius: 2, boxShadow: 2, border: "1px solid #ddd",maxWidth:900,overflow:'auto' }}>
           <CardContent>
-            <Box sx={{ backgroundColor: "#2c3e50", color: "#fff", p: 2, mb: 2 }}>
+            <Box sx={{ backgroundColor: "#2c3e50", color: "#fff", p: 2, mb: 2,borderRadius:2 }}>
               <Typography variant="h6">ORDER OVERVIEW</Typography>
               <Typography variant="h5" sx={{ fontWeight: "bold" }}>
                 ${billingInfo.total.toFixed(2)} USD
@@ -210,12 +212,13 @@ const TenantPayment = () => {
             <Typography variant="h6" gutterBottom>
               PLEASE SELECT A PAYMENT METHOD
             </Typography>
-            <Typography variant="h6" gutterBottom>
+            {/* <Typography variant="h6" gutterBottom>
               CREDIT / DEBIT CARD
-            </Typography>
+            </Typography> */}
             <Box sx={{ mt: 2 }}>
               <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
                 <TextField
+                  size="small"
                   fullWidth
                   label="First name"
                   name="firstName"
@@ -226,6 +229,7 @@ const TenantPayment = () => {
                   sx={{ mb: 2 }}
                 />
                 <TextField
+                size="small"
                   fullWidth
                   label="Last name"
                   name="lastName"
@@ -237,6 +241,7 @@ const TenantPayment = () => {
                 />
               </Box>
               <TextField
+                size="small"
                 fullWidth
                 label="Company name"
                 name="companyName"
@@ -247,6 +252,7 @@ const TenantPayment = () => {
                 sx={{ mb: 2 }}
               />
               <TextField
+                size="small"
                 fullWidth
                 label="Card number"
                 name="cardNumber"
@@ -259,6 +265,7 @@ const TenantPayment = () => {
               />
               <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
                 <TextField
+                  size="small"
                   fullWidth
                   label="CVV"
                   name="cvv"
@@ -273,6 +280,7 @@ const TenantPayment = () => {
                   <FormControl fullWidth sx={{ mb: 1 }}>
                     <InputLabel>Month</InputLabel>
                     <Select
+                      size="small"
                       name="expiryMonth"
                       value={paymentDetails.expiryMonth}
                       onChange={handleInputChange}
@@ -294,6 +302,7 @@ const TenantPayment = () => {
                       onChange={handleInputChange}
                       error={!!errors.expiry}
                       sx={{ minWidth: 100 }}
+                      size="small"
                     >
                       {years.map((year) => (
                         <MenuItem key={year} value={year}>
@@ -320,26 +329,29 @@ const TenantPayment = () => {
           </CardContent>
           <CardActions sx={{ justifyContent: "space-between", p: 2 }}>
             <Button
-              variant="contained"
+              variant="outlined"
               onClick={handleCancel}
               sx={{
-                backgroundColor: "#2c3e50",
-                color: "#fff",
-                "&:hover": { backgroundColor: "#1a252f" },
-                borderRadius: 0,
+                 borderColor: "#2e3b4e",
+                color: "#2e3b4e",
+                "&:hover": { borderColor: "#1a252f", color: "#1a252f" },
+                textTransform: "none",
+                fontSize: ".875rem",
               }}
               disabled={loading}
             >
               Cancel
             </Button>
             <Button
+            className="gradient-button"
               variant="contained"
               onClick={handleSubmitPayment}
               sx={{
                 backgroundColor: "#2ecc71",
                 color: "#fff",
                 "&:hover": { backgroundColor: "#27ae60" },
-                borderRadius: 0,
+                textTransform: "none",
+                fontSize: ".875rem",
                 px: 4,
               }}
               disabled={loading}
