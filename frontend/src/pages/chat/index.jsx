@@ -19,6 +19,7 @@ const Chat = () => {
 
   return (
     <Box
+    
       display="flex"
       flexDirection="column"
       height="88%"
@@ -43,13 +44,13 @@ const Chat = () => {
         <Box
           width="25%"
           minWidth="250px"
-          borderRight={`1px solid ${colors.foreground[100]}`}
+          // borderRight={`1px solid ${colors.foreground[100]}`}
           display="flex"
           flexDirection="column"
           flexShrink={0} // Prevents shrinking when chat expands
         >
           {/* Contacts Header */}
-          <Box
+          {/* <Box
             p={1}
             fontWeight="bold"
             bgcolor={colors.foreground[100]}
@@ -57,7 +58,7 @@ const Chat = () => {
             fontSize="1.1rem"
           >
             Contacts
-          </Box>
+          </Box> */}
 
           {/* Scrollable Contacts List */}
           <Box
@@ -87,6 +88,7 @@ const Chat = () => {
           overflow="hidden" // Prevents full page scrolling
         >
           <ChatContainer
+          
             selectedContact={selectedContact}
             onCloseChat={handleCloseChat}
             style={{ flexGrow: 1, overflowY: "auto" }} // Scrolls only ChatContainer

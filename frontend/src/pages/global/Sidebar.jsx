@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { Box, Divider, Typography, useTheme } from "@mui/material";
+import { Avatar, Box, Divider, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
 import { color, motion } from "framer-motion";
 import { tokens } from "../../theme";
@@ -81,6 +81,7 @@ const Sidebar = ({ isCollapsed }) => {
           display: "flex",
           flexDirection: "column",
           height: "100%",
+          overflowX: "hidden",
           overflowY: "auto",
           bgcolor:colors.foreground[100]
         }}
@@ -142,7 +143,7 @@ const Sidebar = ({ isCollapsed }) => {
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
             sx={{ mb: "25px", overflow: "hidden" }}
           >
-            <Box display="flex" justifyContent="center" alignItems="center" >
+            {/* <Box display="flex" justifyContent="center" alignItems="center" >
               <img
                 // alt="defaultavatar.svg"
                 width="100px"
@@ -150,7 +151,11 @@ const Sidebar = ({ isCollapsed }) => {
                 src={user.image || "defaultavatar.jpg"}
                 style={{ cursor: "pointer", borderRadius: "50%" }}
               />
-            </Box>
+            </Box> */}
+            <Box display="flex" justifyContent="center" alignItems="center">
+                          
+                          <Avatar src={user?.image } alt="Remy Sharp" sx={{ width: "100px", height: "100px" }} />
+                        </Box>
             <Box textAlign="center">
               <motion.div
                 animate={{ opacity: isCollapsed ? 0 : 1, x: isCollapsed ? -10 : 0 }}

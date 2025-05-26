@@ -269,7 +269,7 @@ const AddWork = () => {
                     renderInput={(params) => (
                       <TextField
                         {...params}
-                        variant="filled"
+                        variant="outlined"
                         placeholder="SELECT CUSTOMER"
                         error={touched.customer && !!errors.customer}
                         helperText={touched.customer && errors.customer}
@@ -293,8 +293,9 @@ const AddWork = () => {
                       variant="outlined"
                       sx={{
                         height: "100%",
+                        width:'100%',
                         color: colors.grey[500],
-                        bgcolor: "#dbdbdd",
+                        borderColor: colors.grey[500],
                       }}
                     >
                       <Add />
@@ -311,7 +312,7 @@ const AddWork = () => {
                     placeholder="ENTER BILLING NAME"
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.billingName}
@@ -331,7 +332,7 @@ const AddWork = () => {
                     placeholder="ENTER EMAIL ID"
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.email}
@@ -351,7 +352,7 @@ const AddWork = () => {
                     placeholder="ENTER MOBILE NUMBER"
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.mobile}
@@ -381,7 +382,7 @@ const AddWork = () => {
                     placeholder="ENTER PAN NUMBER"
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.pan}
@@ -411,7 +412,7 @@ const AddWork = () => {
                     maxRows={3}
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.address}
@@ -437,7 +438,7 @@ const AddWork = () => {
                     }
                     renderInput={(params) => (
                       <TextField
-                        variant="filled"
+                        variant="outlined"
                         {...params}
                         placeholder="SELECT SERVICE"
                         error={touched.service && !!errors.service}
@@ -463,7 +464,7 @@ const AddWork = () => {
                     }
                     renderInput={(params) => (
                       <TextField
-                        variant="filled"
+                        variant="outlined"
                         {...params}
                         placeholder="SELECT WORK TYPE"
                         error={touched.workType && !!errors.workType}
@@ -498,7 +499,7 @@ const AddWork = () => {
                     renderInput={(params) => (
                       <TextField
                         {...params}
-                        variant="filled"
+                        variant="outlined"
                         placeholder="SELECT EMPLOYEE"
                         error={
                           touched.assignedEmployee && !!errors.assignedEmployee
@@ -525,8 +526,9 @@ const AddWork = () => {
                       variant="outlined"
                       sx={{
                         height: "100%",
+                        width:'100%',
                         color: colors.grey[500],
-                        bgcolor: "#dbdbdd",
+                        borderColor: colors.grey[500],
                       }}
                     >
                       <Add />
@@ -547,7 +549,7 @@ const AddWork = () => {
                     }
                     renderInput={(params) => (
                       <TextField
-                        variant="filled"
+                        variant="outlined"
                         {...params}
                         placeholder="SELECT MONTH"
                         error={touched.month && !!errors.month}
@@ -580,7 +582,7 @@ const AddWork = () => {
                     }
                     renderInput={(params) => (
                       <TextField
-                        variant="filled"
+                        variant="outlined"
                         {...params}
                         placeholder="SELECT QUARTER"
                         error={touched.quarter && !!errors.quarter}
@@ -603,7 +605,7 @@ const AddWork = () => {
                     }
                     renderInput={(params) => (
                       <TextField
-                        variant="filled"
+                        variant="outlined"
                         {...params}
                         placeholder="SELECT YEAR"
                         error={touched.financialYear && !!errors.financialYear}
@@ -626,7 +628,7 @@ const AddWork = () => {
                   <TextField
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.price}
@@ -653,7 +655,7 @@ const AddWork = () => {
                   <TextField
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.quantity}
@@ -671,7 +673,7 @@ const AddWork = () => {
                   <TextField
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.discount}

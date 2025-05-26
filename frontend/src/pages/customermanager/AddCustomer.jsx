@@ -180,7 +180,7 @@ const AddCustomer = () => {
                     placeholder="ENTER PAN NUMBER"
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={(e) => handleCheckPAN(e.target.value, setFieldValue)}
                     onChange={(e) => {
                       const uppercaseValue = e.target.value.toUpperCase();
@@ -212,7 +212,7 @@ const AddCustomer = () => {
                     placeholder="ENTER CUSTOMER NAME"
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.customerName}
@@ -232,7 +232,7 @@ const AddCustomer = () => {
                     placeholder="ENTER CUSTOMER CODE"
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.customerCode}
@@ -260,7 +260,7 @@ const AddCustomer = () => {
                       <TextField
                         {...params}
                         placeholder="ENTER GROUP NAME"
-                        variant="filled"
+                        variant="outlined"
                         onBlur={handleBlur}
                       />
                     )}
@@ -275,7 +275,7 @@ const AddCustomer = () => {
                     placeholder="ENTER AADHAAR NUMBER"
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.AadharNo}
@@ -305,7 +305,7 @@ const AddCustomer = () => {
                     placeholder='ENTER EMAIL ID'
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.email}
@@ -325,7 +325,7 @@ const AddCustomer = () => {
                     placeholder='ENTER MOBILE NUMBER'
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.mobileNo}
@@ -355,7 +355,7 @@ const AddCustomer = () => {
                     placeholder="ENTER WHATSAPP NUMBER"
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.sameAsMobileNo ? values.mobileNo : values.whatsappNo}
@@ -399,7 +399,7 @@ const AddCustomer = () => {
                     maxRows={3}
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.address}
@@ -417,7 +417,7 @@ const AddCustomer = () => {
                     placeholder="ENTER BILLING NAME"
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.billingName}
@@ -439,7 +439,7 @@ const AddCustomer = () => {
                     freeSolo // Allow typing any value (free-text entry)
                     value={values.customerCompanyName}
                     onChange={(event, newValue) => setFieldValue('customerCompanyName', newValue)}
-                    renderInput={(params) => <TextField variant="filled" {...params} placeholder="ENTER COMPANY/FIRM NAME" />}
+                    renderInput={(params) => <TextField variant="outlined" {...params} placeholder="ENTER COMPANY/FIRM NAME" />}
                   />
                 </Grid2>
 
@@ -452,7 +452,7 @@ const AddCustomer = () => {
                     placeholder="ENTER CONTACT PERSON NAME"
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.contactPersonName}
@@ -469,7 +469,7 @@ const AddCustomer = () => {
                     placeholder="ENTER CONTACT PERSON PHONE"
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.contactPersonPhone}

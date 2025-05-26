@@ -41,7 +41,7 @@ const Settings = () => {
     <Box display={'flex'} flexDirection={'column'} height={'88%'} margin={'10px'} p={0.1}>
       <Header title={'Settings'} />
       <Box
-        bgcolor={colors.primary[900]}
+        bgcolor={colors.foreground[100]}
         flexGrow={1}
         mt="2px"
         display="flex"
@@ -50,7 +50,7 @@ const Settings = () => {
         p={3}
       >
         <List>
-          {/* Account Section */}
+          {/* Account Section
           <Typography variant="h6">Account</Typography>
           <ListItem button>
             <ListItemText primary="Change Email" />
@@ -58,7 +58,7 @@ const Settings = () => {
           <ListItem button>
             <ListItemText primary="Update Password" />
           </ListItem>
-          <Divider />
+          <Divider /> */}
 
           {/* Notification Section */}
           <Typography variant="h6" sx={{ mt: 2 }}>Notification</Typography>
@@ -72,13 +72,13 @@ const Settings = () => {
           </ListItem>
           <Divider />
 
-          {/* Appearance Section */}
+          {/* Appearance Section
           <Typography variant="h6" sx={{ mt: 2 }}>Appearance</Typography>
           <ListItem>
             <ListItemText primary="Dark Mode" />
             <Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
           </ListItem>
-          <Divider />
+          <Divider /> */}
 
           {/* Privacy & Security Section */}
           <Typography variant="h6" sx={{ mt: 2 }}>Privacy & Security</Typography>
@@ -112,9 +112,9 @@ const Settings = () => {
             <ListItemText primary="Privacy Policy" />
           </ListItem>
         </List>
-        <Button variant="contained" color="error" fullWidth sx={{ mt: 3 }}>
+        {/* <Button variant="contained" color="error" fullWidth sx={{ mt: 3 }}>
           Logout
-        </Button>
+        </Button> */}
       </Box>
     </Box>
   );

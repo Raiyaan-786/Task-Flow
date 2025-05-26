@@ -109,7 +109,7 @@ const AddConsultant = () => {
                     placeholder="ENTER CONSULTANT NAME"
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.consultantName}
@@ -127,7 +127,7 @@ const AddConsultant = () => {
                     placeholder='ENTER USERNAME'
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.username}
@@ -146,7 +146,7 @@ const AddConsultant = () => {
                     placeholder='ENTER EMAIL ID'
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.email}
@@ -165,7 +165,7 @@ const AddConsultant = () => {
                     placeholder='ENTER MOBILE NUMBER'
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.mobile}
@@ -195,7 +195,7 @@ const AddConsultant = () => {
                     maxRows={3}
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.address}
@@ -215,7 +215,7 @@ const AddConsultant = () => {
                     placeholder='ENTER BANK ACCOUNT NUMBER'
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.bankAccountNumber}
@@ -242,7 +242,7 @@ const AddConsultant = () => {
                     placeholder="ENTER BANK IFSC CODE"
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.bankIFSCCode}
@@ -269,7 +269,7 @@ const AddConsultant = () => {
                     placeholder="ENTER ACCOUNT HOLDER NAME"
                     size="small"
                     fullWidth
-                    variant="filled"
+                    variant="outlined"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.accountHolderName}

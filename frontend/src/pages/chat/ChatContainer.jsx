@@ -198,10 +198,11 @@ const ChatContainer = () => {
         sx={{
           display: "flex",
           alignItems: "center",
-          bgcolor: colors.grey[800],
+          bgcolor: colors.foreground[100],
           p: 1,
           mb: 1,
           borderRadius: "4px",
+          
         }}
       >
         {fileType === "image" ? (
@@ -295,7 +296,7 @@ const ChatContainer = () => {
         msg.file.filename?.match(/\.(jpg|jpeg|png|gif)$/i);
 
       return (
-        <Box>
+        <Box >
           {msg.isUploading ? (
             <Typography variant="body2">
               Uploading {msg.file.filename}...
@@ -343,8 +344,10 @@ const ChatContainer = () => {
                 size="small"
                 startIcon={<DownloadIcon />}
                 onClick={() => handleDownload(msg.file.url, msg.file.filename)}
+                className="gradient-button"
                 sx={{
                   mt: 1,
+                  mb:1,
                   textTransform: "none",
                   bgcolor: colors.primary[500],
                   "&:hover": {
@@ -388,19 +391,22 @@ const ChatContainer = () => {
       flexDirection="column"
       flexGrow={1}
       p={2}
-      bgcolor={colors.primary[900]}
+      bgcolor={colors.foreground[100]}
       borderRadius="10px"
+      justifyContent={'space-between'}
+      // sx={{ bgcolor:'red'}}
     >
       {/* Chat Header */}
-      <Paper
-        elevation={3}
+      <Box
+        
         sx={{
           p: 1,
           mb: 1,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          borderRadius: "10px",
+          borderRadius: "5px",
+          bgcolor:colors.foreground[100],
         }}
       >
         <Box>
@@ -422,19 +428,24 @@ const ChatContainer = () => {
         >
           <CloseIcon />
         </IconButton>
-      </Paper>
+      </Box>
 
       {/* Messages Container */}
       <Box
         flexGrow={1}
         overflow="auto"
         p={2}
-        bgcolor={colors.bgc[100]}
-        borderRadius="10px"
+        // bgcolor={colors.bgc[100]}
+        
+        borderRadius="5px"
         sx={{
-          maxHeight: "48vh",
+          maxHeight: "60vh",
           display: "flex",
           flexDirection: "column",
+          // backgroundImage:`url("/chatbgc2.png")`,
+          backgroundColor: colors.foreground[100],
+          border:`1px solid ${colors.grey[700]}`,
+          
         }}
       >
         {messages
@@ -449,16 +460,18 @@ const ChatContainer = () => {
               <Box
                 key={msg._id || index}
                 sx={{
+                  
                   mb: 1.5,
                   p: 1.5,
-                  borderRadius: "8px",
-                  bgcolor: isMyMessage ? colors.teal[300] : colors.grey[800],
-                  color: isMyMessage ? "white" : "black",
+                  borderRadius: "6px",
+                  bgcolor: isMyMessage ? colors.chatclr[100] : colors.bgc[100],
+                  // color: isMyMessage ? "white" : "black",
                   alignSelf: isMyMessage ? "flex-end" : "flex-start",
                   marginLeft: isMyMessage ? "auto" : 0,
                   marginRight: isMyMessage ? 0 : "auto",
                   maxWidth: "60%",
                   wordBreak: "break-word",
+                  border: `.5px solid ${colors.grey[700]}`,
                 }}
               >
                 {renderMessageContent(msg)}
@@ -467,9 +480,7 @@ const ChatContainer = () => {
                   display="block"
                   sx={{
                     textAlign: isMyMessage ? "right" : "left",
-                    color: isMyMessage
-                      ? "rgba(255,255,255,0.7)"
-                      : "rgba(0,0,0,0.6)",
+                    
                   }}
                 >
                   {messageDate.toString() !== "Invalid Date"
@@ -490,8 +501,8 @@ const ChatContainer = () => {
         display="flex"
         flexDirection="column"
         mt={2}
-        bgcolor="white"
-        p={1}
+        // bgcolor="white"
+        // p={1}
         borderRadius="10px"
       >
         {selectedFile && renderFilePreview()}
@@ -507,7 +518,8 @@ const ChatContainer = () => {
           />
           <label htmlFor="file-upload">
             <Tooltip title="Attach file">
-              <IconButton component="span" disabled={isSending}>
+              <IconButton  sx={{color:'white',height:'50px',width:'50px'}}  className="gradient-button"  component="span" disabled={isSending}>
+                
                 <AttachFileIcon />
               </IconButton>
             </Tooltip>
@@ -520,14 +532,17 @@ const ChatContainer = () => {
             value={textMessage}
             onChange={(e) => setTextMessage(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && sendMessageHandler()}
-            sx={{ ml: 1, mr: 1 }}
+            sx={{ ml: 2, mr: 2 }}
             disabled={isSending}
+            
           />
 
           <IconButton
+            className="gradient-button"
             onClick={sendMessageHandler}
-            color="primary"
-            disabled={(!textMessage.trim() && !selectedFile) || isSending}
+            sx={{color:'white',height:'50px',width:'50px'}}
+            
+            // disabled={(!textMessage.trim() && !selectedFile) || isSending}
           >
             <SendIcon />
           </IconButton>

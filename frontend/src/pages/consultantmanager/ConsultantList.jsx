@@ -214,7 +214,7 @@ const ConsultantList = () => {
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              bgcolor: colors.teal[300],
+              bgcolor: colors.blueHighlight[900],
               color: "white",
               p: 1.5,
               borderTopLeftRadius: 7,

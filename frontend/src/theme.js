@@ -120,6 +120,9 @@ export const tokens =(mode)=>({
         800: "#3386ff", // Darker, intense highlight for focus states
         900: "#0065e2"  // Darkest, vivid blue (base color) for strong emphasis
       },
+      chatclr:{
+        100:"#3b44d9", 
+      },
       bgc:{
         100:"#121212",
         200:"#121212",
@@ -220,6 +223,9 @@ export const tokens =(mode)=>({
             900: "#0065e2" , // Darkest, vivid blue (base color) for strong emphasis
             1000:"#2563eb"
           },
+           chatclr:{
+        100:"#e5e9ff", 
+      },
           bgc:{
             100:"#f0f0f0",
             200:"#ececec"

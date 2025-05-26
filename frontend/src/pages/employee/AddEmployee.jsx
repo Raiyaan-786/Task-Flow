@@ -98,7 +98,7 @@ const AddEmployee = () => {
                                         placeholder='ENTER EMPLOYEE NAME'
                                         size="small"
                                         fullWidth
-                                        variant="filled"
+                                        variant="outlined"
                                         onBlur={handleBlur}
                                         onChange={handleChange}
                                         value={values.empname}
@@ -117,7 +117,7 @@ const AddEmployee = () => {
                                         placeholder='ENTER USERNAME'
                                         size="small"
                                         fullWidth
-                                        variant="filled"
+                                        variant="outlined"
                                         onBlur={handleBlur}
                                         onChange={handleChange}
                                         value={values.username}
@@ -136,7 +136,7 @@ const AddEmployee = () => {
                                         placeholder='ENTER PASSWORD'
                                         size="small"
                                         fullWidth
-                                        variant="filled"
+                                        variant="outlined"
                                         type="password"
                                         onBlur={handleBlur}
                                         onChange={handleChange}
@@ -156,7 +156,7 @@ const AddEmployee = () => {
                                         placeholder='ENTER EMAIL ID'
                                         size="small"
                                         fullWidth
-                                        variant="filled"
+                                        variant="outlined"
                                         onBlur={handleBlur}
                                         onChange={handleChange}
                                         value={values.email}
@@ -174,7 +174,7 @@ const AddEmployee = () => {
                                         placeholder='ENTER MOBILE NUMBER'
                                         size="small"
                                         fullWidth
-                                        variant="filled"
+                                        variant="outlined"
                                         onBlur={handleBlur}
                                         onChange={handleChange}
                                         value={values.mobile}
@@ -205,7 +205,7 @@ const AddEmployee = () => {
                                         minRows={3}
                                         maxRows={3}
                                         fullWidth
-                                        variant="filled"
+                                        variant="outlined"
                                         onBlur={handleBlur}
                                         onChange={handleChange}
                                         value={values.address}
@@ -223,7 +223,7 @@ const AddEmployee = () => {
                                         options={departmentList}
                                         value={values.department}
                                         onChange={(event, newValue) => setFieldValue('department', newValue)}
-                                        renderInput={(params) => <TextField variant="filled" {...params} placeholder="SELECT DEPARTMENT"
+                                        renderInput={(params) => <TextField variant="outlined" {...params} placeholder="SELECT DEPARTMENT"
                                             error={touched.department && !!errors.department}
                                             helperText={touched.department && errors.department}
                                         />}
@@ -241,7 +241,7 @@ const AddEmployee = () => {
                                         options={postnameList}
                                         value={values.postname}
                                         onChange={(event, newValue) => setFieldValue('postname', newValue)}
-                                        renderInput={(params) => <TextField variant="filled" {...params} placeholder="SELECT POST"
+                                        renderInput={(params) => <TextField variant="outlined" {...params} placeholder="SELECT POST"
                                             error={touched.postname && !!errors.postname}
                                             helperText={touched.postname && errors.postname}
                                         />}
@@ -259,7 +259,7 @@ const AddEmployee = () => {
                                         size="small"
                                         type='date'
                                         fullWidth
-                                        variant="filled"
+                                        variant="outlined"
                                         onBlur={handleBlur}
                                         onChange={handleChange}
                                         value={values.dateofjoining}
@@ -280,6 +280,7 @@ const AddEmployee = () => {
                                             value={values.role}
                                             onChange={handleChange}
                                             label="role"
+                                            variant="outlined"
                                             error={!!touched.role && !!errors.role}
                                         >
                                             <MenuItem value="Admin">ADMIN</MenuItem>

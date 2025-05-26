@@ -60,17 +60,18 @@ const EditWorkPage = () => {
     <Box display={'flex'} flexDirection={'column'} height={'88%'} overflow={'auto'} margin={'10px'} p={0.1}>
       <Header title={'Work Profile'} />
       <Box
-        bgcolor={colors.primary[900]}
+        bgcolor={colors.foreground[100]}
         flexGrow={1}
         mt="2px"
         display="flex"
         flexDirection="row"
         borderRadius={'10px'}
+         boxShadow={1}
       >
 
-        <Box container display={'flex'} flexDirection={'column'} spacing={2} gap={2} padding={"10px 40px"} color={colors.grey[200]} flex='2' >
+        <Box container display={'flex'} flexDirection={'column'} spacing={2} gap={2} padding={"25px 40px"} color={colors.grey[200]} flex='2' >
           <Grid2 size={12}>
-            <Typography variant="h3" color={colors.grey[500]} fontWeight={'bold'} marginBottom={2}>Customer Details</Typography>
+            <Typography variant="h3"  fontWeight={600} textAlign={'center'} marginBottom={2}>Customer Details</Typography>
           </Grid2>
 
 
@@ -80,7 +81,7 @@ const EditWorkPage = () => {
             <TextField
               label="Customer Name"
               value={work.customer.customerName || ''} // Default to empty string if undefined
-              variant="filled"
+              variant="outlined"
               onChange={handleInputChange}
               name="customer" // Field name for dynamic update
               fullWidth
@@ -92,7 +93,7 @@ const EditWorkPage = () => {
             <TextField
               label="Billing Name"
               value={work.billingName || ''}
-              variant="filled"
+              variant="outlined"
               onChange={handleInputChange}
               name="billingName"
               fullWidth
@@ -104,7 +105,7 @@ const EditWorkPage = () => {
             <TextField
               label="Email"
               value={work.customer.email || ''}
-              variant="filled"
+              variant="outlined"
               onChange={handleInputChange}
               name="email"
               fullWidth
@@ -118,7 +119,7 @@ const EditWorkPage = () => {
             <TextField
               label="Mobile"
               value={work.customer.mobileNo || ''}
-              variant="filled"
+              variant="outlined"
               onChange={handleInputChange}
               name="mobile"
               fullWidth
@@ -131,7 +132,7 @@ const EditWorkPage = () => {
             <TextField
               label="PAN"
               value={work.pan || ''}
-              variant="filled"
+              variant="outlined"
               onChange={handleInputChange}
               name="pan"
               fullWidth
@@ -145,7 +146,7 @@ const EditWorkPage = () => {
             <TextField
               label="Address"
               value={work.address || ''}
-              variant="filled"
+              variant="outlined"
               onChange={handleInputChange}
               name="address"
               fullWidth
@@ -156,16 +157,16 @@ const EditWorkPage = () => {
           </Grid2>
         </Box>
 
-        <Grid2 container spacing={2} gap={2} padding={"10px 40px"} color={colors.grey[200]} flex='4'>
+        <Grid2 container spacing={2} gap={2} padding={"25px 40px"} color={colors.grey[200]} flex='4'>
           <Grid2 size={12}>
-            <Typography variant="h3" color={colors.grey[500]} fontWeight={'bold'} marginBottom={2}>Work Details</Typography>
+            <Typography variant="h3" textAlign={'center'}  fontWeight={600} marginBottom={2}>Work Details</Typography>
           </Grid2>
 
           <Grid2 size={6}>
             <TextField
               label="Service Type"
               value={work.service || ''}
-              variant="filled"
+              variant="outlined"
               onChange={handleInputChange}
               name="service"
               fullWidth
@@ -177,7 +178,7 @@ const EditWorkPage = () => {
             <TextField
               label="Work Type"
               value={work.workType || ''}
-              variant="filled"
+              variant="outlined"
               onChange={handleInputChange}
               name="workType"
               fullWidth
@@ -189,7 +190,7 @@ const EditWorkPage = () => {
             <TextField
               label="Assigned Employee ID"
               value={work.assignedEmployee._id || ''}
-              variant="filled"
+              variant="outlined"
               onChange={handleInputChange}
               name="assignedEmployee"
               fullWidth
@@ -201,7 +202,7 @@ const EditWorkPage = () => {
             <TextField
               label="Employee Name"
               value={work.assignedEmployee.name || ''}
-              variant="filled"
+              variant="outlined"
               onChange={handleInputChange}
               name="assignedEmployee"
               fullWidth
@@ -213,7 +214,7 @@ const EditWorkPage = () => {
             <TextField
               label="Month"
               value={work.month || ''}
-              variant="filled"
+              variant="outlined"
               onChange={handleInputChange}
               name="month"
               fullWidth
@@ -224,7 +225,7 @@ const EditWorkPage = () => {
             <TextField
               label="Quarter"
               value={work.quarter || ''}
-              variant="filled"
+              variant="outlined"
               onChange={handleInputChange}
               name="quarter"
               fullWidth
@@ -235,7 +236,7 @@ const EditWorkPage = () => {
             <TextField
               label="Financial Year"
               value={work.financialYear || ''}
-              variant="filled"
+              variant="outlined"
               onChange={handleInputChange}
               name="financialYear"
               fullWidth
@@ -246,7 +247,7 @@ const EditWorkPage = () => {
             <TextField
               label="Price"
               value={work.price || ''}
-              variant="filled"
+              variant="outlined"
               onChange={handleInputChange}
               name="price"
               fullWidth
@@ -257,7 +258,7 @@ const EditWorkPage = () => {
             <TextField
               label="Quantity"
               value={work.quantity || ''}
-              variant="filled"
+              variant="outlined"
               onChange={handleInputChange}
               name="quantity"
               fullWidth
@@ -268,7 +269,7 @@ const EditWorkPage = () => {
             <TextField
               label="Discount"
               value={work.discount || ''}
-              variant="filled"
+              variant="outlined"
               onChange={handleInputChange}
               name="discount"
               fullWidth
@@ -279,7 +280,7 @@ const EditWorkPage = () => {
             <TextField
               label="Reminder"
               value={work.reminder || ''}
-              variant="filled"
+              variant="outlined"
               onChange={handleInputChange}
               name="reminder"
               fullWidth
@@ -290,7 +291,7 @@ const EditWorkPage = () => {
             <TextField
               label="Payment Status"
               value={work.paymentStatus || ''}
-              variant="filled"
+              variant="outlined"
               onChange={handleInputChange}
               name="paymentStatus"
               fullWidth
@@ -302,6 +303,7 @@ const EditWorkPage = () => {
               <Select
                 inputProps={{ 'aria-label': 'Without label' }}
                 displayEmpty
+                variant="outlined"
                 name="paymentStatus" // Add name to track the field
                 value={work.paymentStatus || ''}
                 onChange={(e) => handleInputChange({ target: { name: "paymentStatus", value: e.target.value } })}
@@ -319,7 +321,7 @@ const EditWorkPage = () => {
             <TextField
               label="Remark"
               value={work.remark || ''}
-              variant="filled"
+             variant="outlined"
               onChange={handleInputChange}
               name="remark"
               fullWidth
@@ -330,10 +332,10 @@ const EditWorkPage = () => {
           </Grid2>
 
           <Box display="flex" justifyContent="flex-end" width="100%" mt={2} gap={2}>
-            <Button variant="contained" onClick={() => navigate('/')} sx={{ mr: 1, bgcolor: colors.redAccent[500] }} >
+            <Button variant="outlined" onClick={() => navigate('/')} sx={{ mr: 1,textTransform:'none',fontSize:'.8rem' }} >
               Cancel
             </Button>
-            <Button variant="contained" onClick={handleSaveChanges} sx={{ bgcolor: colors.teal[300] }}>
+            <Button className='gradient-button' variant="contained" onClick={handleSaveChanges} sx={{ bgcolor: colors.teal[300],textTransform:'none',fontSize:'.8rem' }}>
               Save Changes
             </Button>
           </Box>
