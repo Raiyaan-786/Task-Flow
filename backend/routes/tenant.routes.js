@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createPlan, getAllPlans, getReceipt, getTenant, loginTenant, processPayment, registerTenant, updateTenant, updateTenantPlanDetails } from "../controllers/tenant.controller.js";
+import { createPlan, getAllPlans, getReceipt, getTenant, loginTenant, processPayment, registerTenant, updateTenant, updateTenantCompanyDetails, updateTenantPlanDetails } from "../controllers/tenant.controller.js";
 import { authorizeRole, verifyOwnerJWT } from "../middlewares/ownerAuth.middleware.js";
 import multer from "multer";
 
@@ -17,6 +17,7 @@ router.route("/update/:tenantId").put(upload.single("image") ,verifyOwnerJWT, au
 router.route("/updateplan/:tenantId").post(verifyOwnerJWT, authorizeRole("Tenant"),updateTenantPlanDetails);
 router.route("/payments/process").post(verifyOwnerJWT, authorizeRole("Tenant"), processPayment);
 router.route("/payments/receipt/:paymentId").get(verifyOwnerJWT, authorizeRole("Tenant") , getReceipt);
+router.route("/updatecompany/:tenantId").put(upload.single("companyLogo"),verifyOwnerJWT,authorizeRole("Tenant"),updateTenantCompanyDetails);
 
 
 export default router;
