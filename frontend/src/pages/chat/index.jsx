@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useTheme } from "@emotion/react";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
@@ -19,12 +19,12 @@ const Chat = () => {
 
   return (
     <Box
-    
       display="flex"
       flexDirection="column"
       height="88%"
       margin="10px"
       p={0.1}
+      // bgcolor={"red"}
     >
       {/* Fixed Header */}
       <Header title="Chat Management" />
@@ -35,32 +35,29 @@ const Chat = () => {
         bgcolor={colors.foreground[100]}
         flexGrow={1}
         mt="2px"
+        // bgcolor="orange"
         display="flex"
         flexDirection="row"
         borderRadius="10px"
+        height={"100%"}
         overflow="hidden" // Prevents entire page from scrolling
       >
-        {/* Sidebar - Fixed Contacts Section */}
+       
         <Box
           width="25%"
           minWidth="250px"
-          // borderRight={`1px solid ${colors.foreground[100]}`}
+          borderRight={`1px solid ${colors.bgc[200]}`}
           display="flex"
           flexDirection="column"
           flexShrink={0} // Prevents shrinking when chat expands
+          // bgcolor={"black"}
         >
-          {/* Contacts Header */}
-          {/* <Box
-            p={1}
-            fontWeight="bold"
-            bgcolor={colors.foreground[100]}
-            textAlign="center"
-            fontSize="1.1rem"
-          >
-            Contacts
-          </Box> */}
+          
 
-          {/* Scrollable Contacts List */}
+          <Typography variant="h3" sx={{ p: 2, fontWeight: "bold" }}>
+              Contacts
+            </Typography>
+         
           <Box
             flexGrow={1}
             overflow="auto"
@@ -68,9 +65,26 @@ const Chat = () => {
             sx={{
               maxHeight: isDropdownOpen ? "400px" : "100%",
               scrollbarWidth: isDropdownOpen ? "auto" : "thin",
+              
+              
               transition: "max-height 0.3s ease-in-out",
+              // bgcolor:colors.bgc[100],
+               '&::-webkit-scrollbar': {
+                width: '8px',
+              },
+              '&::-webkit-scrollbar-track': {
+                background: colors.foreground[100],
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: colors.blueHighlight[900],
+                borderRadius: '4px',
+              },
+              '&::-webkit-scrollbar-thumb:hover': {
+                background: colors.blueHighlight[800],
+              },
             }}
           >
+            
             <SidebarForChat
               onSelectContact={setSelectedContact}
               onDropdownToggle={setIsDropdownOpen}
@@ -84,11 +98,10 @@ const Chat = () => {
           display="flex"
           flexDirection="column"
           height="100%"
-          p="0 10px"
+          // p="0 10px"
           overflow="hidden" // Prevents full page scrolling
         >
           <ChatContainer
-          
             selectedContact={selectedContact}
             onCloseChat={handleCloseChat}
             style={{ flexGrow: 1, overflowY: "auto" }} // Scrolls only ChatContainer

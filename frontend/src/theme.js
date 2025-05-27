@@ -121,7 +121,8 @@ export const tokens =(mode)=>({
         900: "#0065e2"  // Darkest, vivid blue (base color) for strong emphasis
       },
       chatclr:{
-        100:"#3b44d9", 
+        100:"#3b44d9", //the other person's chat color
+        200:"#7aa369"   //your chat color 
       },
       bgc:{
         100:"#121212",
@@ -224,7 +225,8 @@ export const tokens =(mode)=>({
             1000:"#2563eb"
           },
            chatclr:{
-        100:"#e5e9ff", 
+        100:"#e5e9ff",  // the other person's chat color
+        200:"#ddfbd0"  // your chat color
       },
           bgc:{
             100:"#f0f0f0",

@@ -9,6 +9,7 @@ import {
   Tooltip,
   Button,
   Modal,
+  Avatar,
 } from "@mui/material";
 import {
   Send as SendIcon,
@@ -201,8 +202,9 @@ const ChatContainer = () => {
           bgcolor: colors.foreground[100],
           p: 1,
           mb: 1,
-          borderRadius: "4px",
-          
+          borderRadius: "40px",
+          bgcolor: colors.chatclr[100],
+          width: "400px",
         }}
       >
         {fileType === "image" ? (
@@ -245,12 +247,15 @@ const ChatContainer = () => {
         throw new Error(`Failed to fetch file: ${response.statusText}`);
       }
 
-      const contentType = response.headers.get("Content-Type") || "application/octet-stream";
+      const contentType =
+        response.headers.get("Content-Type") || "application/octet-stream";
       const fileExtension = fileName?.split(".").pop()?.toLowerCase();
       const mimeType = mimeTypeMap[fileExtension] || contentType;
 
       const blob = await response.blob();
-      const url = window.URL.createObjectURL(new Blob([blob], { type: mimeType }));
+      const url = window.URL.createObjectURL(
+        new Blob([blob], { type: mimeType })
+      );
 
       const a = document.createElement("a");
       a.href = url;
@@ -296,7 +301,7 @@ const ChatContainer = () => {
         msg.file.filename?.match(/\.(jpg|jpeg|png|gif)$/i);
 
       return (
-        <Box >
+        <Box>
           {msg.isUploading ? (
             <Typography variant="body2">
               Uploading {msg.file.filename}...
@@ -330,9 +335,14 @@ const ChatContainer = () => {
                     alignItems: "center",
                     mb: 1,
                     cursor: "pointer",
-                    "&:hover": { bgcolor: colors.grey[700], borderRadius: "4px" },
+                    "&:hover": {
+                      bgcolor: colors.grey[700],
+                      borderRadius: "4px",
+                    },
                   }}
-                  onClick={() => handleOpenFile(msg.file.url, msg.file.filename)}
+                  onClick={() =>
+                    handleOpenFile(msg.file.url, msg.file.filename)
+                  }
                 >
                   <InsertDriveFileIcon sx={{ mr: 1 }} />
                   <Typography variant="body2">{msg.file.filename}</Typography>
@@ -347,7 +357,7 @@ const ChatContainer = () => {
                 className="gradient-button"
                 sx={{
                   mt: 1,
-                  mb:1,
+                  mb: 1,
                   textTransform: "none",
                   bgcolor: colors.primary[500],
                   "&:hover": {
@@ -377,8 +387,15 @@ const ChatContainer = () => {
         display="flex"
         alignItems="center"
         justifyContent="center"
+        bgcolor={colors.bgc[100]}
+        sx={{
+          backgroundImage: `url("/chatbgc.webp")`,
+          backgroundSize: "fill",
+          backgroundPosition: "center",
+          opacity: 0.4,
+        }}
       >
-        <Typography variant="h6" color="gray">
+        <Typography variant="h3" color="black" >
           Select a contact to start chatting
         </Typography>
       </Box>
@@ -390,41 +407,50 @@ const ChatContainer = () => {
       display="flex"
       flexDirection="column"
       flexGrow={1}
-      p={2}
-      bgcolor={colors.foreground[100]}
+      // p={2}
+      bgcolor={colors.bgc[100]}
       borderRadius="10px"
-      justifyContent={'space-between'}
+      justifyContent={"space-between"}
       // sx={{ bgcolor:'red'}}
+      
     >
       {/* Chat Header */}
       <Box
-        
         sx={{
           p: 1,
-          mb: 1,
+          // mb: 1,
+          pl: 2,
+          pr: 2,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          borderRadius: "5px",
-          bgcolor:colors.foreground[100],
+          // borderRadius: "5px",
+          height: "10%",
+          bgcolor: colors.foreground[100],
+          
+          zIndex: 10,
+          boxShadow: 1,
         }}
       >
-        <Box>
-          <Typography variant="subtitle1">
-            {selectedUser.name} ({selectedUser.role})
-            {onlineUsers.includes(selectedUser._id) && (
-              <span style={{ color: "green", marginLeft: "8px" }}>
-                • Online
-              </span>
-            )}
-          </Typography>
-          <Typography variant="body2" color="textSecondary">
-            {selectedUser.email}
-          </Typography>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Avatar src={selectedUser.image} sx={{ width: 45, height: 45 }} />
+          <Box p={1}>
+            <Typography variant="h5">
+              {selectedUser.name} ({selectedUser.role})
+              {onlineUsers.includes(selectedUser._id) && (
+                <span style={{ color: "green", marginLeft: "8px" }}>
+                  Online
+                </span>
+              )}
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              {selectedUser.email}
+            </Typography>
+          </Box>
         </Box>
         <IconButton
           onClick={() => dispatch(setSelectedUser(null))}
-          color="error"
+          // color="error"
         >
           <CloseIcon />
         </IconButton>
@@ -434,17 +460,17 @@ const ChatContainer = () => {
       <Box
         flexGrow={1}
         overflow="auto"
-        p={2}
+        p={"0px 50px"}
         // bgcolor={colors.bgc[100]}
         
-        borderRadius="5px"
+
         sx={{
-          maxHeight: "60vh",
+          height: "20vh",
           display: "flex",
           flexDirection: "column",
           // backgroundImage:`url("/chatbgc2.png")`,
-          backgroundColor: colors.foreground[100],
-          border:`1px solid ${colors.grey[700]}`,
+          // backgroundColor: colors.bgc[100],
+          // border:`1px solid ${colors.grey[700]}`,
           
         }}
       >
@@ -460,18 +486,21 @@ const ChatContainer = () => {
               <Box
                 key={msg._id || index}
                 sx={{
-                  
                   mb: 1.5,
                   p: 1.5,
                   borderRadius: "6px",
-                  bgcolor: isMyMessage ? colors.chatclr[100] : colors.bgc[100],
+                  bgcolor: isMyMessage
+                  ? colors.chatclr[200]
+                    : colors.chatclr[100],
+                    // : colors.foreground[100],
                   // color: isMyMessage ? "white" : "black",
                   alignSelf: isMyMessage ? "flex-end" : "flex-start",
                   marginLeft: isMyMessage ? "auto" : 0,
                   marginRight: isMyMessage ? 0 : "auto",
                   maxWidth: "60%",
                   wordBreak: "break-word",
-                  border: `.5px solid ${colors.grey[700]}`,
+                  // border: `.5px solid ${colors.grey[700]}`,
+                  boxShadow: 1,
                 }}
               >
                 {renderMessageContent(msg)}
@@ -480,7 +509,6 @@ const ChatContainer = () => {
                   display="block"
                   sx={{
                     textAlign: isMyMessage ? "right" : "left",
-                    
                   }}
                 >
                   {messageDate.toString() !== "Invalid Date"
@@ -500,10 +528,18 @@ const ChatContainer = () => {
       <Box
         display="flex"
         flexDirection="column"
-        mt={2}
-        // bgcolor="white"
+        justifyContent="center"
+        // mt={2}
+        // height={"10%"}
+        bgcolor={colors.foreground[100]}
+        m={2}
+        mt={0}
         // p={1}
-        borderRadius="10px"
+        sx={{
+          p: selectedFile ? 4 : 1,
+        }}
+        borderRadius="90px"
+        boxShadow={2}
       >
         {selectedFile && renderFilePreview()}
 
@@ -518,8 +554,12 @@ const ChatContainer = () => {
           />
           <label htmlFor="file-upload">
             <Tooltip title="Attach file">
-              <IconButton  sx={{color:'white',height:'50px',width:'50px'}}  className="gradient-button"  component="span" disabled={isSending}>
-                
+              <IconButton
+                sx={{ color: "white", height: "50px", width: "50px" }}
+                className="gradient-button"
+                component="span"
+                disabled={isSending}
+              >
                 <AttachFileIcon />
               </IconButton>
             </Tooltip>
@@ -532,16 +572,29 @@ const ChatContainer = () => {
             value={textMessage}
             onChange={(e) => setTextMessage(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && sendMessageHandler()}
-            sx={{ ml: 2, mr: 2 }}
+            sx={{
+              ml: 2,
+              mr: 2,
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  border: "none", // Remove border
+                },
+                "&:hover fieldset": {
+                  border: "none", // Remove border on hover
+                },
+                "&.Mui-focused fieldset": {
+                  border: "none", // Remove border on focus
+                },
+              },
+            }}
             disabled={isSending}
-            
           />
 
           <IconButton
             className="gradient-button"
             onClick={sendMessageHandler}
-            sx={{color:'white',height:'50px',width:'50px'}}
-            
+            sx={{ color: "white", height: "50px", width: "50px" }}
+
             // disabled={(!textMessage.trim() && !selectedFile) || isSending}
           >
             <SendIcon />
@@ -561,8 +614,8 @@ const ChatContainer = () => {
             position: "relative",
             maxWidth: "90vw",
             maxHeight: "90vh",
-            bgcolor: "black",
-            borderRadius: "8px",
+            // bgcolor: "black",
+            // borderRadius: "8px",
             overflow: "hidden",
           }}
         >
@@ -572,7 +625,7 @@ const ChatContainer = () => {
             style={{
               maxWidth: "100%",
               maxHeight: "90vh",
-              objectFit: "contain",
+              objectFit: "fill",
             }}
           />
           <IconButton
