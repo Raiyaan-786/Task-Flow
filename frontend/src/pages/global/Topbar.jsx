@@ -144,7 +144,7 @@ const Topbar = ({ isCollapsed, setIsCollapsed }) => {
   // Updated notification content with "Clear All" button
   const notificationContent = (
     <>
-      <List sx={{ width: 350, maxHeight: 400, overflow: "auto" }}>
+      <List sx={{ width: 350, maxHeight: 400, overflowY: "auto",overflowX: "hidden" }}>
         {notifications.length === 0 ? (
           <Typography variant="body2" sx={{ p: 2, textAlign: "center" }}>
             No notifications
@@ -185,8 +185,9 @@ const Topbar = ({ isCollapsed, setIsCollapsed }) => {
       {notifications.length > 0 && (
         <Box sx={{ p: 1, borderTop: "1px solid #eee", textAlign: "center" }}>
           <Button
+            className="gradient-button"
             variant="text"
-            color="error"
+            
             size="small"
             onClick={() => {
               setNotifications([]); // Clear notifications from state
@@ -196,7 +197,7 @@ const Topbar = ({ isCollapsed, setIsCollapsed }) => {
             sx={{
               textTransform: "none",
               width: "100%",
-              color: colors.redAccent[500],
+              // color: colors.redAccent[500],
               "&:hover": {
                 backgroundColor: colors.redAccent[100],
               },

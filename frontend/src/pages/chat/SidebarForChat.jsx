@@ -7,6 +7,7 @@ import {
   Collapse,
   Typography,
   Avatar,
+  ListItemAvatar,
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
@@ -88,12 +89,13 @@ const SidebarForChat = () => {
     return users.map((user) => (
       <ListItemButton
         key={user._id}
-        sx={{ pl: 4 }}
+        sx={{ pl: 4,borderRadius:2 }}
         onClick={() => handleSelectContact(user)}
         selected={selectedUser?._id === user._id}
+        
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Avatar src={user.avatar} sx={{ width: 32, height: 32 }} />
+          <Avatar src={user.image} sx={{ width: 32, height: 32 }} />
           <ListItemText 
             primary={isCustomer ? user.customerName : user.name} 
             secondary={onlineUsers.includes(user._id) ? "Online" : "Offline"}
@@ -107,14 +109,13 @@ const SidebarForChat = () => {
     <Box
       sx={{
         // width: 280,
-        borderRight: "1px solid #ccc",
+        // borderRight: "1px solid #ccc",
         height: "100vh",
-        overflowY: "auto",
+        // overflowY: "auto",
+        // bgcolor:'red'
       }}
     >
-      <Typography variant="h6" sx={{ p: 2, fontWeight: "bold" }}>
-        Contacts
-      </Typography>
+     
       
       <List>
         {/* Admins Section */}
@@ -124,9 +125,11 @@ const SidebarForChat = () => {
         </ListItemButton>
         <Collapse in={openSections.admins} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
+            
             {renderUserList(users.admins)}
           </List>
         </Collapse>
+        
 
         {/* Managers Section */}
         <ListItemButton onClick={() => toggleSection("managers")}>
