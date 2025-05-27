@@ -84,7 +84,7 @@ const OwnerClients = () => {
                     <Typography fontWeight="bold">Image</Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography fontWeight="bold">Name</Typography>
+                    <Typography fontWeight="bold">Email</Typography> {/* Changed from Name to Email */}
                   </TableCell>
                   <TableCell>
                     <Typography fontWeight="bold">Phone</Typography>
@@ -113,11 +113,11 @@ const OwnerClients = () => {
                       <TableCell>
                         <Avatar
                           src={client.image || 'https://via.placeholder.com/40'}
-                          alt={client.name}
+                          alt={client.email} 
                           sx={{ width: 40, height: 40 }}
                         />
                       </TableCell>
-                      <TableCell>{client.name || 'N/A'}</TableCell>
+                      <TableCell>{client.email || 'N/A'}</TableCell> {/* Changed from name to email */}
                       <TableCell>{client.phone || 'N/A'}</TableCell>
                       <TableCell>{client.plan?.tier || 'N/A'}</TableCell>
                     </TableRow>

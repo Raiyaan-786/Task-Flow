@@ -50,7 +50,7 @@ export const loginTenant = async (req, res) => {
 
 export const getTenant = async (req, res) => {
   try {
-    const tenantId = req.user?.tenantId; 
+    const tenantId = req.user?.id; 
 
     if (!tenantId) {
       return res.status(401).json({ error: "Unauthorized: Tenant ID not found in token" });

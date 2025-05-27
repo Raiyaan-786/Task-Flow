@@ -38,7 +38,6 @@ const OwnerPayments = () => {
           },
         });
         setPayments(response.data);
-        console.log(response.data)
         setLoading(false);
       } catch (err) {
         setError('Failed to fetch payments. Please try again.');
@@ -84,7 +83,7 @@ const OwnerPayments = () => {
                     <Typography fontWeight="bold">Tenant Image</Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography fontWeight="bold">Tenant Name</Typography>
+                    <Typography fontWeight="bold">Tenant Email</Typography> {/* Changed from Tenant Name to Tenant Email */}
                   </TableCell>
                   <TableCell>
                     <Typography fontWeight="bold">Plan Name</Typography>
@@ -116,11 +115,11 @@ const OwnerPayments = () => {
                       <TableCell>
                         <Avatar
                           src={payment.tenant?.image || 'https://via.placeholder.com/40'}
-                          alt={payment.tenant?.name || 'Tenant'}
+                          alt={payment.tenant?.email || 'Tenant'} 
                           sx={{ width: 40, height: 40 }}
                         />
                       </TableCell>
-                      <TableCell>{payment.tenant?.name || 'N/A'}</TableCell>
+                      <TableCell>{payment.tenant?.email || 'N/A'}</TableCell> {/* Changed from name to email */}
                       <TableCell>{payment.plan?.name || 'N/A'}</TableCell>
                       <TableCell>{payment.amount} {payment.currency}</TableCell>
                       <TableCell>{payment.status}</TableCell>
