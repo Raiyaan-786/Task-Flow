@@ -200,6 +200,7 @@ const createUser = async (req, res) => {
 
     const sharedUser = new SharedUser({
       companyName: tenant.companyName,
+      companyLogo: tenant.companyLogo,
       tenantId,
       email,
       password: hashedPassword,

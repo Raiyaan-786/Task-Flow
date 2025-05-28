@@ -149,6 +149,7 @@ const createCustomer = async (req, res) => {
     // Create SharedCustomer for login
     const sharedCustomer = new SharedCustomer({
       companyName: tenant.companyName,
+      companyLogo: tenant.companyLogo,
       tenantId,
       email,
       password: hashedPassword,
