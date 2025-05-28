@@ -61,9 +61,9 @@ const UserProfilePage = () => {
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
 
-  // Get the current logged-in user from localStorage
-  const user = JSON.parse(localStorage.getItem('user'));
-  const token = localStorage.getItem('token');
+  // Initialize user and token as state
+  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('user')));
+  const [token, setToken] = useState(localStorage.getItem('token'));
 
   // States
   const [loading, setLoading] = useState(true);
@@ -119,7 +119,6 @@ const UserProfilePage = () => {
             status: fetchedUser.status || 'Active',
             image: fetchedUser.image || ''
           });
-          // Only set imagePreview if no image is currently selected
           if (!profileImage) {
             setImagePreview(fetchedUser.image || '');
             setConfirmedImage(fetchedUser.image || '');
@@ -136,7 +135,7 @@ const UserProfilePage = () => {
       }
     };
     fetchUser();
-  }, [navigate, user, token]); // Dependencies ensure it runs only on mount or auth changes
+  }, [navigate, user?._id, token]);
 
   // Handle profile image change
   const handleImageChange = (e) => {
@@ -199,12 +198,12 @@ const UserProfilePage = () => {
       setConfirmedImage(updatedImage);
       setImagePreview(updatedImage);
       setUserData(prev => ({ ...prev, image: updatedImage }));
+      setUser(prev => ({ ...prev, image: updatedImage }));
       localStorage.setItem('user', JSON.stringify({
         ...user,
         image: updatedImage
       }));
       alert('Image updated successfully!');
-      window.location.reload();
       setProfileImage(null);
     } catch (error) {
       console.error('Error updating image:', error);
@@ -225,7 +224,6 @@ const UserProfilePage = () => {
     setPasswordError('');
     setPasswordSuccess('');
 
-    // Validate inputs
     if (!currentPassword || !newPassword || !confirmPassword) {
       setPasswordError('All fields are required.');
       return;
@@ -240,7 +238,6 @@ const UserProfilePage = () => {
     }
 
     try {
-      // Verify current password
       const loginResponse = await API.post('/auth/login', {
         email: user.email,
         password: currentPassword,
@@ -251,7 +248,6 @@ const UserProfilePage = () => {
         return;
       }
 
-      // Update password
       const response = await API.put(`/auth/users/${user._id}`, {
         password: newPassword,
       }, {
@@ -298,6 +294,7 @@ const UserProfilePage = () => {
       setConfirmedImage('');
       setProfileImage(null);
       setUserData(prev => ({ ...prev, image: '' }));
+      setUser(prev => ({ ...prev, image: '' }));
       localStorage.setItem('user', JSON.stringify({ ...user, image: '' }));
       alert('Profile image deleted successfully!');
     } catch (error) {
@@ -386,7 +383,7 @@ const UserProfilePage = () => {
         <Divider variant="middle" sx={{ mb: 1, mt: 1 }} />
         <form onSubmit={handleProfileSubmit}>
           <TabPanel value={tabValue} index={0}>
-            <Grid2 container spacing={2} gap={2} color={colors.grey[200]} ml={8}>
+            <Grid2 container spacing={2} gap={1} color={colors.grey[200]} ml={8}>
               <Grid2 size={4} display={"flex"} alignItems={"center"}>
                 <label>Name</label>
               </Grid2>
@@ -413,24 +410,12 @@ const UserProfilePage = () => {
                   sx={{ backgroundColor: "#fff" }}
                 />
               </Grid2>
-              <Grid2 size={4} display={"flex"} alignItems={"center"}>
-                <label>Address</label>
-              </Grid2>
-              <Grid2 size={6}>
-                <TextField
-                  value={userData.address}
-                  size="small"
-                  fullWidth
-                  margin="normal"
-                  disabled
-                  sx={{ backgroundColor: "#fff" }}
-                />
-              </Grid2>
+             
               <Grid2 size={4} display={"flex"} alignItems={"center"}>
                 <label>Profile Image</label>
               </Grid2>
               <Grid2 size={4}>
-                <Avatar src={imagePreview} alt="Profile" sx={{ width: 60, height: 60 }} />
+                <Avatar src={imagePreview} alt="Profile" sx={{ width: 40, height: 40 }} />
               </Grid2>
               <Grid2 size={2} sx={{ alignItems: 'center', justifyContent: "end", display: 'flex' }}>
                 <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: "none" }} id="profile-image-input" />
@@ -442,11 +427,11 @@ const UserProfilePage = () => {
             </Grid2>
           </TabPanel>
           <TabPanel value={tabValue} index={1}>
-            <Grid2 container spacing={2} gap={1} color={colors.grey[200]} ml={8}>
-              <Grid2 size={4} display={"flex"} alignItems={"center"}>
+            <Grid2 container spacing={5} gap={1} color={colors.grey[200]} ml={8}>
+              <Grid2 size={2} display={"flex"} alignItems={"center"}>
                 <label>Department</label>
               </Grid2>
-              <Grid2 size={6}>
+              <Grid2 size={4}>
                 <TextField
                   value={userData.department}
                   size="small"
@@ -456,10 +441,10 @@ const UserProfilePage = () => {
                   sx={{ backgroundColor: "#fff" }}
                 />
               </Grid2>
-              <Grid2 size={4} display={"flex"} alignItems={"center"}>
+              <Grid2 size={2} display={"flex"} alignItems={"center"}>
                 <label>Post Name</label>
               </Grid2>
-              <Grid2 size={6}>
+              <Grid2 size={4}>
                 <TextField
                   value={userData.postname}
                   size="small"
@@ -469,25 +454,11 @@ const UserProfilePage = () => {
                   sx={{ backgroundColor: "#fff" }}
                 />
               </Grid2>
-              <Grid2 size={4} display={"flex"} alignItems={"center"}>
-                <label>Date of Joining</label>
-              </Grid2>
-              <Grid2 size={6}>
-                <TextField
-                  type="date"
-                  value={userData.dateofjoining}
-                  size="small"
-                  fullWidth
-                  margin="normal"
-                  disabled
-                  sx={{ backgroundColor: "#fff" }}
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid2>
-              <Grid2 size={4} display={"flex"} alignItems={"center"}>
+              
+              <Grid2 size={2} display={"flex"} alignItems={"center"}>
                 <label>Role</label>
               </Grid2>
-              <Grid2 size={6}>
+              <Grid2 size={4}>
                 <TextField
                   select
                   value={userData.role}
@@ -502,10 +473,10 @@ const UserProfilePage = () => {
                   ))}
                 </TextField>
               </Grid2>
-              <Grid2 size={4} display={"flex"} alignItems={"center"}>
+              <Grid2 size={2} display={"flex"} alignItems={"center"}>
                 <label>Status</label>
               </Grid2>
-              <Grid2 size={6}>
+              <Grid2 size={4}>
                 <TextField
                   select
                   value={userData.status}
@@ -519,6 +490,34 @@ const UserProfilePage = () => {
                     <MenuItem key={option} value={option}>{option}</MenuItem>
                   ))}
                 </TextField>
+              </Grid2>
+              <Grid2 size={2} display={"flex"} alignItems={"center"}>
+                <label>Date of Joining</label>
+              </Grid2>
+              <Grid2 size={4}>
+                <TextField
+                  type="date"
+                  value={userData.dateofjoining}
+                  size="small"
+                  fullWidth
+                  margin="normal"
+                  disabled
+                  sx={{ backgroundColor: "#fff" }}
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid2>
+               <Grid2 size={2} display={"flex"} alignItems={"center"}>
+                <label>Address</label>
+              </Grid2>
+              <Grid2 size={4}>
+                <TextField
+                  value={userData.address}
+                  size="small"
+                  fullWidth
+                  margin="normal"
+                  disabled
+                  sx={{ backgroundColor: "#fff" }}
+                />
               </Grid2>
             </Grid2>
           </TabPanel>

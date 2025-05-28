@@ -4,7 +4,7 @@ import { Avatar, Box, Divider, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
 import { color, motion } from "framer-motion";
 import { tokens } from "../../theme";
-const user = JSON.parse(localStorage.getItem('user'));
+const user = JSON.parse(localStorage.getItem("user"));
 import {
   AssessmentOutlined,
   ChatBubbleOutlineOutlined,
@@ -83,7 +83,7 @@ const Sidebar = ({ isCollapsed }) => {
           height: "100%",
           overflowX: "hidden",
           overflowY: "auto",
-          bgcolor:colors.foreground[100]
+          bgcolor: colors.foreground[100],
         }}
       >
         {/* Logo */}
@@ -129,7 +129,11 @@ const Sidebar = ({ isCollapsed }) => {
                     opacity: isCollapsed ? 0 : 1,
                   }}
                 >
-                  TASK-FLOW
+                  {user.companyName
+                    ? user.companyName.length > 10
+                      ? `${user.companyName.slice(0, 10)}...`
+                      : user.companyName
+                    : "TASK-FLOW"}
                 </Typography>
               </motion.div>
             )}
@@ -139,7 +143,10 @@ const Sidebar = ({ isCollapsed }) => {
         {/* User Profile */}
         {!isCollapsed && (
           <motion.div
-            animate={{ opacity: isCollapsed ? 0 : 1, height: isCollapsed ? 0 : "auto" }}
+            animate={{
+              opacity: isCollapsed ? 0 : 1,
+              height: isCollapsed ? 0 : "auto",
+            }}
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
             sx={{ mb: "25px", overflow: "hidden" }}
           >
@@ -153,12 +160,18 @@ const Sidebar = ({ isCollapsed }) => {
               />
             </Box> */}
             <Box display="flex" justifyContent="center" alignItems="center">
-                          
-                          <Avatar src={user?.image } alt="Remy Sharp" sx={{ width: "100px", height: "100px" }} />
-                        </Box>
+              <Avatar
+                src={user?.image}
+                alt="Remy Sharp"
+                sx={{ width: "100px", height: "100px" }}
+              />
+            </Box>
             <Box textAlign="center">
               <motion.div
-                animate={{ opacity: isCollapsed ? 0 : 1, x: isCollapsed ? -10 : 0 }}
+                animate={{
+                  opacity: isCollapsed ? 0 : 1,
+                  x: isCollapsed ? -10 : 0,
+                }}
                 transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
               >
                 <Typography
@@ -168,7 +181,9 @@ const Sidebar = ({ isCollapsed }) => {
                   sx={{
                     m: "10px 0 0 0",
                     opacity: isCollapsed ? 0 : 1,
-                    transform: isCollapsed ? "translateX(-10px)" : "translateX(0)",
+                    transform: isCollapsed
+                      ? "translateX(-10px)"
+                      : "translateX(0)",
                     transition: "all 0.3s ease",
                   }}
                 >
@@ -176,7 +191,10 @@ const Sidebar = ({ isCollapsed }) => {
                 </Typography>
               </motion.div>
               <motion.div
-                animate={{ opacity: isCollapsed ? 0 : 1, x: isCollapsed ? -10 : 0 }}
+                animate={{
+                  opacity: isCollapsed ? 0 : 1,
+                  x: isCollapsed ? -10 : 0,
+                }}
                 transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
               >
                 <Typography
@@ -184,7 +202,9 @@ const Sidebar = ({ isCollapsed }) => {
                   color={colors.blueHighlight[900]}
                   sx={{
                     opacity: isCollapsed ? 0 : 1,
-                    transform: isCollapsed ? "translateX(-10px)" : "translateX(0)",
+                    transform: isCollapsed
+                      ? "translateX(-10px)"
+                      : "translateX(0)",
                     transition: "all 0.3s ease",
                   }}
                 >
@@ -196,7 +216,7 @@ const Sidebar = ({ isCollapsed }) => {
         )}
 
         {/* Menu Items with Scroll */}
-        <Box sx={{ flexGrow: 1,mt:2 }} >
+        <Box sx={{ flexGrow: 1, mt: 2 }}>
           {menuItems.slice(0, 6).map((item) => (
             <Link
               to={item.to}
@@ -256,7 +276,10 @@ const Sidebar = ({ isCollapsed }) => {
                 </Box>
                 {!isCollapsed && (
                   <motion.div
-                    animate={{ opacity: isCollapsed ? 0 : 1, x: isCollapsed ? -20 : 0 }}
+                    animate={{
+                      opacity: isCollapsed ? 0 : 1,
+                      x: isCollapsed ? -20 : 0,
+                    }}
                     transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                   >
                     <Typography
@@ -265,7 +288,9 @@ const Sidebar = ({ isCollapsed }) => {
                       sx={{
                         color: "inherit",
                         opacity: isCollapsed ? 0 : 1,
-                        transform: isCollapsed ? "translateX(-20px)" : "translateX(0)",
+                        transform: isCollapsed
+                          ? "translateX(-20px)"
+                          : "translateX(0)",
                         transition: "all 0.3s ease",
                         whiteSpace: "nowrap",
                       }}
@@ -337,7 +362,10 @@ const Sidebar = ({ isCollapsed }) => {
                 </Box>
                 {!isCollapsed && (
                   <motion.div
-                    animate={{ opacity: isCollapsed ? 0 : 1, x: isCollapsed ? -20 : 0 }}
+                    animate={{
+                      opacity: isCollapsed ? 0 : 1,
+                      x: isCollapsed ? -20 : 0,
+                    }}
                     transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                   >
                     <Typography
@@ -346,7 +374,9 @@ const Sidebar = ({ isCollapsed }) => {
                       sx={{
                         color: "inherit",
                         opacity: isCollapsed ? 0 : 1,
-                        transform: isCollapsed ? "translateX(-20px)" : "translateX(0)",
+                        transform: isCollapsed
+                          ? "translateX(-20px)"
+                          : "translateX(0)",
                         transition: "all 0.3s ease",
                         whiteSpace: "nowrap",
                       }}
@@ -418,7 +448,10 @@ const Sidebar = ({ isCollapsed }) => {
                 </Box>
                 {!isCollapsed && (
                   <motion.div
-                    animate={{ opacity: isCollapsed ? 0 : 1, x: isCollapsed ? -20 : 0 }}
+                    animate={{
+                      opacity: isCollapsed ? 0 : 1,
+                      x: isCollapsed ? -20 : 0,
+                    }}
                     transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                   >
                     <Typography
@@ -427,7 +460,9 @@ const Sidebar = ({ isCollapsed }) => {
                       sx={{
                         color: "inherit",
                         opacity: isCollapsed ? 0 : 1,
-                        transform: isCollapsed ? "translateX(-20px)" : "translateX(0)",
+                        transform: isCollapsed
+                          ? "translateX(-20px)"
+                          : "translateX(0)",
                         transition: "all 0.3s ease",
                         whiteSpace: "nowrap",
                       }}
