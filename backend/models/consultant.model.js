@@ -36,11 +36,8 @@ const consultantSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: [
-        "Active",
-        "Mute"
-      ],
-      default: "Active",
+      enum: ["Active", "Block","Inactive" ,"Mute"],
+      default: "Active"
     },
     accountHolderName: {
       type: String,

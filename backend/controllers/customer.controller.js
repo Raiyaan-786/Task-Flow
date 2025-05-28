@@ -284,6 +284,7 @@ const updateCustomer = async (req, res) => {
       whatsappNo,
       contactPersonName,
       contactPersonPhone,
+      status
     } = req.body;
 
     const tenant = await Tenant.findById(tenantId);
@@ -300,6 +301,7 @@ const updateCustomer = async (req, res) => {
       whatsappNo,
       contactPersonName,
       contactPersonPhone,
+      status
     };
 
     const customer = await Customer.findById(id);

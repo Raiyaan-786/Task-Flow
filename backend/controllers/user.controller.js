@@ -151,6 +151,7 @@ const createUser = async (req, res) => {
     }
 
     const companyName = tenant.companyName ;
+    const companyLogo = tenant.companyLogo ;
 
     const { models } = await getTenantConnection(tenantId, tenant.databaseName);
     const User = models.User;
@@ -177,6 +178,7 @@ const createUser = async (req, res) => {
 
     const newUser = new User({
       companyName,
+      companyLogo,
       tenantId,
       name,
       username,

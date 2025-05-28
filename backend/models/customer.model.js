@@ -47,6 +47,11 @@ const customerSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    status: {
+      type: String,
+      enum: ["Active", "Block","Inactive" ,"Mute"],
+      default: "Active"
+    },
     AadharNo: {
       type: String,
       unique: true,

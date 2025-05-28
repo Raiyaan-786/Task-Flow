@@ -6,6 +6,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    companyLogo: {
+      type: String,
+      default: '',
+    },
     tenantId: {
       type: String,
       required: true,
