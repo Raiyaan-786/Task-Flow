@@ -14,8 +14,8 @@ import { useTheme } from "@emotion/react";
 import { tokens } from "../../theme";
 
 const TenantReciept = () => {
-   const theme = useTheme();
-    const colors = tokens(theme.palette.mode);
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
   const location = useLocation();
   const { plan, billingInfo, paymentDetails, paymentId, transactionDate } =

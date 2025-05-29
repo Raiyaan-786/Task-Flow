@@ -9,12 +9,13 @@ import { SharedUser } from "../models/sharedUser.model.js";
 
 export const registerTenant = async (req, res) => {
   try {
-    const { email, password ,phone} = req.body;
+    const { email, password ,phone , name} = req.body;
     const existingTenant = await Tenant.findOne({ email });
     if (existingTenant) return res.status(400).json({ error: "Email already registered" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newTenant = new Tenant({
+      name,
       email,
       phone,
       password: hashedPassword,
@@ -245,7 +246,6 @@ export const processPayment = async (req, res) => {
   try {
     const {
       tenant,
-      companyName,
       firstName,
       lastName,
       plan,
@@ -256,20 +256,30 @@ export const processPayment = async (req, res) => {
       cvv,
       billingCycle,
     } = req.body;
-    
+
     // Validate required fields for payment
-    if (!tenant || !plan || !amount || !firstName || !lastName || !cardNumber || !expiry || !cvv || !billingCycle || !companyName) {
+    if (!tenant || !plan || !amount || !firstName || !lastName || !cardNumber || !expiry || !cvv || !billingCycle) {
       return res.status(400).json({
         success: false,
         message: 'Missing required fields',
       });
     }
+
     // Fetch plan details
     const planData = await Plan.findById(plan);
     if (!planData) {
       return res.status(404).json({
         success: false,
         message: 'Plan not found',
+      });
+    }
+
+    // Fetch tenant details
+    const tenantData = await Tenant.findById(tenant);
+    if (!tenantData) {
+      return res.status(404).json({
+        success: false,
+        message: 'Tenant not found',
       });
     }
 
@@ -286,102 +296,130 @@ export const processPayment = async (req, res) => {
       cvv,
       status: 'completed',
     });
-
     await payment.save();
-
-    // Fetch tenant details
-    const tenantData = await Tenant.findById(tenant);
-    if (!tenantData) {
-      return res.status(404).json({
-        success: false,
-        message: 'Tenant not found',
-      });
-    }
-    const database = tenantData._id.toString();
-    const { models } = await getTenantConnection(tenantData._id.toString(), database);
-    const User = models.User;
-
-    // Generate login credentials for tenant
-    const username = `${firstName.toLowerCase()}${tenantData._id.toString().slice(0, 10)}`;
-    const password = generateRandomString(12); // In production, hash this
 
     // Calculate plan dates
     const startsAt = new Date();
     const renewsAt = calculateRenewsAt(startsAt, billingCycle);
 
-    // Update tenant's loginCredentials and plan details
-    const updatedTenant = await Tenant.findByIdAndUpdate(
-      tenant,
-      {
-        $set: {
-          'companyName': companyName,
-          'databaseName': database,
-          'loginCredentials.username': username,
-          'loginCredentials.password': password,
-          'plan.tier': planData.tier,
-          'plan.price': amount,
-          'plan.billingCycle': billingCycle,
-          'plan.startsAt': startsAt,
-          'plan.renewsAt': renewsAt,
-          'plan.status': 'active',
-          'plan.isAutoRenew': true,
+    // Check if the tenant's current plan is "free" (first-time subscription)
+    const isFirstTimeSubscription = tenantData.plan.tier.toLowerCase() === 'free';
+
+    let updatedTenant;
+    let user = null;
+    let shareduser = null;
+    let username = tenantData.loginCredentials?.username || '';
+    let password = tenantData.loginCredentials?.password || '';
+
+    if (isFirstTimeSubscription) {
+      // Scenario 1: First-time subscription (current plan is "free")
+      const database = tenantData._id.toString();
+      const { models } = await getTenantConnection(tenantData._id.toString(), database);
+      const User = models.User;
+
+      // Generate login credentials for tenant
+      username = `${firstName.toLowerCase()}${tenantData._id.toString().slice(0, 10)}`;
+      password = generateRandomString(12); // In production, hash this
+
+      // Update tenant's loginCredentials, databaseName, and plan details
+      updatedTenant = await Tenant.findByIdAndUpdate(
+        tenant,
+        {
+          $set: {
+            'companyName': companyName,
+            'databaseName': database,
+            'loginCredentials.username': username,
+            'loginCredentials.password': password,
+            'plan.tier': planData.tier,
+            'plan.price': amount,
+            'plan.billingCycle': billingCycle,
+            'plan.startsAt': startsAt,
+            'plan.renewsAt': renewsAt,
+            'plan.status': 'active',
+            'plan.isAutoRenew': true,
+          },
         },
-      },
-      { new: true }
-    );
-    if (!updatedTenant) {
-      return res.status(404).json({
-        success: false,
-        message: 'Failed to update tenant details',
+        { new: true }
+      );
+
+      if (!updatedTenant) {
+        return res.status(404).json({
+          success: false,
+          message: 'Failed to update tenant details',
+        });
+      }
+
+      // Create a user in the User collection
+      const userName = username;
+      const userEmail = tenantData.email;
+      const userPassword = password;
+
+      // Check if user already exists
+      const existingUser = await User.findOne({ email: userEmail });
+      if (existingUser) {
+        return res.status(400).json({
+          success: false,
+          message: 'User with this email or username already exists',
+        });
+      }
+
+      const hashedPassword = await bcrypt.hash(userPassword, 10);
+
+      // Create new user
+      user = new User({
+        companyName: companyName,
+        tenantId: tenantData._id,
+        name: tenantData.name,
+        username: userName,
+        email: userEmail,
+        password: hashedPassword,
+        role: "Admin",
       });
+      await user.save();
+
+      // Create a shared user
+      shareduser = new SharedUser({
+        companyName: companyName,
+        tenantId: tenantData._id,
+        email: userEmail,
+        password: hashedPassword,
+      });
+      await shareduser.save();
+    } else {
+      // Scenario 2: Plan upgrade (current plan is not "free")
+      // Only update the plan details, keep loginCredentials, email, and databaseName unchanged
+      updatedTenant = await Tenant.findByIdAndUpdate(
+        tenant,
+        {
+          $set: {
+            'companyName': companyName,
+            'plan.tier': planData.tier,
+            'plan.price': amount,
+            'plan.billingCycle': billingCycle,
+            'plan.startsAt': startsAt,
+            'plan.renewsAt': renewsAt,
+            'plan.status': 'active',
+            'plan.isAutoRenew': true,
+          },
+        },
+        { new: true }
+      );
+
+      if (!updatedTenant) {
+        return res.status(404).json({
+          success: false,
+          message: 'Failed to update tenant plan details',
+        });
+      }
     }
 
-    // Create a user in the User collection
-    const userName = username; 
-    const userEmail = tenantData.email; 
-    const userPassword = password; 
-
-    // Check if user already exists
-    const existingUser = await User.findOne({ email: userEmail });
-    if (existingUser) {
-      return res.status(400).json({
-        success: false,
-        message: 'User with this email or username already exists',
-      });
-    }
-
-    const hashedPassword = await bcrypt.hash(userPassword, 10);
-
-    // Create new user
-    const user = new User({
-      companyName: companyName ,
-      tenantId: tenantData._id ,
-      name: tenantData.name,
-      username: userName,
-      email: userEmail,
-      password: hashedPassword,
-      role: "Admin",
-    });
-    await user.save();
-
-    const shareduser = new SharedUser({
-      companyName: companyName,
-      tenantId: tenantData._id ,
-      email: userEmail,
-      password: hashedPassword,
-    });
-
-    await shareduser.save();
-
-    res.status(200).json({
+    // Prepare the response
+    const response = {
       success: true,
       paymentId: payment._id,
-      userId: user._id, 
-      message: 'Payment processed successfully, tenant details updated, and user registered',
-      loginCredentials: {
-        username,
-        password, 
-      },
+      message: isFirstTimeSubscription
+        ? 'Payment processed successfully, tenant details updated, and user registered'
+        : 'Payment processed successfully, plan upgraded',
       plan: {
         tier: planData.tier || 'basic',
         price: amount,
@@ -391,34 +429,43 @@ export const processPayment = async (req, res) => {
         status: 'active',
         isAutoRenew: true,
       },
-      user: {
-        name: userName,
-        username: userName,
-        email: userEmail,
+    };
+
+    // Include additional fields for first-time subscription
+    if (isFirstTimeSubscription) {
+      response.loginCredentials = {
+        username,
+        password,
+      };
+      response.userId = user._id;
+      response.user = {
+        name: username,
+        username: username,
+        email: tenantData.email,
         role: "Admin",
-      },
-      shareduser: {
-        email: userEmail,
+      };
+      response.shareduser = {
+        email: tenantData.email,
         companyName: tenantData.companyName,
-        tenantId: tenantData._id
-      },
-    });
+        tenantId: tenantData._id,
+      };
+    }
+
+    res.status(200).json(response);
   } catch (error) {
     console.error('Payment processing error:', error);
     res.status(500).json({
       success: false,
-      message: `Error processing payment or user registration: ${error.message}`,
+      message: `Error processing payment: ${error.message}`,
     });
   }
 };
-
 export const getReceipt = async (req, res) => {
   try {
     const { paymentId } = req.params;
     const payment = await TenantPayment.findById(paymentId)
       .populate('tenant', 'email')
-      .populate('plan', 'name');
-
+      .populate('plan', 'tier billingCycle');
     if (!payment) {
       return res.status(404).json({ success: false, message: 'Payment not found' });
     }
@@ -432,6 +479,46 @@ export const getReceipt = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error retrieving receipt',
+    });
+  }
+};
+
+export const getTransactions = async (req, res) => {
+  try {
+    // Get the tenant ID from the authenticated user (assumes middleware sets req.user)
+    const tenantId = req.user?.id;
+
+    // If tenant ID is not available, return an error
+    if (!tenantId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized: Tenant ID not found",
+      });
+    }
+
+    const transactions = await TenantPayment.find({ tenant: tenantId })
+      .populate('tenant', 'email name') // Populate tenant's email and name
+      .populate('plan', 'name tier price billingCycle') // Populate plan details
+      .sort({ transactionDate: -1 }); // Sort by transaction date (newest first)
+
+    if (!transactions || transactions.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No transactions found for this tenant",
+      });
+    }
+
+    // Return the transactions
+    res.status(200).json({
+      success: true,
+      transactions,
+    });
+  } catch (error) {
+    console.error('Transaction retrieval error:', error);
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving transactions",
+      error: error.message,
     });
   }
 };

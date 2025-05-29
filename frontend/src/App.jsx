@@ -50,6 +50,7 @@ import OwnerClientDetails from './components/OwnerClientDetails';
 import OwnerPaymentDetails from './components/OwnerPaymentDetails';
 import LandingPage from './landingpage';
 import TenantSignup from './landingpage/TenantSignup';
+import TenantTransactions from './pages/tenant/TenantTransactions';
 
 
 
@@ -141,7 +142,7 @@ function App() {
               <Route path="/tenant/profile" element={<TenantProfile/>} />
               <Route path="/tenant/plan" element={<TenantPlan />} />
               <Route path="/tenant/settings" element={<TenantSettings />} />
-              <Route path="/tenant/transactions" element={<TenantSettings />} />
+              <Route path="/tenant/transactions" element={<TenantTransactions />} />
               <Route path="/tenant/plan-confirmation" element={<TenantPlanConfirm />} />
               <Route path="/tenant/payment" element={<TenantPayment />} />
               <Route path="/tenant/receipt" element={<TenantReceipt />} />

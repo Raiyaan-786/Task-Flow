@@ -13,7 +13,6 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import { FaCreditCard } from "react-icons/fa";
 import TenantLayout from "./TenantLayout";
 import API from "../../api/api";
 import { useTheme } from "@emotion/react";
@@ -21,7 +20,7 @@ import { tokens } from "../../theme";
 
 const TenantPayment = () => {
   const theme = useTheme();
-    const colors = tokens(theme.palette.mode);
+  const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -34,7 +33,6 @@ const TenantPayment = () => {
   const [paymentDetails, setPaymentDetails] = useState({
     firstName: "",
     lastName: "",
-    companyName: "",
     cardNumber: "",
     cvv: "",
     expiryMonth: "",
@@ -70,9 +68,6 @@ const TenantPayment = () => {
     }
     if (!paymentDetails.lastName || paymentDetails.lastName.trim() === "") {
       newErrors.lastName = "Last name is required";
-    }
-    if (!paymentDetails.companyName || paymentDetails.companyName.trim() === "") {
-      newErrors.companyName = "Company name is required";
     }
     if (!paymentDetails.cardNumber || !/^\d{16}$/.test(paymentDetails.cardNumber)) {
       newErrors.cardNumber = "Enter a valid 16-digit card number";
@@ -115,7 +110,6 @@ const TenantPayment = () => {
           tenant: tenant._id,
           firstName: paymentDetails.firstName,
           lastName: paymentDetails.lastName,
-          companyName: paymentDetails.companyName,
           plan: planId,
           amount: billingInfo.total,
           currency: "USD",
@@ -130,7 +124,6 @@ const TenantPayment = () => {
             'Authorization': `Bearer ${tenanttoken}`,
           },
         });
-
 
         if (response.data.success) {
           const updatedTenant = {
@@ -151,11 +144,8 @@ const TenantPayment = () => {
             },
           };
           localStorage.setItem("tenant", JSON.stringify(updatedTenant));
-
           alert(
-            `Payment of $${billingInfo.total.toFixed(2)} processed successfully!\n` +
-              `Login Credentials:\nUsername: ${response.data.loginCredentials.username}\n` +
-              `Password: ${response.data.loginCredentials.password}`
+            `Payment of $${billingInfo.total.toFixed(2)} processed successfully!\n`
           );
           navigate("/tenant/receipt", {
             state: {
@@ -193,175 +183,204 @@ const TenantPayment = () => {
   const years = Array.from({ length: 10 }, (_, i) => currentYear + i);
 
   return (
-   
-      <Box sx={{ p: 3,height:'100vh',bgcolor:colors.foreground[100] }}>
-            <Typography variant="h1" fontWeight={700} mt={5} mb={2} className="pricing-section-title">
-                Payment  <span className="pricing-gradient-text">Details</span>
+    <Box sx={{ p: { xs: 2, sm: 3 }, minHeight: '100vh', bgcolor: colors.foreground[100] }}>
+      {/* Header Section */}
+      <Typography
+        variant="h1"
+        fontWeight={700}
+        mt={5}
+        mb={1}
+        className="pricing-section-title"
+        sx={{ fontSize: { xs: "2rem", sm: "3rem" }, textAlign: "center" }}
+      >
+        Payment <span className="pricing-gradient-text">Details</span>
+      </Typography>
+      <Typography
+        variant="h4"
+        className="pricing-section-subtitle"
+        sx={{ mb: 3, textAlign: "center", fontSize: { xs: "1.2rem", sm: "1.5rem" } }}
+      >
+        Enter your payment information to subscribe to the {selectedPlan.name} plan.
+      </Typography>
+
+      {/* Card Section */}
+      <Card
+        sx={{
+          maxWidth: 900,
+          width: "100%",
+          mx: "auto",
+          mt: 2,
+          borderRadius: 2,
+          boxShadow: 2,
+          border: "1px solid #ddd",
+          display: "flex",
+          flexDirection: "column",
+          minHeight: 400,
+          overflow: "auto",
+        }}
+      >
+        <CardContent sx={{ flexGrow: 1, p: 3 }}>
+          {/* Order Overview */}
+          <Box sx={{ backgroundColor: "#2c3e50", color: "#fff", p: 2, borderRadius: 2, mb: 2 }}>
+            <Typography variant="h6" fontWeight={500}>
+              ORDER OVERVIEW
             </Typography>
-            <Typography variant="h4" className="pricing-section-subtitle">
-                Enter your payment information to subscribe to the {selectedPlan.name} plan.
+            <Typography variant="h5" fontWeight="bold">
+              ${billingInfo.total.toFixed(2)} USD
             </Typography>
-        <Card sx={{height:550, mt: 3, borderRadius: 2, boxShadow: 2, border: "1px solid #ddd",maxWidth:900,overflow:'auto' }}>
-          <CardContent>
-            <Box sx={{ backgroundColor: "#2c3e50", color: "#fff", p: 2, mb: 2,borderRadius:2 }}>
-              <Typography variant="h6">ORDER OVERVIEW</Typography>
-              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                ${billingInfo.total.toFixed(2)} USD
-              </Typography>
-            </Box>
-            <Typography variant="h6" gutterBottom>
-              PLEASE SELECT A PAYMENT METHOD
-            </Typography>
-            {/* <Typography variant="h6" gutterBottom>
-              CREDIT / DEBIT CARD
-            </Typography> */}
-            <Box sx={{ mt: 2 }}>
-              <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-                <TextField
-                  size="small"
-                  fullWidth
-                  label="First name"
-                  name="firstName"
-                  value={paymentDetails.firstName}
-                  onChange={handleInputChange}
-                  error={!!errors.firstName}
-                  helperText={errors.firstName}
-                  sx={{ mb: 2 }}
-                />
-                <TextField
-                size="small"
-                  fullWidth
-                  label="Last name"
-                  name="lastName"
-                  value={paymentDetails.lastName}
-                  onChange={handleInputChange}
-                  error={!!errors.lastName}
-                  helperText={errors.lastName}
-                  sx={{ mb: 2 }}
-                />
-              </Box>
+          </Box>
+
+          {/* Payment Method Section */}
+          <Typography variant="h6" fontWeight={500} mb={2}>
+            PLEASE SELECT A PAYMENT METHOD
+          </Typography>
+          <Box sx={{ mt: 1 }}>
+            {/* First Name and Last Name */}
+            <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
               <TextField
                 size="small"
                 fullWidth
-                label="Company name"
-                name="companyName"
-                value={paymentDetails.companyName}
+                label="First name"
+                name="firstName"
+                value={paymentDetails.firstName}
                 onChange={handleInputChange}
-                error={!!errors.companyName}
-                helperText={errors.companyName || "Please review as it cannot be changed"}
-                sx={{ mb: 2 }}
+                error={!!errors.firstName}
+                helperText={errors.firstName}
               />
               <TextField
                 size="small"
                 fullWidth
-                label="Card number"
-                name="cardNumber"
-                value={paymentDetails.cardNumber}
+                label="Last name"
+                name="lastName"
+                value={paymentDetails.lastName}
                 onChange={handleInputChange}
-                error={!!errors.cardNumber}
-                helperText={errors.cardNumber}
-                sx={{ mb: 2 }}
-                inputProps={{ maxLength: 16 }}
+                error={!!errors.lastName}
+                helperText={errors.lastName}
               />
-              <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-                <TextField
-                  size="small"
-                  fullWidth
-                  label="CVV"
-                  name="cvv"
-                  value={paymentDetails.cvv}
-                  onChange={handleInputChange}
-                  error={!!errors.cvv}
-                  helperText={errors.cvv}
-                  sx={{ flex: 1, mb: 2 }}
-                  inputProps={{ maxLength: 4 }}
-                />
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 1, flex: 1 }}>
-                  <FormControl fullWidth sx={{ mb: 1 }}>
-                    <InputLabel>Month</InputLabel>
-                    <Select
-                      size="small"
-                      name="expiryMonth"
-                      value={paymentDetails.expiryMonth}
-                      onChange={handleInputChange}
-                      error={!!errors.expiry}
-                      sx={{ minWidth: 100 }}
-                    >
-                      {months.map((month) => (
-                        <MenuItem key={month} value={month}>
-                          {month}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <FormControl fullWidth>
-                    <InputLabel>Year</InputLabel>
-                    <Select
-                      name="expiryYear"
-                      value={paymentDetails.expiryYear}
-                      onChange={handleInputChange}
-                      error={!!errors.expiry}
-                      sx={{ minWidth: 100 }}
-                      size="small"
-                    >
-                      {years.map((year) => (
-                        <MenuItem key={year} value={year}>
-                          {year}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Box>
-              </Box>
-              <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
-                {typeof window !== "undefined" && (
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Visa_and_MasterCard_logos.svg/1200px-Visa_and_MasterCard_logos.svg.png"
-                    alt="Accepted cards"
-                    style={{ maxWidth: "200px", height: "auto", display: "block" }}
-                    onError={(e) => {
-                      e.target.style.display = "none";
-                    }}
-                  />
-                )}
+            </Box>
+
+            {/* Card Number */}
+            <TextField
+              size="small"
+              fullWidth
+              label="Card number"
+              name="cardNumber"
+              value={paymentDetails.cardNumber}
+              onChange={handleInputChange}
+              error={!!errors.cardNumber}
+              helperText={errors.cardNumber}
+              inputProps={{ maxLength: 16 }}
+              sx={{ mb: 2 }}
+            />
+
+            {/* CVV and Expiry Date */}
+            <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+              <TextField
+                size="small"
+                label="CVV"
+                name="cvv"
+                value={paymentDetails.cvv}
+                onChange={handleInputChange}
+                error={!!errors.cvv}
+                helperText={errors.cvv}
+                inputProps={{ maxLength: 4 }}
+                sx={{ width: "30%" }}
+              />
+              <Box sx={{ display: "flex", gap: 2, flex: 1 }}>
+                <FormControl fullWidth>
+                  <InputLabel>Month</InputLabel>
+                  <Select
+                    size="small"
+                    name="expiryMonth"
+                    value={paymentDetails.expiryMonth}
+                    onChange={handleInputChange}
+                    error={!!errors.expiry}
+                  >
+                    {months.map((month) => (
+                      <MenuItem key={month} value={month}>
+                        {month}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl fullWidth>
+                  <InputLabel>Year</InputLabel>
+                  <Select
+                    size="small"
+                    name="expiryYear"
+                    value={paymentDetails.expiryYear}
+                    onChange={handleInputChange}
+                    error={!!errors.expiry}
+                  >
+                    {years.map((year) => (
+                      <MenuItem key={year} value={year}>
+                        {year}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Box>
             </Box>
-          </CardContent>
-          <CardActions sx={{ justifyContent: "space-between", p: 2 }}>
-            <Button
-              variant="outlined"
-              onClick={handleCancel}
-              sx={{
-                 borderColor: "#2e3b4e",
-                color: "#2e3b4e",
-                "&:hover": { borderColor: "#1a252f", color: "#1a252f" },
-                textTransform: "none",
-                fontSize: ".875rem",
-              }}
-              disabled={loading}
-            >
-              Cancel
-            </Button>
-            <Button
+
+            {/* Accepted Cards Image */}
+            <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+              {typeof window !== "undefined" && (
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Visa_and_MasterCard_logos.svg/1200px-Visa_and_MasterCard_logos.svg.png"
+                  alt="Accepted cards"
+                  style={{
+                    width: "100%",
+                    maxWidth: "200px",
+                    height: "auto",
+                    display: "block",
+                  }}
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                  }}
+                />
+              )}
+            </Box>
+          </Box>
+        </CardContent>
+
+        {/* Action Buttons */}
+        <CardActions sx={{ justifyContent: "space-between", p: 2, borderTop: "1px solid #ddd" }}>
+          <Button
+            variant="outlined"
+            onClick={handleCancel}
+            sx={{
+              borderColor: "#2e3b4e",
+              color: "#2e3b4e",
+              "&:hover": { borderColor: "#1a252f", color: "#1a252f" },
+              textTransform: "none",
+              fontSize: "0.875rem",
+              px: 3,
+              py: 1,
+            }}
+            disabled={loading}
+          >
+            Cancel
+          </Button>
+          <Button
             className="gradient-button"
-              variant="contained"
-              onClick={handleSubmitPayment}
-              sx={{
-                backgroundColor: "#2ecc71",
-                color: "#fff",
-                "&:hover": { backgroundColor: "#27ae60" },
-                textTransform: "none",
-                fontSize: ".875rem",
-                px: 4,
-              }}
-              disabled={loading}
-            >
-              {loading ? "Processing..." : "Submit"}
-            </Button>
-          </CardActions>
-        </Card>
-      </Box>
-  
+            variant="contained"
+            onClick={handleSubmitPayment}
+            sx={{
+              backgroundColor: "#2ecc71",
+              color: "#fff",
+              "&:hover": { backgroundColor: "#27ae60" },
+              textTransform: "none",
+              fontSize: "0.875rem",
+              px: 3,
+              py: 1,
+            }}
+            disabled={loading}
+          >
+            {loading ? "Processing..." : "Submit"}
+          </Button>
+        </CardActions>
+      </Card>
+    </Box>
   );
 };
 

@@ -13,10 +13,6 @@ import {
   Link,
   IconButton,
   Grid,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
 } from "@mui/material";
 import { ArrowBack, CheckCircleOutline } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
@@ -30,12 +26,9 @@ const TenantSignup = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    name: "",
     email: "",
     phone: "",
-    firmName: "",
-    teamSize: "",
     password: "",
   });
   const [agreeTerms, setAgreeTerms] = useState(false);
@@ -63,12 +56,12 @@ const TenantSignup = () => {
 
     try {
       const { data } = await API.post("/tenant/register", {
+        name: formData.name,
         email: formData.email,
         password: formData.password,
         phone: formData.phone,
       });
       const { tenant } = data;
-      // Assuming a token is needed for tenantLogin; if not, adjust accordingly
       const tenanttoken = data.tenanttoken || "temp-token"; // Fallback if no token is returned
       dispatch(tenantLogin({ tenant, tenanttoken }));
       setShowLoadingScreen(true);
@@ -172,9 +165,35 @@ const TenantSignup = () => {
                 </Typography>
               )}
               <form onSubmit={handleSubmit}>
-                {/* <Grid container spacing={2}> */}
-                  
                 <Box sx={{ mb: 2, mt: 2 }}>
+                  <Typography
+                    variant="body2"
+                    component="label"
+                    htmlFor="name"
+                    sx={{ display: "block", mb: 1 }}
+                  >
+                    Name
+                  </Typography>
+                  <TextField
+                    id="name"
+                    name="name"
+                    placeholder="John Doe"
+                    fullWidth
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    required
+                    variant="outlined"
+                    size="small"
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        "& fieldset": { borderColor: "#e5e7eb" },
+                        "&:hover fieldset": { borderColor: "#2563eb" },
+                        "&.Mui-focused fieldset": { borderColor: "#2563eb" },
+                      },
+                    }}
+                  />
+                </Box>
+                <Box sx={{ mb: 2 }}>
                   <Typography
                     variant="body2"
                     component="label"
@@ -232,66 +251,6 @@ const TenantSignup = () => {
                     }}
                   />
                 </Box>
-                {/* <Box sx={{ mb: 2 }}>
-                  <Typography
-                    variant="body2"
-                    component="label"
-                    htmlFor="firmName"
-                    sx={{ display: "block", mb: 1 }}
-                  >
-                    Firm Name
-                  </Typography>
-                  <TextField
-                    id="firmName"
-                    name="firmName"
-                    placeholder="Your Firm Name"
-                    fullWidth
-                    value={formData.firmName}
-                    onChange={handleInputChange}
-                    required
-                    variant="outlined"
-                    size="small"
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        "& fieldset": { borderColor: "#e5e7eb" },
-                        "&:hover fieldset": { borderColor: "#2563eb" },
-                        "&.Mui-focused fieldset": { borderColor: "#2563eb" },
-                      },
-                    }}
-                  />
-                </Box> */}
-                {/* <Box sx={{ mb: 2 }}>
-                  <Typography
-                    variant="body2"
-                    component="label"
-                    htmlFor="teamSize"
-                    sx={{ display: "block", mb: 1 }}
-                  >
-                    Team Size
-                  </Typography>
-                  <FormControl fullWidth variant="outlined" size="small">
-                    <InputLabel id="teamSize-label">Select team size</InputLabel>
-                    <Select
-                      labelId="teamSize-label"
-                      id="teamSize"
-                      name="teamSize"
-                      value={formData.teamSize}
-                      onChange={handleInputChange}
-                      label="Select team size"
-                      required
-                      sx={{
-                        "& .MuiOutlinedInput-notchedOutline": { borderColor: "#e5e7eb" },
-                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#2563eb" },
-                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#2563eb" },
-                      }}
-                    >
-                      <MenuItem value="1-5">1-5 people</MenuItem>
-                      <MenuItem value="6-15">6-15 people</MenuItem>
-                      <MenuItem value="16-50">16-50 people</MenuItem>
-                      <MenuItem value="50+">50+ people</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Box> */}
                 <Box sx={{ mb: 2 }}>
                   <Typography
                     variant="body2"
