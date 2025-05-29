@@ -64,8 +64,16 @@ const loginUser = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
+
     const { password: pwd, ...userWithoutPassword } = user._doc;
-    return res.status(200).json({ user: userWithoutPassword, token });
+
+    const userWithTenantDetails = {
+      ...userWithoutPassword,
+      companyName: tenant.companyName || "",
+      companyLogo: tenant.companyLogo || "",
+    };
+
+    return res.status(200).json({ user: userWithTenantDetails, token });
   } catch (err) {
     console.error("Error during login user:", err.message);
     return res.status(500).json({ error: "Server error" });
@@ -96,7 +104,6 @@ const registerUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({
-      companyName: tenant.companyName,
       name,
       username,
       email,
@@ -150,8 +157,6 @@ const createUser = async (req, res) => {
       return res.status(404).json({ message: "Tenant not found" });
     }
 
-    const companyName = tenant.companyName ;
-    const companyLogo = tenant.companyLogo ;
 
     const { models } = await getTenantConnection(tenantId, tenant.databaseName);
     const User = models.User;
@@ -177,8 +182,6 @@ const createUser = async (req, res) => {
     }
 
     const newUser = new User({
-      companyName,
-      companyLogo,
       tenantId,
       name,
       username,

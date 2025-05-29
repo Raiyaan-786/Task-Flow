@@ -76,8 +76,18 @@ const loginCustomer = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
+
+    // Remove password from customer object
     const { password: pwd, ...userWithoutPassword } = customer._doc;
-    return res.status(200).json({ user: userWithoutPassword, customertoken });
+
+    // Add companyName and companyLogo from tenant to the customer object
+    const customerWithTenantDetails = {
+      ...userWithoutPassword,
+      companyName: tenant.companyName || "",
+      companyLogo: tenant.companyLogo || "",
+    };
+
+    return res.status(200).json({ user: customerWithTenantDetails, customertoken });
   } catch (err) {
     console.error("Error during login customer:", err.message);
     return res.status(500).json({ error: "Server error" });

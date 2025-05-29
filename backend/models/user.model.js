@@ -2,14 +2,6 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
-    companyName: {
-      type: String,
-      required: true,
-    },
-    companyLogo: {
-      type: String,
-      default: '',
-    },
     tenantId: {
       type: String,
       required: true,
