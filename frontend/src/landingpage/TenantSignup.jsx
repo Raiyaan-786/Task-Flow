@@ -172,64 +172,8 @@ const TenantSignup = () => {
                 </Typography>
               )}
               <form onSubmit={handleSubmit}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6}>
-                    <Typography
-                      variant="body2"
-                      component="label"
-                      htmlFor="firstName"
-                      sx={{ display: "block", mb: 1 }}
-                    >
-                      First Name
-                    </Typography>
-                    <TextField
-                      id="firstName"
-                      name="firstName"
-                      placeholder="John"
-                      fullWidth
-                      value={formData.firstName}
-                      onChange={handleInputChange}
-                      required
-                      variant="outlined"
-                      size="small"
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          "& fieldset": { borderColor: "#e5e7eb" },
-                          "&:hover fieldset": { borderColor: "#2563eb" },
-                          "&.Mui-focused fieldset": { borderColor: "#2563eb" },
-                        },
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Typography
-                      variant="body2"
-                      component="label"
-                      htmlFor="lastName"
-                      sx={{ display: "block", mb: 1 }}
-                    >
-                      Last Name
-                    </Typography>
-                    <TextField
-                      id="lastName"
-                      name="lastName"
-                      placeholder="Doe"
-                      fullWidth
-                      value={formData.lastName}
-                      onChange={handleInputChange}
-                      required
-                      variant="outlined"
-                      size="small"
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          "& fieldset": { borderColor: "#e5e7eb" },
-                          "&:hover fieldset": { borderColor: "#2563eb" },
-                          "&.Mui-focused fieldset": { borderColor: "#2563eb" },
-                        },
-                      }}
-                    />
-                  </Grid>
-                </Grid>
+                {/* <Grid container spacing={2}> */}
+                  
                 <Box sx={{ mb: 2, mt: 2 }}>
                   <Typography
                     variant="body2"
@@ -237,7 +181,7 @@ const TenantSignup = () => {
                     htmlFor="email"
                     sx={{ display: "block", mb: 1 }}
                   >
-                    Work Email
+                    Email
                   </Typography>
                   <TextField
                     id="email"
@@ -288,7 +232,7 @@ const TenantSignup = () => {
                     }}
                   />
                 </Box>
-                <Box sx={{ mb: 2 }}>
+                {/* <Box sx={{ mb: 2 }}>
                   <Typography
                     variant="body2"
                     component="label"
@@ -315,8 +259,8 @@ const TenantSignup = () => {
                       },
                     }}
                   />
-                </Box>
-                <Box sx={{ mb: 2 }}>
+                </Box> */}
+                {/* <Box sx={{ mb: 2 }}>
                   <Typography
                     variant="body2"
                     component="label"
@@ -347,7 +291,7 @@ const TenantSignup = () => {
                       <MenuItem value="50+">50+ people</MenuItem>
                     </Select>
                   </FormControl>
-                </Box>
+                </Box> */}
                 <Box sx={{ mb: 2 }}>
                   <Typography
                     variant="body2"

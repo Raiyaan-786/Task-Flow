@@ -35,11 +35,13 @@ const TenantSidebar = ({ isCollapsed }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+
+
   useEffect(() => {
     if (!tenant) {
       console.log("Tenant is not logged in!");
     }
-  }, [tenant]);
+  }, tenant);
 
   const handleLogout = () => {
     dispatch(tenantLogout());
@@ -435,7 +437,7 @@ const TenantSidebar = ({ isCollapsed }) => {
         <Box  borderTop={'.5px solid #e8e8e8'} sx={{padding:3,height:'100px',width:'100%',display:'flex',alignItems:'center'}}>
           <Avatar  src={tenant?.image } alt="Remy Sharp" sx={{ width: "50px", height: "50px" }} />
           <Box padding={2}>
-            <Typography variant="body1" fontWeight={700} color="initial">{tenant?.name || "Tenant Name"}</Typography>
+            <Typography variant="body1" fontWeight={700} color="initial">{tenant.name || "Tenant Name"}</Typography>
             <Typography variant="body2" color="text.secondary">{tenant.email}</Typography>
           </Box>
           <Tooltip title="Logout">

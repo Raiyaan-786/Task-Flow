@@ -105,13 +105,11 @@ const Sidebar = ({ isCollapsed }) => {
               ml: isCollapsed ? "0px" : "15px",
             }}
           >
-            <img
-              height="28px"
-              width="32px"
-              src="logoicon.svg"
-              alt="brandlogo"
-              style={{ transition: "transform 0.3s ease-in-out" }}
-            />
+         
+            <Avatar
+                src={user.companyLogo || "logoicon.svg"}
+                sx={{ width: "32px", height: "32px" ,borderRadius:0}}
+              />
             {!isCollapsed && (
               <motion.div
                 animate={{ opacity: isCollapsed ? 0 : 1 }}

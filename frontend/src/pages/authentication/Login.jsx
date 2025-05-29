@@ -30,6 +30,7 @@ const Login = () => {
 
     try {
       const { data } = await API.post('/auth/companies', { email });
+      console.log(data)
       if (data.companies.length === 0) {
         setErrorMessage("No companies found for this email.");
         setIsLoading(false);

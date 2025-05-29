@@ -16,7 +16,8 @@ import { useTheme } from "@emotion/react";
 import { useNavigate } from "react-router-dom";
 import { tokens } from "../../theme";
 import API from "../../api/api";
-import profilebg from '../../../public/profilebg.jpeg';
+import { useSelector, useDispatch } from "react-redux";
+import { tenantLogin, setSelectedTenant } from "../../features/tenantAuthSlice";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -59,39 +60,40 @@ const TenantProfilePage = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { tenant, tenanttoken } = useSelector((state) => state.tenantAuth);
+  const selectedTenant = useSelector((state) => state.tenantAuth.selectedTenant);
 
-  const [tenant, setTenant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [tabValue, setTabValue] = useState(0);
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [companyLogo, setCompanyLogo] = useState(null);
-  const [profileImage, setProfileImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState("");
-  const [companyLogoPreview, setCompanyLogoPreview] = useState("");
+  const [saving,setSaving]=useState(false);
+  const [logosaving,setLogoSaving]=useState(false);
 
   useEffect(() => {
     const fetchTenant = async () => {
       try {
-        const tenanttoken = localStorage.getItem("tenanttoken");
         if (!tenanttoken) {
           navigate("/tenantlogin");
           return;
         }
+        setLoading(true);
         const response = await API.get("/tenant/gettenant", {
           headers: { Authorization: `Bearer ${tenanttoken}` },
         });
         console.log(response.data);
         if (response.data.success) {
           const fetchedTenant = response.data.tenant;
-          setTenant(fetchedTenant);
-          setName(fetchedTenant.name || "");
-          setPhone(fetchedTenant.phone || "");
-          setCompanyName(fetchedTenant.companyName || "");
-          setImagePreview(fetchedTenant.image || "");
-          setCompanyLogoPreview(fetchedTenant.companyLogo || "");
+          dispatch(tenantLogin({ tenant: fetchedTenant, tenanttoken }));
+          dispatch(setSelectedTenant({
+            name: fetchedTenant.name || "",
+            phone: fetchedTenant.phone || "",
+            companyName: fetchedTenant.companyName || "",
+            image: fetchedTenant.image || "",
+            companyLogo: fetchedTenant.companyLogo || "",
+            profileImage: null,
+            companyLogoFile: null
+          }));
         } else throw new Error("Failed to fetch tenant data");
       } catch (err) {
         console.error("Error fetching tenant:", err);
@@ -102,57 +104,73 @@ const TenantProfilePage = () => {
       }
     };
     fetchTenant();
-  }, [navigate]);
+  }, [navigate, tenanttoken, dispatch]);
 
   const isFreePlan = tenant?.plan?.tier?.toLowerCase() === "free";
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setProfileImage(file);
       const reader = new FileReader();
-      reader.onloadend = () => setImagePreview(reader.result);
+      reader.onloadend = () => {
+        dispatch(setSelectedTenant({
+          ...selectedTenant,
+          profileImage: file,
+          image: reader.result
+        }));
+      };
       reader.readAsDataURL(file);
     }
   };
 
   const handleCompanyLogoChange = (e) => {
+   
     const file = e.target.files[0];
     if (file) {
-      setCompanyLogo(file);
       const reader = new FileReader();
-      reader.onloadend = () => setCompanyLogoPreview(reader.result);
+      reader.onloadend = () => {
+        dispatch(setSelectedTenant({
+          ...selectedTenant,
+          companyLogoFile: file,
+          companyLogo: reader.result
+        }));
+      };
       reader.readAsDataURL(file);
     }
+   
   };
 
   const handleSubmit = async (e) => {
+    setSaving(true);
     e.preventDefault();
     const formData = new FormData();
-    formData.append("name", name);
-    formData.append("phone", phone);
-    if (profileImage) formData.append("image", profileImage);
+    formData.append("name", selectedTenant.name);
+    formData.append("phone", selectedTenant.phone);
+    if (selectedTenant.profileImage) formData.append("image", selectedTenant.profileImage);
     if (!isFreePlan) {
-      formData.append("companyName", companyName);
-      if (companyLogo) formData.append("companyLogo", companyLogo);
+      formData.append("companyName", selectedTenant.companyName);
+      if (selectedTenant.companyLogoFile) formData.append("companyLogo", selectedTenant.companyLogoFile);
     }
     try {
-      const tenanttoken = localStorage.getItem("tenanttoken");
       if (!tenanttoken) throw new Error("No authentication token found");
       const response = await API.put(`/tenant/update/${tenant._id}`, formData, {
         headers: { Authorization: `Bearer ${tenanttoken}`, "Content-Type": "multipart/form-data" },
       });
       if (response.data.message === "Tenant updated successfully") {
+        setSaving(false);
         alert("Tenant profile updated successfully!");
         const updatedTenant = response.data.tenant;
-        setTenant(updatedTenant);
-        setName(updatedTenant.name || "");
-        setPhone(updatedTenant.phone || "");
-        setCompanyName(updatedTenant.companyName || "");
-        setImagePreview(updatedTenant.image || "");
-        setCompanyLogoPreview(updatedTenant.companyLogo || "");
-        setProfileImage(null);
-        setCompanyLogo(null);
+        dispatch(tenantLogin({ tenant: updatedTenant, tenanttoken }));
+        dispatch(setSelectedTenant({
+          name: updatedTenant.name || "",
+          phone: updatedTenant.phone || "",
+          companyName: updatedTenant.companyName || "",
+          image: updatedTenant.image || "",
+          companyLogo: updatedTenant.companyLogo || "",
+          profileImage: null,
+          companyLogoFile: null
+        }));
+      
       } else throw new Error("Failed to update tenant profile");
     } catch (error) {
       console.error("Error updating tenant profile:", error);
@@ -160,28 +178,30 @@ const TenantProfilePage = () => {
     }
   };
 
-  // New function to handle company details update
   const handleCompanyDetailsSubmit = async (e) => {
+     setLogoSaving(true)
     e.preventDefault();
     const formData = new FormData();
-    formData.append("companyName", companyName);
-    if (companyLogo) formData.append("companyLogo", companyLogo);
+    formData.append("companyName", selectedTenant.companyName);
+    if (selectedTenant.companyLogoFile) formData.append("companyLogo", selectedTenant.companyLogoFile);
 
     try {
-      const tenanttoken = localStorage.getItem("tenanttoken");
       if (!tenanttoken) throw new Error("No authentication token found");
-
       const response = await API.put(`/tenant/updatecompany/${tenant._id}`, formData, {
         headers: { Authorization: `Bearer ${tenanttoken}`, "Content-Type": "multipart/form-data" },
       });
 
       if (response.data.message === "Tenant company details updated successfully") {
+         setLogoSaving(false)
         alert("Company details updated successfully!");
         const updatedTenant = response.data.tenant;
-        setTenant(updatedTenant);
-        setCompanyName(updatedTenant.companyName || "");
-        setCompanyLogoPreview(updatedTenant.companyLogo || "");
-        setCompanyLogo(null);
+        dispatch(tenantLogin({ tenant: updatedTenant, tenanttoken }));
+        dispatch(setSelectedTenant({
+          ...selectedTenant,
+          companyName: updatedTenant.companyName || "",
+          companyLogo: updatedTenant.companyLogo || "",
+          companyLogoFile: null
+        }));
       } else throw new Error("Failed to update company details");
     } catch (error) {
       console.error("Error updating company details:", error);
@@ -191,24 +211,32 @@ const TenantProfilePage = () => {
 
   const handleCancel = () => {
     if (tenant) {
-      setName(tenant.name || "");
-      setPhone(tenant.phone || "");
-      setCompanyName(tenant.companyName || "");
-      setImagePreview(tenant.image || "");
-      setCompanyLogoPreview(tenant.companyLogo || "");
-      setProfileImage(null);
-      setCompanyLogo(null);
+      dispatch(setSelectedTenant({
+        name: tenant.name || "",
+        phone: tenant.phone || "",
+        companyName: tenant.companyName || "",
+        image: tenant.image || "",
+        companyLogo: tenant.companyLogo || "",
+        profileImage: null,
+        companyLogoFile: null
+      }));
     }
   };
 
   const handleDeleteProfileImage = () => {
-    setImagePreview(null);
-    setProfileImage(null);
+    dispatch(setSelectedTenant({
+      ...selectedTenant,
+      image: null,
+      profileImage: null
+    }));
   };
 
   const handleDeleteCompanyLogo = () => {
-    setCompanyLogoPreview(null);
-    setCompanyLogo(null);
+    dispatch(setSelectedTenant({
+      ...selectedTenant,
+      companyLogo: null,
+      companyLogoFile: null
+    }));
   };
 
   if (loading) return (
@@ -268,20 +296,20 @@ const TenantProfilePage = () => {
             sx={{ height: 210, top: "130px", position: "absolute", width: "100%", zIndex: 999, display: 'flex' }}
           >
             <Avatar
-              src={imagePreview}
+              src={tenant.image}
               alt="Remy Sharp"
               sx={{ width: 200, height: 200, border: "4px solid white", marginLeft: 5 }}
             />
             <Box sx={{ pl: 2, width: "500px", display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <Typography variant="h2" fontWeight={700} color="initial">{name}</Typography>
+              <Typography variant="h2" fontWeight={700} color="initial">{tenant?.name || "Tenant Name"}</Typography>
               <Typography variant="h6" color={colors.grey[500]}>{tenant?.email || ""}</Typography>
             </Box>
             <Box sx={{ mr: 5, width: "500px", display: 'flex', justifyContent: 'end', alignItems: 'center', gap: 2 }}>
               <Button variant="outlined" color="primary" sx={{ height: '35px', width: '60px', textTransform: 'none' }} onClick={handleCancel}>
                 Cancel
               </Button>
-              <Button className="gradient-button" variant="contained" color="primary" sx={{ height: '35px', width: '60px', bgcolor: colors.blueHighlight[900], textTransform: 'none' }} onClick={handleSubmit}>
-                Save
+              <Button disabled={saving} className="gradient-button" variant="contained" color="primary" sx={{ height: '35px', width: '60px', bgcolor: colors.blueHighlight[900], textTransform: 'none' }} onClick={handleSubmit}>
+                {saving?"Saving...":"Save"}
               </Button>
             </Box>
           </Box>
@@ -307,13 +335,19 @@ const TenantProfilePage = () => {
                 <label>Name</label>
               </Grid2>
               <Grid2 size={6}>
-                <TextField value={name} size="small" onChange={(e) => setName(e.target.value)} fullWidth margin="normal" />
+                <TextField
+                  value={selectedTenant?.name || ""}
+                  size="small"
+                  onChange={(e) => dispatch(setSelectedTenant({ ...selectedTenant, name: e.target.value }))}
+                  fullWidth
+                  margin="normal"
+                />
               </Grid2>
               <Grid2 size={4} display={"flex"} alignItems={"center"}>
                 <label>Profile Image</label>
               </Grid2>
               <Grid2 size={4}>
-                <Avatar src={imagePreview} alt="Remy Sharp" sx={{ width: 60, height: 60 }} />
+                <Avatar src={selectedTenant?.image || ""} alt="Remy Sharp" sx={{ width: 60, height: 60 }} />
               </Grid2>
               <Grid2 size={2} sx={{ alignItems: 'center', justifyContent: "end", display: 'flex' }}>
                 <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: "none" }} id="profile-image-input" />
@@ -326,7 +360,13 @@ const TenantProfilePage = () => {
                 <label>Phone</label>
               </Grid2>
               <Grid2 size={6}>
-                <TextField size="small" value={phone} onChange={(e) => setPhone(e.target.value)} fullWidth margin="normal" />
+                <TextField
+                  size="small"
+                  value={selectedTenant?.phone || ""}
+                  onChange={(e) => dispatch(setSelectedTenant({ ...selectedTenant, phone: e.target.value }))}
+                  fullWidth
+                  margin="normal"
+                />
               </Grid2>
               <Grid2 size={4} display={"flex"} alignItems={"center"}>
                 <label>Email</label>
@@ -350,8 +390,8 @@ const TenantProfilePage = () => {
               <Grid2 size={6}>
                 <TextField
                   size="small"
-                  value={companyName}
-                  onChange={(e) => setCompanyName(e.target.value)}
+                  value={selectedTenant?.companyName || ""}
+                  onChange={(e) => dispatch(setSelectedTenant({ ...selectedTenant, companyName: e.target.value }))}
                   fullWidth
                   margin="normal"
                   InputProps={{ readOnly: isFreePlan }}
@@ -362,7 +402,7 @@ const TenantProfilePage = () => {
                 <label>Company Logo</label>
               </Grid2>
               <Grid2 size={4}>
-                <Avatar src={companyLogoPreview || "/companyPlaceholder.png"} sx={{ width: 60, height: 60 }} />
+                <Avatar src={selectedTenant?.companyLogo || "/companyPlaceholder.png"} sx={{ width: 60, height: 60 }} />
               </Grid2>
               <Grid2 size={2} sx={{ alignItems: 'center', justifyContent: "end", display: 'flex' }}>
                 <input
@@ -401,9 +441,9 @@ const TenantProfilePage = () => {
                   color="primary"
                   sx={{ height: '35px', width: '60px', bgcolor: colors.blueHighlight[900], textTransform: 'none' }}
                   onClick={handleCompanyDetailsSubmit}
-                  disabled={isFreePlan}
+                  disabled={isFreePlan || logosaving}
                 >
-                  Save
+                  {logosaving?"Saving...":"Save"}
                 </Button>
               </Grid2>
             </Grid2>

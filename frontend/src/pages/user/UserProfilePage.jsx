@@ -18,6 +18,8 @@ import { useTheme } from '@emotion/react';
 import { tokens } from '../../theme';
 import { useNavigate } from 'react-router-dom';
 import API from '../../api/api';
+import { useSelector, useDispatch } from 'react-redux';
+import { login, setSelectedUser } from '../../features/authSlice';
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -57,31 +59,17 @@ const UserProfilePage = () => {
     },
   }));
 
+  const { user, token, selectedUser } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
 
-  // Initialize user and token as state
-  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('user')));
-  const [token, setToken] = useState(localStorage.getItem('token'));
-
-  // States
+  // Local states
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [tabValue, setTabValue] = useState(0);
-  const [userData, setUserData] = useState({
-    name: user?.name || '',
-    username: user?.username || '',
-    email: user?.email || '',
-    mobile: user?.mobile || '',
-    address: user?.address || '',
-    department: user?.department || '',
-    postname: user?.postname || '',
-    dateofjoining: user?.dateofjoining ? new Date(user.dateofjoining).toISOString().split('T')[0] : '',
-    role: user?.role || 'Employee',
-    status: user?.status || 'Active',
-    image: user?.image || ''
-  });
   const [profileImage, setProfileImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(user?.image || '');
   const [confirmedImage, setConfirmedImage] = useState(user?.image || '');
@@ -100,13 +88,14 @@ const UserProfilePage = () => {
           return;
         }
         console.log('Fetching user data for ID:', user._id);
+        setLoading(true);
         const response = await API.get(`/auth/users/${user._id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.data.user) {
           const fetchedUser = response.data.user;
           console.log('Fetched user data:', fetchedUser);
-          setUserData({
+          dispatch(setSelectedUser({
             name: fetchedUser.name || '',
             username: fetchedUser.username || '',
             email: fetchedUser.email || '',
@@ -118,7 +107,7 @@ const UserProfilePage = () => {
             role: fetchedUser.role || 'Employee',
             status: fetchedUser.status || 'Active',
             image: fetchedUser.image || ''
-          });
+          }));
           if (!profileImage) {
             setImagePreview(fetchedUser.image || '');
             setConfirmedImage(fetchedUser.image || '');
@@ -135,7 +124,7 @@ const UserProfilePage = () => {
       }
     };
     fetchUser();
-  }, [navigate, user?._id, token]);
+  }, [navigate, user?._id, token, dispatch]);
 
   // Handle profile image change
   const handleImageChange = (e) => {
@@ -174,16 +163,16 @@ const UserProfilePage = () => {
     try {
       const imageFormData = new FormData();
       imageFormData.append('image', profileImage);
-      imageFormData.append('name', userData.name);
-      imageFormData.append('email', userData.email);
-      imageFormData.append('mobile', userData.mobile);
-      imageFormData.append('address', userData.address);
+      imageFormData.append('name', selectedUser.name);
+      imageFormData.append('email', selectedUser.email);
+      imageFormData.append('mobile', selectedUser.mobile);
+      imageFormData.append('address', selectedUser.address);
 
       console.log('Uploading to /auth/update/:id:', {
         imageName: profileImage.name,
         size: profileImage.size,
         type: profileImage.type,
-        additionalFields: { name: userData.name, email: userData.email, mobile: userData.mobile, address: userData.address }
+        additionalFields: { name: selectedUser.name, email: selectedUser.email, mobile: selectedUser.mobile, address: selectedUser.address }
       });
 
       const response = await API.put(`/auth/update/${user._id}`, imageFormData, {
@@ -197,12 +186,8 @@ const UserProfilePage = () => {
       const updatedImage = response.data.image || response.data.user?.image || imagePreview;
       setConfirmedImage(updatedImage);
       setImagePreview(updatedImage);
-      setUserData(prev => ({ ...prev, image: updatedImage }));
-      setUser(prev => ({ ...prev, image: updatedImage }));
-      localStorage.setItem('user', JSON.stringify({
-        ...user,
-        image: updatedImage
-      }));
+      dispatch(setSelectedUser({ ...selectedUser, image: updatedImage }));
+      dispatch(login({ user: { ...user, image: updatedImage }, token }));
       alert('Image updated successfully!');
       setProfileImage(null);
     } catch (error) {
@@ -284,21 +269,33 @@ const UserProfilePage = () => {
   // Handle delete profile image
   const handleDeleteProfileImage = async () => {
     if (!window.confirm('Are you sure you want to delete your profile image?')) return;
+    
+    const previousImage = confirmedImage; // Store current image for rollback
+    setImagePreview(''); // Optimistically update UI
+    setConfirmedImage('');
+    setProfileImage(null);
+    dispatch(setSelectedUser({ ...selectedUser, image: '' }));
+
     try {
-      await API.put(`/auth/users/image/${user._id}`, { image: '' }, {
+      const response = await API.put(`/auth/users/image/${user._id}`, { image: '' }, {
         headers: {
           'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       });
-      setImagePreview('');
-      setConfirmedImage('');
-      setProfileImage(null);
-      setUserData(prev => ({ ...prev, image: '' }));
-      setUser(prev => ({ ...prev, image: '' }));
-      localStorage.setItem('user', JSON.stringify({ ...user, image: '' }));
-      alert('Profile image deleted successfully!');
+
+      if (response.status === 200 && response.data.success) {
+        dispatch(login({ user: { ...user, image: '' }, token }));
+        alert('Profile image deleted successfully!');
+      } else {
+        throw new Error(response.data.message || 'Failed to delete profile image');
+      }
     } catch (error) {
       console.error('Error deleting profile image:', error);
+      // Revert state on failure
+      setImagePreview(previousImage);
+      setConfirmedImage(previousImage);
+      dispatch(setSelectedUser({ ...selectedUser, image: previousImage }));
       alert('Error deleting profile image: ' + (error.response?.data?.message || error.message));
     }
   };
@@ -306,7 +303,7 @@ const UserProfilePage = () => {
   const handleTabChange = (event, newValue) => setTabValue(newValue);
 
   if (loading) return (
-    <Box sx={{ p: 3, bgcolor: colors.foreground[100], height: "100vh", overflow: "auto" }}>
+    <Box sx={{ p: 3, bgcolor: colors.foreground[100], height: "100vh", overflow: "auto"}}>
       <Box sx={{ height: 335, position: "relative" }}>
         <Skeleton variant="rectangular" width="100%" height={180} sx={{ borderRadius: 3, mr: 1, ml: 1 }} />
         <Box sx={{ height: 210, top: "110px", position: "absolute", width: "100%", zIndex: 999, display: 'flex' }}>
@@ -361,8 +358,8 @@ const UserProfilePage = () => {
               sx={{ width: 200, height: 200, border: "4px solid white", marginLeft: 5 }}
             />
             <Box sx={{ pl: 2, width: "500px", display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <Typography variant="h2" fontWeight={700} color="initial">{userData.name}</Typography>
-              <Typography variant="h6" color={colors.grey[500]}>{userData.email}</Typography>
+              <Typography variant="h2" fontWeight={700} color="initial">{selectedUser?.name}</Typography>
+              <Typography variant="h6" color={colors.grey[500]}>{selectedUser?.email}</Typography>
             </Box>
             <Box sx={{ mr: 5, width: "500px", display: 'flex', justifyContent: 'end', alignItems: 'center', gap: 2 }}>
               <Button variant="outlined" color="primary" sx={{ height: '35px', width: '60px', textTransform: 'none' }} onClick={handleCancel}>
@@ -389,7 +386,7 @@ const UserProfilePage = () => {
               </Grid2>
               <Grid2 size={6}>
                 <TextField
-                  value={userData.name}
+                  value={selectedUser?.name || ''}
                   size="small"
                   fullWidth
                   margin="normal"
@@ -402,7 +399,7 @@ const UserProfilePage = () => {
               </Grid2>
               <Grid2 size={6}>
                 <TextField
-                  value={userData.username}
+                  value={selectedUser?.username || ''}
                   size="small"
                   fullWidth
                   margin="normal"
@@ -410,7 +407,6 @@ const UserProfilePage = () => {
                   sx={{ backgroundColor: "#fff" }}
                 />
               </Grid2>
-             
               <Grid2 size={4} display={"flex"} alignItems={"center"}>
                 <label>Profile Image</label>
               </Grid2>
@@ -422,7 +418,15 @@ const UserProfilePage = () => {
                 <label htmlFor="profile-image-input">
                   <Button sx={{ textTransform: 'none' }} size="small" variant="outlined" component="span">Update</Button>
                 </label>
-                {/* <Button sx={{ textTransform: 'none', ml: 1 }} size="small" variant="outlined" onClick={handleDeleteProfileImage}>Delete</Button> */}
+                <Button
+                  sx={{ textTransform: 'none', ml: 1 }}
+                  size="small"
+                  variant="outlined"
+                  onClick={handleDeleteProfileImage}
+                  disabled={!confirmedImage}
+                >
+                  Delete
+                </Button>
               </Grid2>
             </Grid2>
           </TabPanel>
@@ -433,7 +437,7 @@ const UserProfilePage = () => {
               </Grid2>
               <Grid2 size={4}>
                 <TextField
-                  value={userData.department}
+                  value={selectedUser?.department || ''}
                   size="small"
                   fullWidth
                   margin="normal"
@@ -441,12 +445,12 @@ const UserProfilePage = () => {
                   sx={{ backgroundColor: "#fff" }}
                 />
               </Grid2>
-              <Grid2 size={2} display={"flex"} alignItems={"center"}>
+              <Grid2 ml={2} size={2} display={"flex"} alignItems={"center"}>
                 <label>Post Name</label>
               </Grid2>
               <Grid2 size={4}>
                 <TextField
-                  value={userData.postname}
+                  value={selectedUser?.postname || ''}
                   size="small"
                   fullWidth
                   margin="normal"
@@ -454,42 +458,31 @@ const UserProfilePage = () => {
                   sx={{ backgroundColor: "#fff" }}
                 />
               </Grid2>
-              
               <Grid2 size={2} display={"flex"} alignItems={"center"}>
                 <label>Role</label>
               </Grid2>
               <Grid2 size={4}>
                 <TextField
-                  select
-                  value={userData.role}
+                  value={selectedUser?.role || ''}
                   size="small"
                   fullWidth
                   margin="normal"
                   disabled
                   sx={{ backgroundColor: "#fff" }}
-                >
-                  {["Admin", "Manager", "Employee", "Inactive"].map((option) => (
-                    <MenuItem key={option} value={option}>{option}</MenuItem>
-                  ))}
-                </TextField>
+                />
               </Grid2>
-              <Grid2 size={2} display={"flex"} alignItems={"center"}>
+              <Grid2 ml={2} size={2} display={"flex"} alignItems={"center"}>
                 <label>Status</label>
               </Grid2>
               <Grid2 size={4}>
                 <TextField
-                  select
-                  value={userData.status}
+                  value={selectedUser?.status || ''}
                   size="small"
                   fullWidth
                   margin="normal"
                   disabled
                   sx={{ backgroundColor: "#fff" }}
-                >
-                  {["Active", "Block", "Inactive", "Mute"].map((option) => (
-                    <MenuItem key={option} value={option}>{option}</MenuItem>
-                  ))}
-                </TextField>
+                />
               </Grid2>
               <Grid2 size={2} display={"flex"} alignItems={"center"}>
                 <label>Date of Joining</label>
@@ -497,7 +490,7 @@ const UserProfilePage = () => {
               <Grid2 size={4}>
                 <TextField
                   type="date"
-                  value={userData.dateofjoining}
+                  value={selectedUser?.dateofjoining || ''}
                   size="small"
                   fullWidth
                   margin="normal"
@@ -506,12 +499,12 @@ const UserProfilePage = () => {
                   InputLabelProps={{ shrink: true }}
                 />
               </Grid2>
-               <Grid2 size={2} display={"flex"} alignItems={"center"}>
+              <Grid2 ml={2} size={2} display={"flex"} alignItems={"center"}>
                 <label>Address</label>
               </Grid2>
               <Grid2 size={4}>
                 <TextField
-                  value={userData.address}
+                  value={selectedUser?.address || ''}
                   size="small"
                   fullWidth
                   margin="normal"
@@ -528,7 +521,7 @@ const UserProfilePage = () => {
               </Grid2>
               <Grid2 size={6}>
                 <TextField
-                  value={userData.email}
+                  value={selectedUser?.email || ''}
                   size="small"
                   fullWidth
                   margin="normal"
@@ -541,7 +534,7 @@ const UserProfilePage = () => {
               </Grid2>
               <Grid2 size={6}>
                 <TextField
-                  value={userData.mobile}
+                  value={selectedUser?.mobile || ''}
                   size="small"
                   fullWidth
                   margin="normal"

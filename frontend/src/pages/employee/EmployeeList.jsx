@@ -77,7 +77,7 @@ const EmployeeList = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-
+        console.log(response.data)
         const employeesData = response.data.users || [];
         setEmployees(
           employeesData.map((item, index) => ({ id: index + 1, ...item }))
@@ -92,9 +92,30 @@ const EmployeeList = () => {
     fetchEmployees();
   }, []);
 
-  const handleDelete = (id) => {
-    console.log(`Delete employee with ID: ${id}`);
-  };
+  // handle mute function
+const handleMute = async (id) => {
+  try {
+    const employee = employees.find((emp) => emp.id === id);
+    if (!employee) {
+      setError("Employee not found");
+      return;
+    }
+    const response = await API.put(`/auth/update/${employee._id}`, { status: "Mute" }, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    setEmployees(
+      employees.map((emp) =>
+        emp._id === employee._id ? { ...emp, status: "Mute" } : emp
+      )
+    );
+    alert("User muted successfully!");
+  } catch (err) {
+    setError("Failed to mute user");
+    alert("Failed to mute user.");
+  }
+};
 
   if (error) return <p>Error: {error}</p>;
 
@@ -138,7 +159,7 @@ const EmployeeList = () => {
           </Tooltip>
 
           <Tooltip title="Mute">
-            <IconButton onClick={() => handleDelete(params.row.id)}>
+            <IconButton onClick={() => handleMute(row.id)}>
               <NoAccounts />
             </IconButton>
           </Tooltip>
