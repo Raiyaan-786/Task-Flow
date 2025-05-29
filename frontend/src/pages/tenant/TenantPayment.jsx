@@ -33,6 +33,7 @@ const TenantPayment = () => {
   const [paymentDetails, setPaymentDetails] = useState({
     firstName: "",
     lastName: "",
+    companyName: "", // Added companyName field
     cardNumber: "",
     cvv: "",
     expiryMonth: "",
@@ -68,6 +69,9 @@ const TenantPayment = () => {
     }
     if (!paymentDetails.lastName || paymentDetails.lastName.trim() === "") {
       newErrors.lastName = "Last name is required";
+    }
+    if (!paymentDetails.companyName || paymentDetails.companyName.trim() === "") {
+      newErrors.companyName = "Company name is required"; // Added validation for companyName
     }
     if (!paymentDetails.cardNumber || !/^\d{16}$/.test(paymentDetails.cardNumber)) {
       newErrors.cardNumber = "Enter a valid 16-digit card number";
@@ -110,6 +114,7 @@ const TenantPayment = () => {
           tenant: tenant._id,
           firstName: paymentDetails.firstName,
           lastName: paymentDetails.lastName,
+          companyName: paymentDetails.companyName, // Added companyName to paymentData
           plan: planId,
           amount: billingInfo.total,
           currency: "USD",
@@ -151,7 +156,10 @@ const TenantPayment = () => {
             state: {
               plan: selectedPlan,
               billingInfo,
-              paymentDetails,
+              paymentDetails: {
+                ...paymentDetails,
+                companyName: paymentDetails.companyName, // Include companyName in paymentDetails for the receipt
+              },
               paymentId: response.data.paymentId,
               transactionDate: new Date().toISOString(),
             },
@@ -235,8 +243,8 @@ const TenantPayment = () => {
             PLEASE SELECT A PAYMENT METHOD
           </Typography>
           <Box sx={{ mt: 1 }}>
-            {/* First Name and Last Name */}
-            <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+            {/* First Name, Last Name, and Company Name */}
+            <Box sx={{ display: "flex", gap: 2, mb: 2, flexWrap: "wrap" }}>
               <TextField
                 size="small"
                 fullWidth
@@ -246,6 +254,7 @@ const TenantPayment = () => {
                 onChange={handleInputChange}
                 error={!!errors.firstName}
                 helperText={errors.firstName}
+                sx={{ flex: { xs: "1 1 100%", sm: "1 1 calc(33.33% - 16px)" } }}
               />
               <TextField
                 size="small"
@@ -256,6 +265,18 @@ const TenantPayment = () => {
                 onChange={handleInputChange}
                 error={!!errors.lastName}
                 helperText={errors.lastName}
+                sx={{ flex: { xs: "1 1 100%", sm: "1 1 calc(33.33% - 16px)" } }}
+              />
+              <TextField
+                size="small"
+                fullWidth
+                label="Company name"
+                name="companyName"
+                value={paymentDetails.companyName}
+                onChange={handleInputChange}
+                error={!!errors.companyName}
+                helperText={errors.companyName}
+                sx={{ flex: { xs: "1 1 100%", sm: "1 1 calc(33.33% - 16px)" } }}
               />
             </Box>
 
@@ -274,7 +295,7 @@ const TenantPayment = () => {
             />
 
             {/* CVV and Expiry Date */}
-            <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+            <Box sx={{ display: "flex", gap: 2, mb: 2, flexWrap: "wrap" }}>
               <TextField
                 size="small"
                 label="CVV"
@@ -284,10 +305,10 @@ const TenantPayment = () => {
                 error={!!errors.cvv}
                 helperText={errors.cvv}
                 inputProps={{ maxLength: 4 }}
-                sx={{ width: "30%" }}
+                sx={{ width: { xs: "100%", sm: "30%" } }}
               />
-              <Box sx={{ display: "flex", gap: 2, flex: 1 }}>
-                <FormControl fullWidth>
+              <Box sx={{ display: "flex", gap: 2, flex: 1, flexWrap: "wrap" }}>
+                <FormControl fullWidth sx={{ minWidth: 120 }}>
                   <InputLabel>Month</InputLabel>
                   <Select
                     size="small"
@@ -303,7 +324,7 @@ const TenantPayment = () => {
                     ))}
                   </Select>
                 </FormControl>
-                <FormControl fullWidth>
+                <FormControl fullWidth sx={{ minWidth: 120 }}>
                   <InputLabel>Year</InputLabel>
                   <Select
                     size="small"

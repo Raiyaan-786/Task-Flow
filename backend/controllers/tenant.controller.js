@@ -246,6 +246,7 @@ export const processPayment = async (req, res) => {
   try {
     const {
       tenant,
+      companyName,
       firstName,
       lastName,
       plan,
@@ -258,7 +259,7 @@ export const processPayment = async (req, res) => {
     } = req.body;
 
     // Validate required fields for payment
-    if (!tenant || !plan || !amount || !firstName || !lastName || !cardNumber || !expiry || !cvv || !billingCycle) {
+    if (!tenant || !plan || !amount || !firstName || !lastName || !cardNumber || !expiry || !cvv || !billingCycle || !companyName) {
       return res.status(400).json({
         success: false,
         message: 'Missing required fields',
@@ -326,6 +327,7 @@ export const processPayment = async (req, res) => {
         tenant,
         {
           $set: {
+            'companyName': companyName,
             'databaseName': database,
             'loginCredentials.username': username,
             'loginCredentials.password': password,
