@@ -5,6 +5,8 @@ import { SharedUser } from "../models/sharedUser.model.js";
 import { Tenant } from "../models/tenant.model.js";
 import { getTenantConnection } from "../utils/tenantDb.js";
 
+import mongoose from 'mongoose';
+
 const fetchCompaniesByEmail = async (req, res) => {
   try {
     const { email } = req.body;
@@ -12,16 +14,33 @@ const fetchCompaniesByEmail = async (req, res) => {
       return res.status(400).json({ message: "Email required" });
     }
 
-    const sharedUsers = await SharedUser.find({ email }, 'companyName tenantId');
+    // Step 1: Find shared users with the given email and select tenantId
+    const sharedUsers = await SharedUser.find({ email }, 'tenantId');
     if (!sharedUsers.length) {
       return res.status(404).json({ message: "No companies found for this email" });
     }
 
-    const companies = sharedUsers.map(user => ({
-      tenantId: user.tenantId,
-      companyName: user.companyName,
+    // Step 2: Extract tenantIds and validate them
+    const tenantIds = sharedUsers.map(user => user.tenantId);
+    const validTenantIds = tenantIds.filter(id => mongoose.Types.ObjectId.isValid(id));
+    if (!validTenantIds.length) {
+      return res.status(400).json({ message: "No valid tenant IDs found" });
+    }
+
+    // Step 3: Fetch tenant details (companyName and companyLogo) using valid tenantIds
+    const tenants = await Tenant.find(
+      { _id: { $in: validTenantIds } },
+      'companyName companyLogo'
+    );
+
+    // Step 4: Map the results to the desired response format
+    const companies = tenants.map(tenant => ({
+      tenantId: tenant._id,
+      companyName: tenant.companyName,
+      companyLogo: tenant.companyLogo,
     }));
 
+    // Step 5: Return the response
     res.status(200).json({ companies });
   } catch (err) {
     console.error("Error fetching companies:", err.message);

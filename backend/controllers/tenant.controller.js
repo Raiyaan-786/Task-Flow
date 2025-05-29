@@ -326,7 +326,6 @@ export const processPayment = async (req, res) => {
         tenant,
         {
           $set: {
-            'companyName': companyName,
             'databaseName': database,
             'loginCredentials.username': username,
             'loginCredentials.password': password,
@@ -367,7 +366,6 @@ export const processPayment = async (req, res) => {
 
       // Create new user
       user = new User({
-        companyName: companyName,
         tenantId: tenantData._id,
         name: tenantData.name,
         username: userName,
@@ -379,12 +377,12 @@ export const processPayment = async (req, res) => {
 
       // Create a shared user
       shareduser = new SharedUser({
-        companyName: companyName,
         tenantId: tenantData._id,
         email: userEmail,
         password: hashedPassword,
       });
       await shareduser.save();
+      console.log(shareduser);
     } else {
       // Scenario 2: Plan upgrade (current plan is not "free")
       // Only update the plan details, keep loginCredentials, email, and databaseName unchanged
@@ -392,7 +390,6 @@ export const processPayment = async (req, res) => {
         tenant,
         {
           $set: {
-            'companyName': companyName,
             'plan.tier': planData.tier,
             'plan.price': amount,
             'plan.billingCycle': billingCycle,
@@ -446,7 +443,7 @@ export const processPayment = async (req, res) => {
       };
       response.shareduser = {
         email: tenantData.email,
-        companyName: tenantData.companyName,
+        // companyName: tenantData.companyName,
         tenantId: tenantData._id,
       };
     }
@@ -591,7 +588,6 @@ export const updateTenantCompanyDetails = async (req, res) => {
       updateData,
       { new: true, runValidators: true }
     );
-
     return res.status(200).json({
       message: "Tenant company details updated successfully",
       tenant: updatedTenant,
