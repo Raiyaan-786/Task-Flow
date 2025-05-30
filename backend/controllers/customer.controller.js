@@ -111,6 +111,7 @@ const createCustomer = async (req, res) => {
       address,
       contactPersonName,
       contactPersonPhone,
+      customerCompanyName,
       groupName,
     } = req.body;
 
@@ -121,11 +122,11 @@ const createCustomer = async (req, res) => {
       !billingName ||
       !email ||
       !mobileNo ||
-      !tenantId
+      !tenantId 
     ) {
       return res.status(400).json({
         error:
-          "companyName, customerName, customerCode, password, billingName, email, mobileNo, and tenantId are required",
+          "customerCompanyName, customerName, customerCode, password, billingName, email, mobileNo, and tenantId are required",
       });
     }
 
@@ -133,8 +134,6 @@ const createCustomer = async (req, res) => {
     if (!tenant || !tenant.databaseName) {
       return res.status(404).json({ message: "Tenant not found" });
     }
-
-    const companyName = tenant.companyName;
 
     const { models } = await getTenantConnection(tenantId, tenant.databaseName);
     const Customer = models.Customer;
@@ -158,8 +157,6 @@ const createCustomer = async (req, res) => {
 
     // Create SharedCustomer for login
     const sharedCustomer = new SharedCustomer({
-      companyName: tenant.companyName,
-      companyLogo: tenant.companyLogo,
       tenantId,
       email,
       password: hashedPassword,
@@ -179,7 +176,7 @@ const createCustomer = async (req, res) => {
 
     // Create tenant-specific Customer
     const newCustomer = new Customer({
-      companyName,
+      customerCompanyName,
       tenantId,
       customerName,
       customerCode,
@@ -196,7 +193,7 @@ const createCustomer = async (req, res) => {
       contactPersonPhone,
       groupName: group ? group._id : null,
     });
-
+    console.log(newCustomer);
     await newCustomer.save();
 
     // Update group if applicable

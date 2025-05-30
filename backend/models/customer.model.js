@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const customerSchema = new mongoose.Schema(
   {
+    customerName: {
+      type: String,
+      required: true
+    },
     image:{
       type: String,
       default: '',

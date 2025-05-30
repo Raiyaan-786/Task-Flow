@@ -92,7 +92,7 @@ const AddCustomer = () => {
   };
 
   const handleFormSubmit = async (values, { resetForm }) => {
-    // console.log(values)
+    console.log(values)
     const token = localStorage.getItem("token");
     try {
       const response = await API.post("/createcustomer", values, {
@@ -118,11 +118,11 @@ const AddCustomer = () => {
           customerName: "",
           customerCode: "",
           billingName: "",
-          customerCompanyName: "",//
+          customerCompanyName: "",
           email: "",
           mobileNo: "",
           whatsappNo: "",
-          sameAsMobileNo: false,//
+          sameAsMobileNo: false,
           PAN: "", //
           address: "",
           contactPersonName: "",
@@ -430,8 +430,18 @@ const AddCustomer = () => {
                   <label>COMPANY/FIRM NAME</label>
                 </Grid2>
                 <Grid2 size={6}>
-                  <Autocomplete
-
+                  <TextField
+                    placeholder="ENTER COMPANY NAME"
+                    size="small"
+                    fullWidth
+                    variant="outlined"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.customerCompanyName}
+                    name="customerCompanyName"
+                    disabled={!panChecked}
+                  />
+                  {/* <Autocomplete
                     disablePortal
                     options={firmNames}
                     size="small"
@@ -440,7 +450,7 @@ const AddCustomer = () => {
                     value={values.customerCompanyName}
                     onChange={(event, newValue) => setFieldValue('customerCompanyName', newValue)}
                     renderInput={(params) => <TextField variant="outlined" {...params} placeholder="ENTER COMPANY/FIRM NAME" />}
-                  />
+                  /> */}
                 </Grid2>
 
                 {/* Contact Person Name */}

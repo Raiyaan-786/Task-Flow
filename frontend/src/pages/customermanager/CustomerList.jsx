@@ -61,13 +61,14 @@ const CustomerList = () => {
           customerName: true,
           customerCode: true,
           billingName: true,
-          companyName: true,
+          customerCompanyName: true,
           email: true,
           mobileNo: true,
           whatsappNo: true,
           PAN: true,
           address: true,
-          contactPerson: true,
+          contactPersonName: true,
+          contactPersonPhone: true,
           actions: true,
         };
   });
@@ -108,6 +109,7 @@ const CustomerList = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         const customersData = response.data.customers || [];
+        console.log(customersData) ;
         const formattedData = customersData.map((customer, index) => ({
           id: customer._id,
           Sn: index + 1,
@@ -345,13 +347,14 @@ const CustomerList = () => {
     { field: "customerName", headerName: "Customer Name", flex: 1.5 },
     { field: "customerCode", headerName: "Customer Code", flex: 1 },
     { field: "billingName", headerName: "Billing Name", flex: 1.5 },
-    { field: "companyName", headerName: "Company/Firm Name", flex: 1 },
+    { field: "customerCompanyName", headerName: "Company/Firm Name", flex: 1 },
     { field: "email", headerName: "Email", flex: 1.5 },
     { field: "mobileNo", headerName: "Mobile No", flex: 1 },
     { field: "whatsappNo", headerName: "WhatsApp No", flex: 1 },
     { field: "PAN", headerName: "PAN", flex: 1 },
     { field: "address", headerName: "Address", flex: 2 },
-    { field: "contactPerson", headerName: "Contact Person", flex: 1 },
+    { field: "contactPersonName", headerName: "Contact Person Name", flex: 1 },
+    { field: "contactPersonPhone", headerName: "Contact Person Phone", flex: 1 },
     {
       field: "actions",
       flex: 1.5,
@@ -519,7 +522,7 @@ const CustomerList = () => {
                     },
                     {
                       label: "Company/Firm Name",
-                      value: selectedCustomer.companyName,
+                      value: selectedCustomer.customerCompanyName,
                     },
                     {
                       label: "Billing Name",
@@ -979,7 +982,7 @@ const CustomerList = () => {
                   options={firmNames}
                   size="small"
                   freeSolo
-                  value={editCustomerData.companyName}
+                  value={editCustomerData.customerCompanyName}
                   onChange={(event, newValue) =>
                     setEditCustomerData({
                       ...editCustomerData,
